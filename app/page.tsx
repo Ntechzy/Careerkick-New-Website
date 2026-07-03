@@ -17,10 +17,12 @@ import { ServicesSection } from "@/components/sections/ServicesSection";
 import { FaqSection } from "@/components/sections/FaqSection";
 import { EventsSection } from "@/components/sections/EventsSection";
 import { ImportantEventsSection } from "@/components/sections/ImportantEventsSection";
+import { EBookButton } from "@/components/EBookButton";
 
 export default function Home() {
   return (
     <>
+      <EBookButton />
       <HeroSection />
       <StatsSection />
       <AboutSection />
