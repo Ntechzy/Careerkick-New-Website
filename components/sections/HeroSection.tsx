@@ -140,7 +140,7 @@ export function HeroSection() {
               {rows.map((row, index) => (
                 <div
                   key={row.join("-")}
-                  className="grid grid-cols-5 items-center gap-1 rounded-md border border-white/5 bg-white/[0.03] px-2 py-2.5 text-[9px] text-white/80 sm:gap-3 sm:px-3 sm:py-3 sm:text-xs [animation:pulseSoft_10s_ease-in-out_infinite]"
+                  className="grid grid-cols-5 items-center gap-1 rounded-md border border-white/5 bg-white/[0.03] px-2 py-2.5 text-[9px] text-white/80 sm:gap-3 sm:px-3 sm:py-3 sm:text-xs [animation:heroDataFloat_10s_ease-in-out_infinite]"
                   style={{ animationDelay: `${index * 2}s` }}
                 >
                   {row.map((cell) => (

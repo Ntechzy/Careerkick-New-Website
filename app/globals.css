@@ -157,6 +157,11 @@ input:focus-visible {
   50% { opacity: 1; transform: scale(1.25); }
 }
 
+@keyframes heroDataFloat {
+  0%, 100% { opacity: 0.72; transform: translateY(-3px); }
+  50% { opacity: 1; transform: translateY(3px); }
+}
+
 @keyframes scrollDot {
   0% { opacity: 0; transform: translateY(0); }
   35% { opacity: 1; }
