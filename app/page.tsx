@@ -18,6 +18,7 @@ import { FaqSection } from "@/components/sections/FaqSection";
 import { EventsSection } from "@/components/sections/EventsSection";
 import { ImportantEventsSection } from "@/components/sections/ImportantEventsSection";
 import { EBookButton } from "@/components/EBookButton";
+import { BlogsSection } from "@/components/home/BlogsSection";
 
 export default function Home() {
   return (
@@ -34,6 +35,7 @@ export default function Home() {
       <ImportantEventsSection />
       <EventsSection />
       <AppShowcaseSection />
+      <BlogsSection />
       <FaqSection />
       {/* <HowItWorksSection /> */}
       {/* <PlatformSection /> */}

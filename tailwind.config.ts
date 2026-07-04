@@ -1,12 +1,14 @@
 import type { Config } from "tailwindcss";
 import plugin from "tailwindcss/plugin";
+import typography from "@tailwindcss/typography";
 
 const config: Config = {
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
     "./hooks/**/*.{ts,tsx}",
-    "./lib/**/*.{ts,tsx}"
+    "./lib/**/*.{ts,tsx}",
+    "./types/**/*.{ts,tsx}"
   ],
   theme: {
     extend: {
@@ -77,6 +79,7 @@ const config: Config = {
     }
   },
   plugins: [
+    typography,
     plugin(({ addUtilities }) => {
       addUtilities({
         ".bg-gradient-brand": { backgroundImage: "linear-gradient(135deg, #2F7804 0%, #51A70A 48%, #6DCC12 100%)" },

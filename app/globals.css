@@ -117,6 +117,58 @@ input:focus-visible {
   overflow: hidden;
 }
 
+.career-blog-content {
+  color: var(--color-text-muted);
+}
+
+.career-blog-content :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--color-text-primary);
+  font-family: var(--font-clash), var(--font-jakarta), sans-serif;
+}
+
+.career-blog-content :where(a) {
+  color: var(--color-violet-glow);
+  text-decoration-color: #51A70A66;
+  text-underline-offset: 4px;
+}
+
+.career-blog-content :where(blockquote) {
+  border-left-color: var(--color-violet);
+  color: var(--color-text-primary);
+  background: #51A70A12;
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+}
+
+.career-blog-content :where(img, iframe) {
+  border-radius: var(--radius-lg);
+  border: 1px solid #ffffff14;
+}
+
+.career-blog-content :where(table) {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid #ffffff14;
+}
+
+.career-blog-content :where(th, td) {
+  border-color: #ffffff14;
+}
+
+.career-blog-content :where(code) {
+  color: var(--color-violet-glow);
+  background: #ffffff0a;
+  border-radius: var(--radius-sm);
+  padding: 0.15rem 0.35rem;
+}
+
+.career-blog-content :where(pre) {
+  border: 1px solid #ffffff14;
+  background: var(--color-surface);
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(-10px); }
   50% { transform: translateY(10px); }
