@@ -12,7 +12,7 @@ const channels = [
     subscribers: "206K subscribers",
     href: "https://www.youtube.com/@careerkickneet",
     imagePosition: "50% 0%",
-    imageSrc: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783074368/IMG_20260703_154400.jpg_ievblo.jpg",
+    imageSrc: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783134623/careerkick-neet_ab5he6.jpg",
   },
   {
     id: "careerkick-jee",
@@ -21,7 +21,7 @@ const channels = [
     subscribers: "42.8K subscribers",
     href: "https://www.youtube.com/@CAREERKICKJEE",
     imagePosition: "50% 0%",
-    imageSrc: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783074372/IMG_20260703_154416.jpg_zdw8yq.jpg",
+    imageSrc: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783134620/careerkick-jee_jrbh9x.jpg",
   },
 ] as const;
 
@@ -167,7 +167,7 @@ function IphoneMockup({
               <span className="h-1.5 w-2.5 rounded-sm bg-zinc-900 sm:h-2 sm:w-3" />
             </span>
           </div>
-          <div className="relative z-10 h-[calc(100%-1.75rem)] overflow-hidden px-1.5 pb-2 pt-1.5 sm:h-[calc(100%-2.5rem)] sm:px-2.5 sm:pb-3 sm:pt-2">
+          <div className="relative z-10 h-[calc(100%-1.75rem)] w-full overflow-hidden sm:h-[calc(100%-2.5rem)]">
             {children}
           </div>
         </div>
@@ -180,13 +180,13 @@ function ChannelScreen({ channel }: { channel: (typeof channels)[number] }) {
   const hasImage = Boolean(channel.imageSrc);
 
   return (
-    <div className="relative h-full overflow-hidden rounded-[1.35rem] bg-[#0f0f0f] text-white sm:rounded-[1.9rem]">
+    <div className="relative h-full w-full overflow-hidden bg-[#0f0f0f] text-white">
       <div className="absolute inset-0 bg-zinc-950">
         {hasImage ? (
           <img
             src={channel.imageSrc}
             alt={channel.title}
-            className="h-full w-full scale-[1.025] object-cover"
+            className="h-full w-full object-cover"
             style={{ objectPosition: channel.imagePosition }}
           />
         ) : (
@@ -242,4 +242,3 @@ function PlayIcon({ large = false }: { large?: boolean }) {
     </svg>
   );
 }
-
