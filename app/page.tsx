@@ -22,6 +22,7 @@ import { OfficesSection } from "@/components/sections/OfficesSection";
 import { CounsellingMistakesSection } from "@/components/sections/CounsellingMistakesSection";
 import { WhatAfterNeetSection } from "@/components/sections/WhatAfterNeetSection";
 import { MidHomepageCtaSection } from "@/components/sections/MidHomepageCtaSection";
+import OfficeMapSection from "@/components/OfficeMapSection";
 import { getLatestPosts } from "@/lib/wordpress";
 
 export default async function Home() {
@@ -44,7 +45,7 @@ export default async function Home() {
       <ImportantEventsSection />
       <EventsSection />
       <AppShowcaseSection />
-      <OfficesSection />
+      <OfficeMapSection />
       <FaqSection />
       <AdmittedStudentsSection />
       {/* <HowItWorksSection /> */}
