@@ -104,27 +104,6 @@ export function IntroAnimation() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.18, duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
           >
-            <motion.div
-              className="relative grid h-28 w-28 place-items-center rounded-[2rem] border border-violet/25 bg-gradient-card shadow-[0_0_90px_rgba(81,167,10,0.34)] sm:h-36 sm:w-36 sm:rounded-[2.5rem]"
-              initial={{ scale: 0.82, rotate: -3, filter: "blur(8px)" }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: "spring", stiffness: 130, damping: 20, delay: 0.24 }}
-              whileInView={{ filter: "blur(0px)" }}
-            >
-              <motion.span
-                className="absolute -inset-1 rounded-[2.15rem] border border-violet-glow/35 sm:rounded-[2.65rem]"
-                animate={reduceMotion ? undefined : { scale: [1, 1.1], opacity: [0.7, 0] }}
-                transition={{ duration: 1.8, repeat: Infinity, ease: "easeOut" }}
-              />
-              <Image
-                src="/logo.png"
-                alt="Careerkick"
-                width={180}
-                height={180}
-                priority
-                className="h-16 w-16 object-contain sm:h-20 sm:w-20"
-              />
-            </motion.div>
 
             <motion.div
               className="relative mt-7 overflow-hidden"
