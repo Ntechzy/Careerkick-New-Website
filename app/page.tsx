@@ -46,8 +46,8 @@ export default async function Home() {
       <EventsSection />
       <AppShowcaseSection />
       <OfficeMapSection />
-      <FaqSection />
       <AdmittedStudentsSection />
+      <FaqSection />
       {/* <HowItWorksSection /> */}
       {/* <PlatformSection /> */}
       {/* <CollegeSection /> */}
