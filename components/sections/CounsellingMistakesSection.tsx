@@ -65,9 +65,9 @@ export function CounsellingMistakesSection() {
                 <div className="inline-flex rounded-full border border-[#51A70A]/40 bg-[#51A70A]/15 px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8cef32] sm:text-xs">
                   Avoid seat loss
                 </div>
-                <h2 className="mt-5 font-display text-3xl font-bold leading-[1.05] tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
+                <h2 className="mt-5 font-display text-3xl font-bold leading-[1.16] tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
                   Single mistake in{" "}
-                  <span className="block mt-1 bg-gradient-brand bg-clip-text text-transparent">
+                  <span className="block mt-1 pb-2 bg-gradient-brand bg-clip-text text-transparent">
                     counselling
                   </span>{" "}
                   can cost a seat.

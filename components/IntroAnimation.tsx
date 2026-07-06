@@ -154,13 +154,13 @@ export function IntroAnimation() {
           />
 
           <motion.div
-            className="absolute inset-y-0 right-0 w-1/2 bg-base"
+            className="absolute inset-y-0 right-[-2px] w-[calc(50%+4px)] bg-base"
             initial={{ x: "0%" }}
             animate={{ x: "105%" }}
             transition={{ delay: 1.95, duration: 0.72, ease: [0.76, 0, 0.24, 1] }}
           />
           <motion.div
-            className="absolute inset-y-0 left-0 w-1/2 bg-base"
+            className="absolute inset-y-0 left-[-2px] w-[calc(50%+4px)] bg-base"
             initial={{ x: "0%" }}
             animate={{ x: "-105%" }}
             transition={{ delay: 1.95, duration: 0.72, ease: [0.76, 0, 0.24, 1] }}
