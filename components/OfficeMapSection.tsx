@@ -19,7 +19,6 @@ type NetworkOffice = {
   address: string;
   link: string;
   contacts: string[];
-  note: string;
   labelOffset: {
     x: number;
     y: number;
@@ -50,8 +49,7 @@ const officeNetwork: NetworkOffice[] = [
       "117 N 65, Rani Ganj, Ambedkar Nagar, Navin Nagar Kakadeo, Kanpur, Uttar Pradesh 208025",
     link: "https://www.google.com/maps?ll=26.480127,80.292698&z=15&t=m&hl=en-GB&gl=US&mapclient=embed&cid=9720261514956615116",
     contacts: ["+91 8127942568"],
-    note: "High-touch admission planning for students across Central Uttar Pradesh.",
-    labelOffset: { x: 18, y: -10 },
+    labelOffset: { x: -72, y: 22 },
   },
   {
     id: "greater-noida",
@@ -64,8 +62,7 @@ const officeNetwork: NetworkOffice[] = [
       "2nd floor, AA-007, Block A, Ansal Golf Link-1, Greater Noida, Uttar Pradesh 201315",
     link: "https://www.google.com/maps?ll=28.453756,77.505382&z=15&t=m&hl=en-GB&gl=US&mapclient=embed&cid=1290190296594937614",
     contacts: ["+91 9198350980", "+91 91983 50985"],
-    note: "A premium NCR guidance hub for college shortlisting, strategy, and application support.",
-    labelOffset: { x: -38, y: 16 },
+    labelOffset: { x: -86, y: -4 },
   },
   {
     id: "gorakhpur",
@@ -78,8 +75,7 @@ const officeNetwork: NetworkOffice[] = [
       "2nd floor, 401, LIG 1st St, Vikas Nagar, Gorakhpur, Uttar Pradesh 273007, India",
     link: "https://www.google.com/maps/place/2nd+floor,+401,+LIG+1st+St,+Vikas+Nagar,+Gorakhpur,+Uttar+Pradesh+273007,+India/@26.806494,83.355046,15z/data=!4m5!3m4!1s0x399145ea7d3c0473:0x5ed276420ba33477!8m2!3d26.8064944!4d83.3550462?hl=en-GB&entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D",
     contacts: [],
-    note: "Regional counselling support designed for students across Eastern Uttar Pradesh.",
-    labelOffset: { x: 18, y: -8 },
+    labelOffset: { x: 28, y: 8 },
   },
   {
     id: "indore",
@@ -92,8 +88,7 @@ const officeNetwork: NetworkOffice[] = [
       "402 Apollo Trade Center, Geeta Bhawan Square, Indore, Madhya Pradesh",
     link: "https://www.google.com/maps?ll=22.717817,75.884559&z=15&t=m&hl=en-GB&gl=US&mapclient=embed&cid=17580593814664500296",
     contacts: ["+91 9198350983", "+91 9198350987"],
-    note: "A focused support centre for counselling clarity, documentation, and final-choice decisions.",
-    labelOffset: { x: -36, y: -34 },
+    labelOffset: { x: -54, y: -26 },
   },
 ];
 
@@ -239,9 +234,6 @@ export default function OfficeMapSection() {
                             {activeOffice.state}
                           </p>
 
-                          <p className="mt-3 text-sm leading-6 text-text-muted">
-                            {activeOffice.note}
-                          </p>
                         </div>
 
                         <div className="rounded-[20px] border border-white/10 bg-white/[0.04] p-3.5">
@@ -269,23 +261,15 @@ export default function OfficeMapSection() {
                         ) : null}
                       </div>
 
-                      <div className="space-y-4">
-                        <div className="grid gap-2.5 sm:grid-cols-3">
-                          <StatPill label="4+ Cities" />
-                          <StatPill label="PAN-India Guidance" />
-                          <StatPill label="Expert Counsellors" />
-                        </div>
-
-                        <a
-                          href={activeOffice.link}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-brand px-5 py-3 text-sm font-bold text-[#050704] shadow-[0_18px_44px_rgba(81,167,10,0.24)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_22px_52px_rgba(81,167,10,0.34)] sm:px-6"
-                        >
-                          View Office Location
-                          <ArrowIcon />
-                        </a>
-                      </div>
+                      <a
+                        href={activeOffice.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-brand px-5 py-3 text-sm font-bold text-[#050704] shadow-[0_18px_44px_rgba(81,167,10,0.24)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_22px_52px_rgba(81,167,10,0.34)] sm:px-6"
+                      >
+                        View Office Location
+                        <ArrowIcon />
+                      </a>
                     </div>
                   </div>
                 </motion.article>
@@ -324,70 +308,46 @@ function ThreeDOfficeMap({
     <div className="relative">
       <div className="pointer-events-none absolute -inset-8 bg-[radial-gradient(circle_at_50%_45%,rgba(109,204,18,0.20),transparent_52%)] blur-2xl" />
 
-      <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-white/[0.05] p-4 shadow-[0_32px_90px_rgba(0,0,0,0.42)] backdrop-blur-xl sm:p-5">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(81,167,10,0.18),transparent_30%),radial-gradient(circle_at_58%_50%,rgba(109,204,18,0.12),transparent_40%)]" />
-        <div className="pointer-events-none absolute inset-[10%] rounded-full border border-violet/10" />
-        <div className="pointer-events-none absolute inset-[22%] rounded-full border border-dashed border-violet/12" />
+      <div className="relative mx-auto aspect-[611.86/695.70178] w-full max-w-[640px] perspective-[1200px] lg:max-w-none">
+        <div className="absolute inset-[14%] rounded-full bg-violet/20 blur-[90px]" />
 
-        <div className="relative mb-4 flex items-center justify-between gap-4 rounded-[24px] border border-white/10 bg-[#071006]/80 p-4">
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-violet-glow">
-              3D Office Network
-            </p>
-
-            <p className="mt-1 text-sm text-white/70">
-              Active city:{" "}
-              <span className="font-semibold text-white">
-                {activeOffice.city}
-              </span>
-            </p>
-          </div>
-
-          <div className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-semibold text-white/72">
-            4 Locations
-          </div>
-        </div>
-
-        <div className="relative mx-auto aspect-[611.86/695.70178] w-full max-w-[560px] perspective-[1200px]">
-          <div className="absolute inset-[14%] rounded-full bg-violet/20 blur-[90px]" />
-
-          <motion.div
-            initial={{ opacity: 0, rotateX: 18, rotateZ: -5, y: 30 }}
-            whileInView={{ opacity: 1, rotateX: 0, rotateZ: 0, y: 0 }}
-            viewport={{ once: true, amount: 0.35 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative h-full w-full"
+        <motion.div
+          initial={{ opacity: 0, rotateX: 18, rotateZ: -5, y: 30 }}
+          whileInView={{ opacity: 1, rotateX: 0, rotateZ: 0, y: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative h-full w-full"
+          style={{
+            transformStyle: "preserve-3d",
+          }}
+        >
+          <div
+            className="absolute inset-[6%] rounded-[38px] bg-black/45 blur-2xl"
             style={{
-              transformStyle: "preserve-3d",
+              transform: "translate3d(0, 46px, -80px) scale(0.92)",
+            }}
+          />
+
+          <div
+            className="absolute inset-[3%] rounded-[34px] border border-violet/20 bg-[#0a1208] shadow-[0_44px_110px_rgba(0,0,0,0.60)]"
+            style={{
+              transform: "translate3d(0, 28px, -56px)",
+            }}
+          />
+
+          <div
+            className="absolute inset-[1.5%] rounded-[34px] border border-violet/25 bg-[linear-gradient(180deg,#152b11_0%,#0a1508_100%)]"
+            style={{
+              transform: "translate3d(0, 16px, -32px)",
+            }}
+          />
+
+          <div
+            className="absolute inset-0 overflow-hidden rounded-[34px] border border-white/10 bg-[linear-gradient(145deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0.02)_42%,rgba(0,0,0,0.20)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_34px_90px_rgba(0,0,0,0.45)]"
+            style={{
+              transform: "translate3d(0, 0, 0)",
             }}
           >
-            <div
-              className="absolute inset-[6%] rounded-[38px] bg-black/45 blur-2xl"
-              style={{
-                transform: "translate3d(0, 46px, -80px) scale(0.92)",
-              }}
-            />
-
-            <div
-              className="absolute inset-[3%] rounded-[34px] border border-violet/20 bg-[#0a1208] shadow-[0_44px_110px_rgba(0,0,0,0.60)]"
-              style={{
-                transform: "translate3d(0, 28px, -56px)",
-              }}
-            />
-
-            <div
-              className="absolute inset-[1.5%] rounded-[34px] border border-violet/25 bg-[linear-gradient(180deg,#152b11_0%,#0a1508_100%)]"
-              style={{
-                transform: "translate3d(0, 16px, -32px)",
-              }}
-            />
-
-            <div
-              className="absolute inset-0 overflow-hidden rounded-[34px] border border-white/10 bg-[linear-gradient(145deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0.02)_42%,rgba(0,0,0,0.20)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_34px_90px_rgba(0,0,0,0.45)]"
-              style={{
-                transform: "translate3d(0, 0, 0)",
-              }}
-            >
               <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(109,204,18,0.12)_0%,transparent_32%,rgba(81,167,10,0.08)_65%,transparent_100%)]" />
               <div className="absolute inset-0 opacity-[0.18] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:34px_34px]" />
 
@@ -508,11 +468,10 @@ function ThreeDOfficeMap({
                 })}
               </div>
 
-              <div className="pointer-events-none absolute inset-0 rounded-[34px] bg-[linear-gradient(120deg,rgba(255,255,255,0.16)_0%,transparent_22%,transparent_70%,rgba(109,204,18,0.10)_100%)]" />
-              <div className="pointer-events-none absolute inset-x-10 top-8 h-28 rounded-full bg-white/10 blur-3xl" />
-            </div>
-          </motion.div>
-        </div>
+            <div className="pointer-events-none absolute inset-0 rounded-[34px] bg-[linear-gradient(120deg,rgba(255,255,255,0.16)_0%,transparent_22%,transparent_70%,rgba(109,204,18,0.10)_100%)]" />
+            <div className="pointer-events-none absolute inset-x-10 top-8 h-28 rounded-full bg-white/10 blur-3xl" />
+          </div>
+        </motion.div>
       </div>
     </div>
   );
@@ -593,9 +552,9 @@ function OfficePin3D({
       </button>
 
       <div
-        className="pointer-events-none absolute left-0 top-0"
+        className="pointer-events-none absolute left-0 top-0 z-[9]"
         style={{
-          transform: `translate(clamp(-90px, ${office.labelOffset.x}px, 90px), clamp(-42px, ${office.labelOffset.y}px, 42px))`,
+          transform: `translate(clamp(-120px, ${office.labelOffset.x}px, 120px), clamp(-56px, ${office.labelOffset.y}px, 56px))`,
         }}
       >
         <div
