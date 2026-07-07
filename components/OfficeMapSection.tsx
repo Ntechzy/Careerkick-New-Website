@@ -49,7 +49,7 @@ const officeNetwork: NetworkOffice[] = [
     address:
       "117 N 65, Rani Ganj, Ambedkar Nagar, Navin Nagar Kakadeo, Kanpur, Uttar Pradesh 208025",
     link: "https://www.google.com/maps?ll=26.480127,80.292698&z=15&t=m&hl=en-GB&gl=US&mapclient=embed&cid=9720261514956615116",
-    contacts: ["+91 8127942568", "+91 8423689480"],
+    contacts: ["+91 8127942568"],
     note: "High-touch admission planning for students across Central Uttar Pradesh.",
     labelOffset: { x: 18, y: -10 },
   },
@@ -573,13 +573,20 @@ function OfficePin3D({
 
         <span
           className={cn(
-            "relative grid place-items-center rounded-full border border-white/70 bg-gradient-brand shadow-[0_0_24px_rgba(109,204,18,0.55),0_12px_22px_rgba(0,0,0,0.36)] transition-all duration-300",
+            "relative grid place-items-center overflow-hidden rounded-full border border-white/70 bg-white shadow-[0_0_24px_rgba(109,204,18,0.55),0_12px_22px_rgba(0,0,0,0.36)] transition-all duration-300",
             isActive
-              ? "h-6 w-6 scale-110"
-              : "h-5 w-5 group-hover:scale-110"
+              ? "h-12 w-12 scale-110"
+              : "h-11 w-11 group-hover:scale-110"
           )}
         >
-          <span className="h-2 w-2 rounded-full bg-[#050704]" />
+          <Image
+            src="/logo_circle2.png"
+            alt=""
+            fill
+            sizes="48px"
+            className="relative z-[1] object-cover"
+            aria-hidden="true"
+          />
         </span>
 
         <span className="absolute left-1/2 top-full h-8 w-[2px] -translate-x-1/2 bg-[linear-gradient(180deg,rgba(140,255,34,0.8),transparent)]" />
