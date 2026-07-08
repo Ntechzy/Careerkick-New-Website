@@ -9,6 +9,7 @@ import { PlatformSection } from "@/components/sections/PlatformSection";
 import { PricingSection } from "@/components/sections/PricingSection";
 import { StatsSection } from "@/components/sections/StatsSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
+import { StudentImageTestimonialsSection } from "@/components/sections/StudentImageTestimonialsSection";
 import { WebinarsSection } from "@/components/sections/WebinarsSection";
 import { CounsellingProcessSection } from "@/components/CounsellingProcessSection";
 import { ServicesSection } from "@/components/sections/ServicesSection";
@@ -44,6 +45,7 @@ export default async function Home() {
       />
       <AdmissionGuidanceSection />
       <TestimonialsSection />
+      <StudentImageTestimonialsSection />
       <ImportantEventsSection />
       <EventsSection />
       <OfficeMapSection />

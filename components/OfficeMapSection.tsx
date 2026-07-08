@@ -532,16 +532,16 @@ function OfficePin3D({
           className={cn(
             "relative grid place-items-center overflow-hidden rounded-full border border-white/70 bg-white shadow-[0_0_24px_rgba(109,204,18,0.55),0_12px_22px_rgba(0,0,0,0.36)] transition-all duration-300",
             isActive
-              ? "h-12 w-12 scale-110"
-              : "h-11 w-11 group-hover:scale-110"
+              ? "h-10 w-10 scale-110"
+              : "h-9 w-9 group-hover:scale-110"
           )}
         >
           <Image
-            src="/logo_circle2.png"
+            src="/logo_circle3.png"
             alt=""
             fill
             sizes="50px"
-            className="relative z-[1] object-cover"
+            className="relative z-[1] object-contain scale-125"
             aria-hidden="true"
           />
         </span>
