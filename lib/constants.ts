@@ -53,7 +53,7 @@ export const NAV_LINKS: NavLink[] = [
   { label: "Policies", href: "/policies" },
 ];
 
-export const PLATFORM_LINKS: FooterLink[] = [
+export const RESOURCE_LINKS: FooterLink[] = [
   { label: "NEET 2026", href: "/services" },
   { label: "MBBS Counselling", href: "/services" },
   { label: "College Predictor", href: "/portfolio" },
@@ -76,7 +76,7 @@ export const LEGAL_LINKS: FooterLink[] = [
   { label: "Privacy Policy", href: "/policies/privacy" },
   { label: "Terms", href: "/policies/terms" },
   { label: "Disclaimer", href: "/policies/disclaimer" },
-  { label: "Made with care in Chennai, India", href: "/about" },
+  { label: "Developed by Ntechzy", href: "https://ntechzy.in/" },
 ];
 
 export const STATS: Stat[] = [

@@ -198,6 +198,7 @@ const steps: Step[] = [
 export default function AdmissionTimeline() {
   const [active, setActive] = useState(0);
   const [imageVisible, setImageVisible] = useState(true);
+  const [imageTop, setImageTop] = useState(0);
   const refs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -217,9 +218,9 @@ export default function AdmissionTimeline() {
             }
           },
           {
-            // Mobile cards are taller; use a looser margin/threshold
-            rootMargin: isMobile ? "0px 0px -30% 0px" : "-40% 0px -40% 0px",
-            threshold: isMobile ? 0.1 : 0.2,
+            // Improved margins to trigger active state more accurately based on scrolling
+            rootMargin: isMobile ? "-20% 0px -40% 0px" : "-25% 0px -45% 0px",
+            threshold: isMobile ? 0.1 : 0.15,
           },
         );
 
@@ -251,7 +252,24 @@ export default function AdmissionTimeline() {
   useEffect(() => {
     setImageVisible(false);
     const frame = requestAnimationFrame(() => setImageVisible(true));
-    return () => cancelAnimationFrame(frame);
+    
+    // Logic to perfectly track the card's vertical position
+    const updatePosition = () => {
+      if (refs.current[active]) {
+        setImageTop(refs.current[active].offsetTop);
+      }
+    };
+    
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    // Add scroll event listener briefly to ensure it catches layout shifts on heavy pages
+    window.addEventListener("scroll", updatePosition, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition);
+    };
   }, [active]);
 
   return (
@@ -260,44 +278,45 @@ export default function AdmissionTimeline() {
       <div className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-[#56b016]/6 blur-[120px]" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="mb-12 text-center sm:mb-14">
+        <div className="mb-12 text-center sm:mb-16">
           <p className="text-xs font-medium uppercase tracking-[0.4em] text-[#56b016] sm:text-sm">
             Admission Timeline
           </p>
           <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-slate-950 sm:mt-4 sm:text-5xl">
             Your Admission Journey, Step by Step
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-slate-600 sm:mt-4 sm:text-lg">
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
             Track every stage from inquiry and profile review to final admission
             and post-admission support.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)] lg:gap-16">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.85fr)] lg:gap-20">
           {/* LEFT CONTENT */}
           <div className="relative">
-            {/* Vertical Line */}
+            {/* Vertical Line - dynamically sizes with the content */}
             <div className="absolute bottom-0 left-4 top-0 w-0.5 bg-[#56b016]/20 sm:left-5" />
 
-            <div className="space-y-12 sm:space-y-16 lg:space-y-20">
+            {/* Added dynamic bottom padding so the final image doesn't overflow the section */}
+            <div className="space-y-16 pb-12 sm:space-y-20 lg:space-y-28 lg:pb-[400px]">
               {steps.map((step, index) => (
                 <div
                   key={step.id}
                   ref={(el) => {
                     refs.current[index] = el;
                   }}
-                  className="relative pl-12 sm:pl-16"
+                  className="relative pl-12 sm:pl-16 lg:pl-20"
                 >
                   {/* Circle */}
                   <div
                     className={clsx(
-                      "absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full border transition-all sm:h-10 sm:w-10",
+                      "absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full border transition-all duration-300 sm:h-10 sm:w-10",
                       active === index
-                        ? "border-[#56b016] bg-[#56b016] text-white shadow-[0_0_0_6px_rgba(86,176,22,0.14)]"
+                        ? "border-[#56b016] bg-[#56b016] text-white shadow-[0_0_0_6px_rgba(86,176,22,0.14)] scale-110"
                         : "border-[#56b016]/30 bg-white text-[#56b016]",
                     )}
                   >
-                    <span className="font-mono text-xs font-semibold">{step.id}</span>
+                    <span className="font-mono text-xs font-bold sm:text-sm">{step.id}</span>
                   </div>
 
                   {/* Content */}
@@ -306,71 +325,82 @@ export default function AdmissionTimeline() {
                       "max-w-none text-left transition-all duration-500",
                       active === index
                         ? "opacity-100 translate-y-0"
-                        : "opacity-55 translate-y-6",
+                        : "opacity-40 translate-y-4",
                     )}
                   >
                     {/* Mobile image */}
-                    <div className="mb-4 overflow-hidden rounded-[1.25rem] border border-[#56b016]/15 shadow-[0_14px_40px_rgba(86,176,22,0.12)] sm:mb-6 lg:hidden">
+                    <div className="mb-6 overflow-hidden rounded-[1.25rem] border border-[#56b016]/15 shadow-[0_14px_40px_rgba(86,176,22,0.12)] sm:mb-8 lg:hidden">
                       <img
                         src={step.image}
                         alt={`${step.title} ${step.highlight}`}
-                        className="h-48 w-full object-cover sm:h-56"
+                        className="aspect-video w-full object-cover sm:aspect-[4/3]"
                       />
                     </div>
 
                     {/* Tag */}
-                    <span className="inline-flex rounded-full border border-[#56b016]/15 bg-[#56b016]/8 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#56b016]">
+                    <span className="inline-flex rounded-full border border-[#56b016]/15 bg-[#56b016]/8 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#56b016]">
                       {step.tag}
                     </span>
 
                     {/* Title */}
-                    <h3 className="mt-4 font-display text-xl font-bold leading-tight text-slate-950 sm:text-2xl md:text-3xl">
+                    <h3 className="mt-4 font-display text-2xl font-bold leading-tight text-slate-950 sm:text-3xl lg:text-4xl">
                       {step.title}{" "}
                       <span className="text-[#56b016]">{step.highlight}</span>
                     </h3>
 
                     {/* Description */}
-                    <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
-                      {step.description}
-                    </p>
+                    {step.description && (
+                      <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
+                        {step.description}
+                      </p>
+                    )}
 
                     {/* Points */}
-                    <ul className="mt-5 space-y-3 sm:mt-6">
-                      {step.points.map((point, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-3 text-left text-sm leading-6 text-slate-700 sm:text-[15px]"
-                        >
-                          <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#56b016]/25 bg-[#56b016]/10 text-xs font-semibold text-[#56b016]">
-                            {i + 1}
-                          </span>
-                          <span>{point}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    {step.points.length > 0 && (
+                      <ul className="mt-6 space-y-4">
+                        {step.points.map((point, i) => (
+                          <li
+                            key={i}
+                            className="flex items-start gap-3.5 text-left text-sm leading-relaxed text-slate-700 sm:text-base"
+                          >
+                            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#56b016]/30 bg-[#56b016]/10 text-xs font-semibold text-[#56b016]">
+                              {i + 1}
+                            </span>
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* RIGHT STICKY VIDEO */}
+          {/* RIGHT MOVING VIDEO/IMAGE */}
           <div className="relative hidden lg:block">
-            <div className="top-24 lg:sticky">
-              <div className="relative overflow-hidden rounded-[1.5rem] border border-[#56b016]/15 bg-white shadow-[0_20px_60px_rgba(86,176,22,0.12)]">
+            {/* The absolute container that tracks the active step */}
+            <div 
+              className="absolute w-full transition-all duration-700 ease-out"
+              style={{ top: `${imageTop}px` }}
+            >
+              <div className="relative overflow-hidden rounded-3xl border border-[#56b016]/15 bg-white shadow-[0_24px_80px_rgba(86,176,22,0.15)]">
                 <img
                   src={steps[active].image}
-                  alt="step visual"
+                  alt={`${steps[active].title} visual`}
                   className={clsx(
-                    "h-64 w-full object-cover transition-opacity duration-500 ease-in-out sm:h-80 lg:h-[31rem]",
+                    "w-full object-cover transition-opacity duration-500 ease-in-out lg:aspect-[4/3] xl:aspect-square lg:max-h-[480px]",
                     imageVisible ? "opacity-100" : "opacity-0",
                   )}
                 />
               </div>
 
-              {/* Optional dynamic caption */}
-              <div className="mt-4 text-center text-sm text-slate-500 sm:mt-6 lg:text-left">
-                Step {active + 1} of {steps.length}
+              {/* Dynamic caption centered under the image */}
+              <div className="mt-6 flex items-center justify-between text-sm font-medium text-slate-500">
+                <span>{steps[active].tag}</span>
+                <span>
+                  Step {active + 1} of {steps.length}
+                </span>
               </div>
             </div>
           </div>

@@ -97,7 +97,7 @@ export default function AchievementsSection() {
           <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:mt-4 sm:text-5xl">
             Proven Results & <span className="text-[#8cef32]">Real Impact</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/68 sm:text-base">
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/68 sm:text-base lg:text-white">
             A few of the outcomes that show how we support students with more
             confidence, better planning, and clearer decisions.
           </p>

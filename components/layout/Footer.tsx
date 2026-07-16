@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { COMPANY_LINKS, LEGAL_LINKS, PLATFORM_LINKS } from "@/lib/constants";
+import { COMPANY_LINKS, LEGAL_LINKS, RESOURCE_LINKS } from "@/lib/constants";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
 const socials = [
@@ -65,7 +65,7 @@ export function Footer() {
             </div>
           </div>
 
-          <FooterColumn title="Platform" links={PLATFORM_LINKS} />
+          <FooterColumn title="Resources" links={RESOURCE_LINKS} />
           <FooterColumn title="Company" links={COMPANY_LINKS} />
 
           <div>
