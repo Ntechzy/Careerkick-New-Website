@@ -42,7 +42,7 @@ export const upcomingEvents: UpcomingEventCard[] = [
     location: "2nd floor, AA -007, Block A, Ansal Golf Link -1, Greater Noida, Uttar Pradesh 201315",
     accent: "blue",
     imageSrc: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783076186/greater-noida_usr4x9.webp",
-    videoUrl: "",
+    videoUrl: "https://res.cloudinary.com/dhlqc0ymy/video/upload/v1784785459/AQOZzuUgwAlssR_oAxWGh1tRrFYaS1-rZQJpjvYLQSQu2LqPAhkbHTlKKX17hCza31DmUofsDeJ_a-zEop_2Si5Ou87N_DRl6KGzkHg_pru2up.mp4",
     imagePrompt:
       "Create a premium event visual for Careerkick's counselling expo in Greater Noida. Use a circular illustration with a modern campus and office-inspired backdrop, subtle map pin, and polished admissions theme. No text, no watermark, white or transparent background, lime green and blue accents.",
   },
