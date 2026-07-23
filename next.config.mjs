@@ -13,7 +13,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "careerkick.in",
+        hostname: "blogs.careerkick.in",
         pathname: "/wp-content/uploads/**",
       },
       {

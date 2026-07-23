@@ -8,7 +8,7 @@ import type {
   WPTag,
 } from "@/types/wordpress";
 
-const API_BASE = "https://careerkick.in/wp-json/wp/v2";
+const API_BASE = "https://blogs.careerkick.in/wp-json/wp/v2";
 const REVALIDATE_SECONDS = 3600;
 
 const htmlEntityMap: Record<string, string> = {
