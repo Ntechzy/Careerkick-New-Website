@@ -208,7 +208,7 @@ export function CareersView({ openings }: CareersViewProps) {
             <h2 className="mx-auto mt-3 max-w-xl font-display text-2xl font-bold leading-tight text-white sm:text-3xl">
               Interested in joining the team?
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white sm:text-base">
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white sm:text-base lg:text-white">
               Send your resume through the contact page and mention the role
               you want to apply for. We will review the current openings and
               get back to you.
