@@ -89,7 +89,7 @@ function BrandStoryComponent() {
         </motion.h2>
         <motion.p
           variants={fadeUpVariants}
-          className="mx-auto max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base"
+          className="mx-auto max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base lg:text-white"
         >
           A focused, student-first journey built on trust, scale, and clarity at every step.
         </motion.p>

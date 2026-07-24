@@ -34,7 +34,39 @@ export function TestimonialsSection() {
           </p>
         </ScrollReveal>
 
-        <div className="mt-12 grid gap-6 xl:grid-cols-4">
+        <div className="relative mt-10 md:hidden">
+          <div className="mb-4 flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#8cef32]">
+            <span className="h-px w-8 bg-[#51A70A]/45" />
+            <span>Swipe for more</span>
+            <span className="h-px w-8 bg-[#51A70A]/45" />
+          </div>
+
+          <div className="pointer-events-none absolute bottom-12 right-0 top-16 z-20 w-8 bg-gradient-to-l from-base to-transparent" />
+          <div className="pointer-events-none absolute bottom-12 left-0 top-16 z-20 w-8 bg-gradient-to-r from-base to-transparent" />
+
+          <div className="flex snap-x snap-mandatory overflow-x-auto pb-7 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {videoTestimonials.map((item, index) => (
+              <div
+                key={item.id}
+                className="flex w-full shrink-0 snap-center justify-center px-2"
+              >
+                <VideoPhoneCard item={item} index={index} />
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-1 flex items-center justify-center gap-2">
+            {videoTestimonials.map((item) => (
+              <span
+                key={`${item.id}-dot`}
+                className="h-1.5 w-7 rounded-full bg-[#51A70A]/45"
+                aria-hidden="true"
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-12 hidden gap-6 md:grid xl:grid-cols-4">
           {videoTestimonials.map((item, index) => (
             <ScrollReveal key={item.id} delay={index * 0.06} className="h-full">
               <VideoPhoneCard item={item} index={index} />
@@ -54,23 +86,25 @@ function VideoPhoneCard({ item, index }: { item: VideoTestimonial; index: number
   return (
     <GlassCard
       className={cn(
-        "mx-auto h-full w-full max-w-[300px] overflow-hidden border-white/10 bg-surface-2/80 p-3 shadow-elevated backdrop-blur-xl",
+        "mx-auto h-full w-full max-w-[340px] overflow-hidden border-white/10 bg-surface-2/80 p-3 shadow-elevated backdrop-blur-xl md:max-w-[300px]",
         accent.glow,
         index % 2 === 1 && "xl:mt-10",
         index % 2 === 0 && "xl:-mt-2"
       )}
     >
-      <div className={cn("relative aspect-[9/18.5] overflow-hidden rounded-[2.5rem] border-2 bg-[#030504]", accent.ring)}>
-        <div className="absolute left-1/2 top-3 z-20 h-1.5 w-20 -translate-x-1/2 rounded-full bg-white/15" />
-        <div className="absolute inset-x-0 top-0 z-10 h-24 bg-gradient-to-b from-black/40 via-black/10 to-transparent" />
+      <div className={cn("relative aspect-[9/16] overflow-hidden rounded-[2rem] border-2 bg-[#030504] sm:rounded-[2.5rem]", accent.ring)}>
+        <div className="pointer-events-none absolute left-1/2 top-3 z-20 h-1.5 w-20 -translate-x-1/2 rounded-full bg-white/15" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-24 bg-gradient-to-b from-black/40 via-black/10 to-transparent" />
 
         <div className="absolute inset-0">
           {embedUrl ? (
             <iframe
               title={item.title}
               src={embedUrl}
-              className="h-full w-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              className="relative z-10 h-full w-full bg-black"
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
               allowFullScreen
             />
           ) : (
@@ -110,8 +144,8 @@ function VideoPhoneCard({ item, index }: { item: VideoTestimonial; index: number
           )}
         </div>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-28 bg-gradient-to-t from-black via-black/70 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 z-30 p-4">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 hidden h-24 bg-gradient-to-t from-black/85 via-black/45 to-transparent md:block" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 hidden p-4 md:block">
           <div className="flex items-end justify-between gap-3">
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-white">{item.title}</p>
@@ -127,20 +161,23 @@ function VideoPhoneCard({ item, index }: { item: VideoTestimonial; index: number
   );
 }
 
-function getYoutubeEmbedUrl(value: string) {
+function getYoutubeVideoId(value: string) {
   const trimmed = value.trim();
   if (!trimmed) {
     return "";
   }
 
-  if (trimmed.includes("embed/")) {
-    return trimmed;
-  }
-
   const match = trimmed.match(/(?:youtu\.be\/|v=|shorts\/)([A-Za-z0-9_-]{6,})/);
-  const videoId = match?.[1];
+  const embedMatch = trimmed.match(/embed\/([A-Za-z0-9_-]{6,})/);
+  return match?.[1] ?? embedMatch?.[1] ?? "";
+}
 
-  return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : trimmed;
+function getYoutubeEmbedUrl(value: string) {
+  const videoId = getYoutubeVideoId(value);
+
+  return videoId
+    ? `https://www.youtube.com/embed/${videoId}?playsinline=1&rel=0&modestbranding=1`
+    : value.trim();
 }
 
 function PlayIcon() {

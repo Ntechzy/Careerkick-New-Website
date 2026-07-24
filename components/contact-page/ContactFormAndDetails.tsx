@@ -128,9 +128,6 @@ export function ContactFormAndDetails() {
                 Send us your details
               </h2>
             </div>
-            <span className="hidden rounded-full border border-[#51A70A]/25 bg-[#51A70A]/10 px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8cef32] sm:inline-flex">
-              Private intake
-            </span>
           </div>
 
           <p className="relative mt-4 max-w-2xl text-sm leading-relaxed text-white sm:text-base lg:text-white">
