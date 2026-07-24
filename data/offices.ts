@@ -18,7 +18,7 @@ export const offices: OfficeBranch[] = [
     image: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783162431/greater-noida_igf980.png",
     address:
       "2nd floor, AA-007, Block A, Ansal Golf Link-1, Greater Noida, Uttar Pradesh 201315",
-    contacts: ["+91 9151807781", "+91 7068595192"],
+    contacts: ["+91 91983 50985", "+91 9198350980"],
     mapUrl:
       "https://www.google.com/maps/search/?api=1&query=2nd%20floor%20AA-007%20Block%20A%20Ansal%20Golf%20Link-1%20Greater%20Noida%20Uttar%20Pradesh%20201315",
     status: "open",

@@ -8,6 +8,7 @@ import {
   Phone,
   MessagesSquare,
 } from "lucide-react";
+import { SOCIAL_LINKS } from "@/lib/contactLinks";
 
 const cardEase = [0.22, 1, 0.36, 1] as const;
 
@@ -80,7 +81,7 @@ const contactPoints = [
 const socialLinks = [
   {
     label: "Instagram",
-    href: "https://www.instagram.com/careerkickservices/",
+    href: SOCIAL_LINKS.instagram,
     icon: InstagramIcon,
   },
   {
@@ -90,12 +91,12 @@ const socialLinks = [
   },
   {
     label: "Facebook",
-    href: "https://www.facebook.com/CAREERKICKSERVICES/",
+    href: SOCIAL_LINKS.facebook,
     icon: FacebookIcon,
   },
   {
     label: "YouTube",
-    href: "https://www.youtube.com/@careerkickneet",
+    href: SOCIAL_LINKS.youtube,
     icon: YoutubeIcon,
   },
 ];
@@ -121,7 +122,7 @@ export function ContactFormAndDetails() {
           <div className="relative flex items-center justify-between gap-4">
             <div>
               <p className="font-mono text-xs font-semibold uppercase tracking-[0.24em] text-[#8cef32]">
-                Embedded Form
+                Contact Form
               </p>
               <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
                 Send us your details

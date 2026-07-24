@@ -45,9 +45,9 @@ export type BlogPost = {
 export const NAV_LINKS: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Portfolio", href: "/portfolio" },
   { label: "Services", href: "/services" },
   { label: "Blogs", href: "/blog" },
+  { label: "Portfolio", href: "/portfolio" },
   { label: "Contact", href: "/contact" },
   { label: "Careers", href: "/careers" },
   { label: "Policies", href: "/policies" },
@@ -74,6 +74,7 @@ export const COMPANY_LINKS: FooterLink[] = [
 
 export const LEGAL_LINKS: FooterLink[] = [
   { label: "Privacy Policy", href: "/policies/privacy" },
+  { label: "Refund Policy", href: "/policies/refund" },
   { label: "Terms", href: "/policies/terms" },
   { label: "Disclaimer", href: "/policies/disclaimer" },
   { label: "Developed by Ntechzy", href: "https://ntechzy.in/" },

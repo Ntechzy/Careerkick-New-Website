@@ -59,7 +59,7 @@ const officeNetwork: NetworkOffice[] = [
     address:
       "2nd floor, AA-007, Block A, Ansal Golf Link-1, Greater Noida, Uttar Pradesh 201315",
     link: "https://www.google.com/maps?ll=28.453756,77.505382&z=15&t=m&hl=en-GB&gl=US&mapclient=embed&cid=1290190296594937614",
-    contacts: ["+91 9198350980", "+91 91983 50985"],
+    contacts: ["+91 91983 50985","+91 9198350980"],
     labelOffset: { x: -86, y: -4 },
   },
   {

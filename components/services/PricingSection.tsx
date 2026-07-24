@@ -63,7 +63,7 @@ export default function PricingSection() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-[#fafaf6] px-4 py-16 text-slate-900 sm:py-20 md:px-8 lg:py-24">
+    <section id="pricing" className="relative scroll-mt-28 overflow-hidden bg-[#fafaf6] px-4 py-16 text-slate-900 sm:py-20 md:px-8 lg:py-24">
       <div className="pointer-events-none absolute left-1/2 top-0 h-72 w-[78%] -translate-x-1/2 rounded-full bg-[#56b016]/10 blur-[120px]" />
       <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-[#56b016]/6 blur-[120px]" />
 
