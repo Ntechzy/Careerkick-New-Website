@@ -63,7 +63,7 @@ export function BlogCard({ post, featured = false, compact = false, priority = f
           >
             {post.title}
           </h3>
-          <p className={cn("mt-3 text-sm leading-relaxed text-text-muted", compact ? "line-clamp-2" : "line-clamp-3", featured && "md:text-base")}>
+          <p className={cn("mt-3 text-sm leading-relaxed text-text-muted lg:text-white", compact ? "line-clamp-2" : "line-clamp-3", featured && "md:text-base")}>
             {post.excerpt}
           </p>
           <span className={cn("inline-flex w-fit items-center gap-2 font-semibold text-violet-glow", compact ? "mt-5 text-sm" : "mt-6")}>

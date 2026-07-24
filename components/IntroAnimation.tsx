@@ -15,9 +15,23 @@ const particles = [
 
 export function IntroAnimation() {
   const reduceMotion = useReducedMotion();
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(() => {
+    if (typeof window === "undefined") {
+      return true;
+    }
+
+    return !(
+      window.location.pathname === "/services" &&
+      (window.location.hash === "#pricing" ||
+        new URLSearchParams(window.location.search).get("section") === "pricing")
+    );
+  });
 
   useEffect(() => {
+    if (!visible) {
+      return;
+    }
+
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const timer = window.setTimeout(() => {
@@ -29,7 +43,7 @@ export function IntroAnimation() {
       window.clearTimeout(timer);
       document.body.style.overflow = previousOverflow;
     };
-  }, [reduceMotion]);
+  }, [reduceMotion, visible]);
 
   return (
     <AnimatePresence>

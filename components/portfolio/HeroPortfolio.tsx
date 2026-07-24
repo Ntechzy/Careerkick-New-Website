@@ -1,6 +1,9 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
+import { getWhatsAppLink } from "@/lib/contactLinks";
+
+const portfolioStoryUrl = "https://youtube.com/shorts/h7h0Qx22iWs?si=YQwXv2QFdAMj2th7";
 
 const HeroPortfolio = () => {
   return (
@@ -32,15 +35,25 @@ const HeroPortfolio = () => {
           </p>
 
           <div className="relative z-30 mt-8 flex w-full flex-col items-center gap-4 sm:flex-row">
-            <button className="inline-flex w-full items-center justify-center rounded-full bg-gradient-brand px-8 py-4 font-display text-base font-bold text-white shadow-card transition-all hover:-translate-y-0.5 hover:shadow-glow-violet sm:w-auto sm:text-lg">
+            <a
+              href={getWhatsAppLink("Hello, I want to book a Careerkick demo.")}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex w-full items-center justify-center rounded-full bg-gradient-brand px-8 py-4 font-display text-base font-bold text-white shadow-card transition-all hover:-translate-y-0.5 hover:shadow-glow-violet sm:w-auto sm:text-lg"
+            >
               Book a demo
-            </button>
-            <button className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white/80 transition-colors hover:text-white sm:w-auto">
+            </a>
+            <a
+              href={portfolioStoryUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white/80 transition-colors hover:text-white sm:w-auto"
+            >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white">
                 Play
               </span>
               Watch Student Stories
-            </button>
+            </a>
           </div>
         </div>
 

@@ -160,7 +160,7 @@ export default async function SingleBlogPage({ params }: SingleBlogPageProps) {
               <h1 className="mt-6 font-display text-4xl font-bold leading-tight text-white md:text-6xl">
                 {post.title}
               </h1>
-              <p className="mt-6 max-w-3xl text-base leading-relaxed text-text-muted md:text-lg">
+              <p className="mt-6 max-w-3xl text-base leading-relaxed text-text-muted md:text-lg lg:text-white">
                 {post.excerpt}
               </p>
               <div className="mt-7 grid gap-3 rounded-lg border border-white/10 bg-white/[0.035] p-4 shadow-card backdrop-blur-xl sm:grid-cols-3">

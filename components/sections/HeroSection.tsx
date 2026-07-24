@@ -7,12 +7,16 @@ import { charVariant, containerVariant, fadeInVariant } from "@/lib/animations";
 
 const heading = ["Careerkick", "Shape Your Medical Future"];
 const phoneNumber = "7393062116";
+const studentStoryUrl = "https://youtube.com/shorts/MalUsmT9GHQ?si=UxgYdHj0FHgNRm_n";
 const rows = [
-  ["Indian", "2402774", "2330090", "1313740", "2273528", "2206968", "1234991"],
-  ["Foreign", "1196", "1122", "696", "939", "870", "529"],
-  ["NRI", "1304", "1214", "801", "741", "694", "405"],
-  ["OCI", "805", "736", "616", "861", "786", "606"],
-  ["Total", "2406079", "2333162", "1315853", "2276069", "2209318", "1236531"],
+  ["UR/EWS", "50th", "715-213", "9,96,935"],
+  ["OBC", "40th", "212-177", "81,111"],
+  ["SC", "40th", "212-177", "29,947"],
+  ["ST", "40th", "212-177", "12,452"],
+  ["UR/EWS-PwBD", "45th", "212-194", "480"],
+  ["OBC-PwBD", "40th", "193-177", "185"],
+  ["SC-PwBD", "40th", "193-177", "64"],
+  ["ST-PwBD", "40th", "191-178", "11"],
 ];
 
 export function HeroSection() {
@@ -38,7 +42,7 @@ export function HeroSection() {
 
                   const highlighted =
                     (lineIndex === 0 && index >= 6) ||
-                    (lineIndex === 1 && index >= 9);
+                    (lineIndex === 1 && index >= 11);
                   return (
                     <motion.span
                       key={`${line}-${index}`}
@@ -104,7 +108,9 @@ export function HeroSection() {
               Book Free Call
             </MagneticButton>
             <a
-              href="#platform"
+              href={studentStoryUrl}
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white/80 transition-colors hover:text-white sm:w-auto"
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white">
@@ -153,20 +159,17 @@ export function HeroSection() {
           <div className="overflow-hidden rounded-2xl border border-slate-500/20 bg-white/10 shadow-[0_24px_70px_rgba(81,167,10,0.18),0_8px_24px_rgba(81,167,10,0.1)] backdrop-blur-2xl backdrop-saturate-150">
             <div className="border-b border-white/8 bg-white/5 px-5 py-4 text-center sm:px-6">
               <h3 className="font-display text-sm font-bold leading-tight tracking-tight text-white sm:text-base lg:text-lg lg:text-white">
-                Highlights of NEET UG Over the Last Two Years
+                Category-wise NEET UG Qualifying Marks
               </h3>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] border-collapse text-left text-xs text-white/90 sm:text-sm">
+              <table className="w-full min-w-[720px] border-collapse text-left text-xs text-white/90 sm:text-sm">
                 <thead>
                   <tr className="border-y border-slate-500/20 bg-gradient-to-r from-[#51A70A] to-[#3d8807] text-white">
-                    <th className="px-5 py-3 font-display font-bold sm:px-6">Nationality</th>
-                    <th className="whitespace-nowrap px-4 py-3 text-right font-display font-bold sm:px-6">NEET (UG) 2024</th>
-                    <th className="whitespace-nowrap px-4 py-3 text-right font-display font-bold sm:px-6">Appeared</th>
-                    <th className="whitespace-nowrap px-4 py-3 text-right font-display font-bold sm:px-6">Qualified</th>
-                    <th className="whitespace-nowrap px-4 py-3 text-right font-display font-bold sm:px-6">NEET (UG) 2025</th>
-                    <th className="whitespace-nowrap px-4 py-3 text-right font-display font-bold sm:px-6">Appeared</th>
-                    <th className="whitespace-nowrap px-4 py-3 text-right font-display font-bold sm:px-6">Qualified</th>
+                    <th className="px-5 py-3 font-display font-bold sm:px-6">Category</th>
+                    <th className="whitespace-nowrap px-4 py-3 text-right font-display font-bold sm:px-6">Percentile</th>
+                    <th className="whitespace-nowrap px-4 py-3 text-right font-display font-bold sm:px-6">Qualifying Marks</th>
+                    <th className="whitespace-nowrap px-4 py-3 text-right font-display font-bold sm:px-6">Qualified Candidates</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-500/15">

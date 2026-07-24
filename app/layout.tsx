@@ -101,7 +101,7 @@ export default function RootLayout({
           id="student-form-loader"
           type="module"
           src="https://ntechzy.in/api/v1/student-form/form.js"
-          data-path='["/", "/dynamicForm/index.html", "/apply-now", "/e-books/form"]'
+          data-path='["/", "/dynamicForm/index.html", "/apply-now", "/e-books/form", "/contact"]'
           data-divid="formsID7375"
           data-courses='["Select Course","BAMS","BHMS","BUMS","MBBS","BDS"]'
           data-styles="basic"

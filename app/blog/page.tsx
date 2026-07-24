@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { BlogCategories } from "@/components/blog/BlogCategories";
 import { BlogGrid } from "@/components/blog/BlogGrid";
 import { BlogPagination } from "@/components/blog/BlogPagination";
-import { BlogSearch } from "@/components/blog/BlogSearch";
 import { BlogSidebar } from "@/components/blog/BlogSidebar";
 import { FeaturedBlog } from "@/components/blog/FeaturedBlog";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -67,30 +66,22 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
         <div className="relative mx-auto max-w-7xl">
           <SectionLabel>Careerkick Journal</SectionLabel>
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-end">
-            <div>
-              <h1 className="font-display text-4xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
-                Admission strategy, cut-offs, and counselling clarity.
-              </h1>
-              <p className="mt-6 max-w-3xl text-base leading-relaxed text-text-muted md:text-lg">
-                Read practical Careerkick articles for NEET and JEE aspirants, from deadline tracking to choice filling and college planning.
-              </p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                {["NEET Counselling", "JEE Updates", "Choice Filling"].map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-text-muted"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="rounded-lg border border-white/10 bg-gradient-card p-5 shadow-elevated backdrop-blur-xl">
-              <p className="mb-4 font-mono text-[10px] uppercase tracking-widest text-violet-glow">
-                Find an article
-              </p>
-              <BlogSearch defaultValue={search} />
+          <div>
+            <h1 className="font-display text-4xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
+              Admission strategy, cut-offs, and counselling clarity.
+            </h1>
+            <p className="mt-6 max-w-3xl text-base leading-relaxed text-text-muted md:text-lg">
+              Read practical Careerkick articles for NEET and JEE aspirants, from deadline tracking to choice filling and college planning.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              {["NEET Counselling", "JEE Updates", "Choice Filling"].map((item) => (
+                <span
+                  key={item}
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-text-muted"
+                >
+                  {item}
+                </span>
+              ))}
             </div>
           </div>
         </div>

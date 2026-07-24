@@ -1,25 +1,26 @@
 import Link from "next/link";
 import Image from "next/image";
 import { COMPANY_LINKS, LEGAL_LINKS, RESOURCE_LINKS } from "@/lib/constants";
+import { SOCIAL_ICON_URLS, SOCIAL_LINKS } from "@/lib/contactLinks";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
-const socials = [
+const socials: { label: string; href: string; imageUrl: string; fallback: string }[] = [
   {
     label: "YouTube",
-    href: "#",
-    imageUrl: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783319541/youtube_1_zggtor.png",
+    href: SOCIAL_LINKS.youtube,
+    imageUrl: SOCIAL_ICON_URLS.youtube,
     fallback: "YT",
   },
   {
     label: "Instagram",
-    href: "#",
-    imageUrl: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783319239/instagram_c0kdq3.png",
+    href: SOCIAL_LINKS.instagram,
+    imageUrl: SOCIAL_ICON_URLS.instagram,
     fallback: "IG",
   },
   {
     label: "Facebook",
-    href: "#",
-    imageUrl: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783319278/facebook_uwlmq4.png",
+    href: SOCIAL_LINKS.facebook,
+    imageUrl: SOCIAL_ICON_URLS.facebook,
     fallback: "FB",
   },
 ];
@@ -46,6 +47,8 @@ export function Footer() {
                 <a
                   key={social.label}
                   href={social.href}
+                  target="_blank"
+                  rel="noreferrer"
                   aria-label={social.label}
                   className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-surface text-xs font-semibold text-text-muted transition-colors hover:bg-violet/20 hover:text-white"
                 >

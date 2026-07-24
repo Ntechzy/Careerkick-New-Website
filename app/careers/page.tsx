@@ -191,7 +191,7 @@ export default async function CareersPage() {
                       </p>
                       <Link
                         href="/contact"
-                        className="inline-flex items-center justify-center rounded-full border border-[#51A70A]/25 bg-[#51A70A] px-4 py-2 text-sm font-semibold text-slate-950 transition-transform duration-300 hover:-translate-y-0.5 sm:shrink-0"
+                        className="inline-flex items-center justify-center rounded-full bg-gradient-brand px-5 py-2.5 text-sm font-semibold text-white shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow-violet sm:shrink-0"
                       >
                         {role.applyLabel ?? "Apply Now"}
                       </Link>
@@ -240,7 +240,7 @@ export default async function CareersPage() {
             </p>
             <Link
               href="/contact"
-              className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-[#8cef32] px-6 py-3 text-sm font-semibold text-slate-950 transition-transform duration-300 hover:-translate-y-0.5 sm:w-auto"
+              className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-gradient-brand px-6 py-3 text-sm font-semibold text-white shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow-violet sm:w-auto"
             >
               Contact Us
             </Link>

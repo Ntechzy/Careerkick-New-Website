@@ -1,3 +1,5 @@
+import { CONTACT_NUMBERS, getTelLink } from "@/lib/contactLinks";
+
 export function NewsletterCard() {
   return (
     <div className="rounded-lg border border-violet/20 bg-gradient-card p-6 shadow-card">
@@ -11,7 +13,7 @@ export function NewsletterCard() {
         Get admission timelines, cut-off explainers, and choice filling guidance from the Careerkick desk.
       </p>
       <a
-        href="#contact"
+        href={getTelLink(CONTACT_NUMBERS.secondaryDigits)}
         className="mt-5 inline-flex rounded-full bg-gradient-brand px-5 py-3 text-sm font-semibold text-white shadow-card transition-shadow hover:shadow-glow-violet"
       >
         Talk to an Expert

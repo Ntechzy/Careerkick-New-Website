@@ -8,9 +8,11 @@ import { GradientText } from "@/components/ui/GradientText";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { cn } from "@/lib/utils";
 import { faqItems } from "@/data/faq";
+import { CONTACT_NUMBERS, getTelLink } from "@/lib/contactLinks";
 
 export function FaqSection() {
   const [openIndex, setOpenIndex] = useState(0);
+  const [contactOpen, setContactOpen] = useState(false);
   const reduceMotion = useReducedMotion();
 
   return (
@@ -48,12 +50,43 @@ export function FaqSection() {
               <div className="h-px flex-1 bg-white/10" />
             </div>
 
-            <a
-              href="#contact"
-              className="mt-6 inline-flex w-full items-center justify-center rounded-full border border-[#51A70A]/20 bg-gradient-brand px-5 py-3.5 font-semibold text-base text-base shadow-glow-violet transition-transform duration-300 hover:-translate-y-0.5"
+            <button
+              type="button"
+              onClick={() => setContactOpen((value) => !value)}
+              className="mt-6 inline-flex w-full items-center justify-center rounded-full border border-[#51A70A]/20 bg-gradient-brand px-5 py-3.5 text-center text-sm font-semibold text-white shadow-glow-violet transition-transform duration-300 hover:-translate-y-0.5"
+              aria-expanded={contactOpen}
+              aria-controls="faq-contact-drawer"
             >
               Contact us
-            </a>
+            </button>
+
+            <AnimatePresence initial={false}>
+              {contactOpen && (
+                <motion.div
+                  id="faq-contact-drawer"
+                  initial={reduceMotion ? false : { height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
+                  transition={{ duration: 0.24, ease: "easeOut" }}
+                  className="overflow-hidden"
+                >
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <a
+                      href={getTelLink(CONTACT_NUMBERS.primaryDigits)}
+                      className="inline-flex w-full items-center justify-center rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-center text-sm font-semibold text-white transition-colors hover:border-[#51A70A]/35 hover:bg-[#51A70A]/10"
+                    >
+                      {CONTACT_NUMBERS.primaryDisplay}
+                    </a>
+                    <a
+                      href={getTelLink(CONTACT_NUMBERS.secondaryDigits)}
+                      className="inline-flex w-full items-center justify-center rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-center text-sm font-semibold text-white transition-colors hover:border-[#51A70A]/35 hover:bg-[#51A70A]/10"
+                    >
+                      {CONTACT_NUMBERS.secondaryDisplay}
+                    </a>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </GlassCard>
         </ScrollReveal>
 

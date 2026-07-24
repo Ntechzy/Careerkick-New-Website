@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ArrowRight, FileText, ShieldCheck, RotateCcw } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -14,18 +15,21 @@ const policies = [
   {
     id: "privacy-policy",
     label: "Privacy Policy",
+    href: "/policies/privacy",
     icon: ShieldCheck,
     summary: "How we collect, use, and protect your personal information.",
   },
   {
     id: "refund-policy",
     label: "Refund Policy",
+    href: "/policies/refund",
     icon: RotateCcw,
     summary: "When refunds may apply and how requests are handled.",
   },
   {
     id: "terms-conditions",
     label: "Terms & Conditions",
+    href: "/policies/terms",
     icon: FileText,
     summary: "The rules for using the website and our advisory services.",
   },
@@ -56,9 +60,9 @@ export default function PoliciesPage() {
           {policies.map((policy) => {
             const Icon = policy.icon;
             return (
-              <a
+              <Link
                 key={policy.id}
-                href={`#${policy.id}`}
+                href={policy.href}
                 className="group rounded-[1.5rem] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03)),linear-gradient(135deg,rgba(11,16,9,0.88),rgba(18,26,16,0.76))] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.35)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1"
               >
                 <div className="flex items-start gap-4">
@@ -78,7 +82,7 @@ export default function PoliciesPage() {
                   Read section
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                 </div>
-              </a>
+              </Link>
             );
           })}
         </div>

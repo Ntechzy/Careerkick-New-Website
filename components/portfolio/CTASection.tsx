@@ -1,29 +1,26 @@
 "use client";
 import { motion } from "framer-motion";
+import { SOCIAL_ICON_URLS, SOCIAL_LINKS } from "@/lib/contactLinks";
 
 const cardEase = [0.22, 1, 0.36, 1] as const;
 
 const socialLinks = [
   {
     name: "Instagram",
-    href: "https://www.instagram.com/careerkickservices/",
-    bgClass:
-      "bg-[linear-gradient(135deg,#2F7804_0%,#51A70A_48%,#6DCC12_100%)]",
-    shadowClass: "shadow-[0_18px_32px_rgba(214,41,118,0.28)]",
+    href: SOCIAL_LINKS.instagram,
+    imageUrl: SOCIAL_ICON_URLS.instagram,
     Icon: InstagramIcon,
   },
   {
     name: "LinkedIn",
     href: "https://in.linkedin.com/company/careerkick-services-kanpur",
-    bgClass: "bg-[linear-gradient(135deg,#2F7804_0%,#51A70A_48%,#6DCC12_100%)]",
-    shadowClass: "shadow-[0_18px_32px_rgba(37,99,235,0.24)]",
+    imageUrl: "",
     Icon: LinkedInIcon,
   },
   {
     name: "Facebook",
-    href: "https://www.facebook.com/CAREERKICKSERVICES/",
-    bgClass: "bg-[linear-gradient(135deg,#2F7804_0%,#51A70A_48%,#6DCC12_100%)]",
-    shadowClass: "shadow-[0_18px_32px_rgba(37,99,235,0.22)]",
+    href: SOCIAL_LINKS.facebook,
+    imageUrl: SOCIAL_ICON_URLS.facebook,
     Icon: FacebookIcon,
   },
 ];
@@ -181,7 +178,7 @@ export default function CTASection() {
 
               <div className="mt-4 flex w-full items-center justify-center gap-3 lg:justify-start">
                 {socialLinks.map(
-                  ({ name, href, bgClass, shadowClass, Icon }, index) => (
+                  ({ name, href, imageUrl, Icon }, index) => (
                     <motion.a
                       key={name}
                       href={href}
@@ -211,11 +208,17 @@ export default function CTASection() {
                           delay: index * 0.18,
                           ease: "easeInOut",
                         }}
-                        className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] text-white sm:h-11 sm:w-11 sm:rounded-[1.1rem] ${bgClass} ${shadowClass}`}
+                        className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface text-white sm:h-11 sm:w-11"
                       >
-                        <span className="absolute inset-[1px] rounded-[calc(1rem-1px)] bg-gradient-to-b from-white/30 to-transparent opacity-90 sm:rounded-[calc(1.1rem-1px)]" />
-                        <span className="absolute inset-x-1.5 bottom-1 h-2 rounded-full bg-[#8cef32]/15 blur-[6px]" />
-                        <Icon className="relative h-5 w-5 transition group-hover:scale-110" />
+                        {imageUrl ? (
+                          <img
+                            src={imageUrl}
+                            alt=""
+                            className="h-full w-full object-cover transition group-hover:scale-110"
+                          />
+                        ) : (
+                          <Icon className="relative h-5 w-5 transition group-hover:scale-110" />
+                        )}
                       </motion.span>
                       <span className="sr-only">{name}</span>
                     </motion.a>
