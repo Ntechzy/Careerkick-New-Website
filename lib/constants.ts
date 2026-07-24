@@ -1,4 +1,8 @@
-export type NavLink = { label: string; href: string };
+export type NavLink = {
+  label: string;
+  href: string;
+  children?: Array<{ label: string; href: string }>;
+};
 export type FooterLink = { label: string; href: string };
 export type Stat = { value: number; suffix: string; label: string };
 export type Feature = {
@@ -44,7 +48,14 @@ export type BlogPost = {
 
 export const NAV_LINKS: NavLink[] = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
+  {
+    label: "About",
+    href: "/about",
+    children: [
+      { label: "About Careerkick", href: "/about" },
+      { label: "Board Members", href: "/about/board-members" },
+    ],
+  },
   { label: "Services", href: "/services" },
   { label: "Blogs", href: "/blog" },
   { label: "Portfolio", href: "/portfolio" },
