@@ -8,6 +8,7 @@ import {
   Phone,
   MessagesSquare,
 } from "lucide-react";
+import { StudentFormLoader } from "@/components/StudentFormLoader";
 import { SOCIAL_LINKS } from "@/lib/contactLinks";
 
 const cardEase = [0.22, 1, 0.36, 1] as const;
@@ -137,6 +138,7 @@ export function ContactFormAndDetails() {
 
           <div className="relative mt-6 overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-3 shadow-[0_12px_36px_rgba(0,0,0,0.28)] sm:p-4">
             <div className="min-h-[560px] rounded-[1.2rem] border border-dashed border-white/10 bg-black/20 p-3 sm:min-h-[620px] sm:p-4">
+              <StudentFormLoader formContainerId="formsID7375" />
               <div id="formsID7375" />
             </div>
           </div>

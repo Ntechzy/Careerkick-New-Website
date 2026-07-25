@@ -98,15 +98,14 @@ export default function RootLayout({
           <Footer />
         </SmoothScrollProvider>
         <Script
-          id="student-form-loader"
           type="module"
           src="https://ntechzy.in/api/v1/student-form/form.js"
-          data-path='["/", "/dynamicForm/index.html", "/apply-now", "/e-books/form", "/contact"]'
-          data-divid="formsID7375"
-          data-courses='["Select Course","BAMS","BHMS","BUMS","MBBS","BDS"]'
-          data-styles="basic"
-          data-logo={`${siteConfig.url}/logo.png`}
-          data-contact="+91-7524085485"
+          path='["/", "/dynamicForm/index.html", "/apply-now", "/e-books/form", "/contact"]'
+          divid="formsID7375"
+          courses='["Select Course","BAMS","BHMS","BUMS","MBBS","BDS"]'
+          styles="basic"
+          logo={`${siteConfig.url}/logo.png`}
+          contact="+91-9198350985"
         ></Script>
       </body>
     </html>

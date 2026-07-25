@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Script from "next/script";
 import { useRouter } from "next/navigation";
+import { StudentFormLoader } from "@/components/StudentFormLoader";
 
 type ExternalEbookFormProps = {
   ebookId: string;
@@ -52,7 +52,7 @@ export function ExternalEbookForm({
   const router = useRouter();
   const [scriptKey, setScriptKey] = useState(0);
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
-    scriptUrl ? "loading" : "idle",
+    "loading",
   );
 
   const handleFormSuccess = useCallback(
@@ -113,16 +113,13 @@ export function ExternalEbookForm({
 
   return (
     <div className="rounded-lg border border-white/10 bg-black/20 p-5 shadow-card">
-      {scriptUrl ? (
-        <Script
-          key={`${scriptUrl}-${scriptKey}`}
-          id={`ebook-form-script-${scriptKey}`}
-          src={scriptUrl}
-          strategy="afterInteractive"
-          onLoad={() => setStatus("ready")}
-          onError={() => setStatus("error")}
-        />
-      ) : null}
+      <StudentFormLoader
+        key={`${scriptUrl ?? "default"}-${scriptKey}`}
+        formContainerId={formContainerId}
+        scriptUrl={scriptUrl}
+        onLoad={() => setStatus("ready")}
+        onError={() => setStatus("error")}
+      />
 
       <div className="min-h-[560px] rounded-lg border border-dashed border-violet/30 bg-violet/5 p-3 sm:min-h-[620px] sm:p-4">
         <div id={formContainerId} {...dataAttributes} />
@@ -139,18 +136,16 @@ export function ExternalEbookForm({
             <p className="mt-2 max-w-md text-sm leading-relaxed text-text-muted">
               Please try again, or return to the E-Book list and reopen this page.
             </p>
-            {scriptUrl ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setStatus("loading");
-                  setScriptKey((current) => current + 1);
-                }}
-                className="mt-5 inline-flex rounded-full border border-violet/30 bg-violet/10 px-5 py-3 text-sm font-semibold text-violet-glow transition-colors hover:border-violet/60 hover:bg-violet/15"
-              >
-                Retry
-              </button>
-            ) : null}
+            <button
+              type="button"
+              onClick={() => {
+                setStatus("loading");
+                setScriptKey((current) => current + 1);
+              }}
+              className="mt-5 inline-flex rounded-full border border-violet/30 bg-violet/10 px-5 py-3 text-sm font-semibold text-violet-glow transition-colors hover:border-violet/60 hover:bg-violet/15"
+            >
+              Retry
+            </button>
           </div>
         ) : null}
       </div>
