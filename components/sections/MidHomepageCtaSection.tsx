@@ -58,7 +58,7 @@ export function MidHomepageCtaSection() {
                 Book Free Call
               </motion.a>
               <a
-                href="#services"
+                href="/services"
                 className="inline-flex w-full items-center justify-center rounded-full border border-[#51A70A]/20 bg-white px-6 py-4 text-sm font-semibold text-slate-700 transition-colors hover:border-[#51A70A]/40 hover:bg-[#51A70A]/5 hover:text-slate-900 focus-visible:shadow-[0_0_0_2px_#51A70A,0_0_0_6px_#f7faf4]"
               >
                 Explore Services

@@ -72,12 +72,24 @@ export function Footer() {
           <FooterColumn title="Company" links={COMPANY_LINKS} />
 
           <div>
-            <h3 className="font-display text-xl font-semibold text-white">Get Counselling Updates</h3>
-            <div className="mt-5 flex overflow-hidden rounded-full border border-white/10 bg-surface p-1">
-              <input className="min-w-0 flex-1 bg-transparent px-4 text-sm text-white placeholder:text-text-faint" placeholder="Email address" aria-label="Email address" />
-              <MagneticButton className="px-4 py-2 text-xs">Subscribe</MagneticButton>
-            </div>
-            <p className="mt-3 text-xs text-text-faint">No spam. Unsubscribe anytime.</p>
+            <h3 className="font-display text-xl font-semibold text-white">Send Us a Message</h3>
+            <form
+              action="https://wa.me/919198350980"
+              method="get"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-5 flex overflow-hidden rounded-full border border-white/10 bg-surface p-1"
+            >
+              <input
+                name="text"
+                required
+                className="min-w-0 flex-1 bg-transparent px-4 text-sm text-white placeholder:text-text-faint"
+                placeholder="Type your message"
+                aria-label="Message for Careerkick on WhatsApp"
+              />
+              <MagneticButton type="submit" className="px-4 py-2 text-xs">Send</MagneticButton>
+            </form>
+            <p className="mt-3 text-xs text-text-faint">Clear all your doubts with our expert team.</p>
           </div>
         </div>
 

@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {
   BriefcaseBusiness,
   Clock3,
@@ -17,10 +16,11 @@ import type { CareerOpening } from "@/data/careers";
 const hiringNotes = [
   "Student-focused work culture",
   "Growth-minded team environment",
-  "Full-time roles in Kanpur",
+  "Full-time roles in our branches",
 ];
 
 const defaultImage = "/logo-bg.png";
+const hrEmail = "hr.careerkick@gmail.com";
 
 type CareersViewProps = {
   openings: CareerOpening[];
@@ -51,7 +51,7 @@ export function CareersView({ openings }: CareersViewProps) {
   }, [openings, query, selectedDomain]);
 
   return (
-    <main className="relative overflow-hidden bg-base px-3 pb-20 pt-24 sm:px-4 md:px-8 md:pb-24 md:pt-32">
+    <main className="relative overflow-x-hidden bg-base px-3 pb-28 pt-24 sm:px-4 md:px-8 md:pb-32 md:pt-32">
       <div className="pointer-events-none absolute left-1/2 top-0 h-80 w-[72%] -translate-x-1/2 rounded-full bg-[#51A70A]/10 blur-[120px]" />
       <div className="pointer-events-none absolute -left-24 top-24 h-96 w-96 rounded-full bg-white/6 blur-[140px]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(81,167,10,0.08),transparent_40%),linear-gradient(to_bottom,rgba(255,255,255,0.02),transparent_18%)]" />
@@ -85,27 +85,7 @@ export function CareersView({ openings }: CareersViewProps) {
           </section>
         </ScrollReveal>
 
-        <ScrollReveal delay={0.08}>
-          <section className="mx-auto mt-8 max-w-4xl rounded-[1.75rem] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03)),linear-gradient(135deg,rgba(11,16,9,0.88),rgba(18,26,16,0.78))] p-4 text-center shadow-[0_20px_60px_rgba(0,0,0,0.4)] backdrop-blur-xl sm:p-6">
-            <div className="grid gap-3 sm:grid-cols-3">
-              <StatCard
-                icon={<Users2 className="h-5 w-5" />}
-                value={`${openings.length}`}
-                label="Open Roles"
-              />
-              <StatCard
-                icon={<BriefcaseBusiness className="h-5 w-5" />}
-                value="Full-time"
-                label="Job Type"
-              />
-              <StatCard
-                icon={<MapPin className="h-5 w-5" />}
-                value="Kanpur"
-                label="Location"
-              />
-            </div>
-          </section>
-        </ScrollReveal>
+        
 
         <section className="mt-10 sm:mt-12">
           <ScrollReveal>
@@ -133,7 +113,7 @@ export function CareersView({ openings }: CareersViewProps) {
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Search by title or domain"
-                    className="h-13 w-full rounded-full border border-white/10 bg-black/24 py-3 pl-12 pr-4 text-sm font-semibold text-white placeholder:text-white/42"
+                    className="h-13 w-full rounded-full border border-white/10 bg-white py-3 pl-12 pr-4 text-sm font-semibold text-[#071305] caret-[#51A70A] placeholder:text-[#071305]/50"
                   />
                 </label>
 
@@ -209,16 +189,18 @@ export function CareersView({ openings }: CareersViewProps) {
               Interested in joining the team?
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white sm:text-base lg:text-white">
-              Send your resume through the contact page and mention the role
-              you want to apply for. We will review the current openings and
-              get back to you.
+              Send your resume to {hrEmail} and mention the role you want to
+              apply for. We will review the current openings and get back to
+              you.
             </p>
-            <Link
-              href="/contact"
+            <a
+              href={`mailto:${hrEmail}?subject=${encodeURIComponent(
+                "Career Application",
+              )}`}
               className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-gradient-brand px-6 py-3 text-sm font-semibold text-white shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow-violet sm:w-auto"
             >
-              Contact Us
-            </Link>
+              Email HR
+            </a>
           </section>
         </ScrollReveal>
       </div>
@@ -295,13 +277,15 @@ function JobCard({ role }: { role: CareerOpening }) {
           </div>
 
           <div className="mt-auto flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-white/60">Apply through the contact page.</p>
-            <Link
-              href="/contact"
+            <p className="text-sm text-white/60">Apply by email.</p>
+            <a
+              href={`mailto:${hrEmail}?subject=${encodeURIComponent(
+                `Application for ${role.title}`,
+              )}`}
               className="inline-flex items-center justify-center rounded-full bg-gradient-brand px-5 py-2.5 text-sm font-semibold text-white shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow-violet sm:shrink-0"
             >
               {role.applyLabel ?? "Apply Now"}
-            </Link>
+            </a>
           </div>
         </div>
       </div>
