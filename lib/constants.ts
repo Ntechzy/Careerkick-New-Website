@@ -58,7 +58,7 @@ export const NAV_LINKS: NavLink[] = [
   },
   { label: "Services", href: "/services" },
   { label: "Blogs", href: "/blog" },
-  { label: "Portfolio", href: "/portfolio" },
+  { label: "Our Results", href: "/our-results" },
   { label: "Contact", href: "/contact" },
   { label: "Careers", href: "/careers" },
   { label: "Policies", href: "/policies" },
@@ -67,8 +67,8 @@ export const NAV_LINKS: NavLink[] = [
 export const RESOURCE_LINKS: FooterLink[] = [
   { label: "NEET 2026", href: "/services" },
   { label: "MBBS Counselling", href: "/services" },
-  { label: "College Predictor", href: "/portfolio" },
-  { label: "College Search", href: "/portfolio" },
+  { label: "College Predictor", href: "/our-results" },
+  { label: "College Search", href: "/our-results" },
   { label: "Choice Filling", href: "/services" },
   { label: "Admission Support", href: "/contact" },
 ];
@@ -78,8 +78,7 @@ export const COMPANY_LINKS: FooterLink[] = [
   { label: "Services", href: "/services" },
   { label: "Careers", href: "/careers" },
   { label: "Blog", href: "/blog" },
-  { label: "Events", href: "/contact" },
-  { label: "Webinars", href: "/services" },
+  { label: "Our Results", href: "/our-results" },
   { label: "Contact", href: "/contact" },
 ];
 

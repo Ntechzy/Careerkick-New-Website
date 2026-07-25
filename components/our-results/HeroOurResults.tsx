@@ -3,9 +3,9 @@ import React from "react";
 import { motion } from "framer-motion";
 import { getWhatsAppLink } from "@/lib/contactLinks";
 
-const portfolioStoryUrl = "https://youtube.com/shorts/h7h0Qx22iWs?si=YQwXv2QFdAMj2th7";
+const resultsStoryUrl = "https://youtube.com/shorts/h7h0Qx22iWs?si=YQwXv2QFdAMj2th7";
 
-const HeroPortfolio = () => {
+const HeroOurResults = () => {
   return (
     <section className="section-shell relative flex min-h-screen w-full items-center overflow-hidden px-4 py-12 sm:py-16 md:px-8 lg:py-20">
       <div className="gradient-mesh absolute inset-0 opacity-95" />
@@ -18,7 +18,7 @@ const HeroPortfolio = () => {
       <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-[1.04fr_0.96fr] lg:gap-16 xl:gap-20">
         {/* Left Content - Shifted up for better viewport visibility */}
         <div className="flex w-full flex-col items-center text-center lg:items-start lg:text-left -mt-8 lg:-mt-16">
-          <div className="section-kicker">Portfolio showcase</div>
+          <div className="section-kicker">Our Results</div>
           <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-normal text-white sm:text-5xl md:text-6xl xl:text-7xl">
             We help BAMS colleges <br className="hidden sm:block" />
             <span className="relative inline-block mt-1 lg:mt-0">
@@ -44,7 +44,7 @@ const HeroPortfolio = () => {
               Book a demo
             </a>
             <a
-              href={portfolioStoryUrl}
+              href={resultsStoryUrl}
               target="_blank"
               rel="noreferrer"
               className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white/80 transition-colors hover:text-white sm:w-auto"
@@ -99,4 +99,4 @@ const HeroPortfolio = () => {
   );
 };
 
-export default HeroPortfolio;
+export default HeroOurResults;

@@ -78,7 +78,7 @@ const itemVariants = {
 export function CounsellingMistakesSection() {
   const [showNumber, setShowNumber] = useState(false);
   const [activeMistakeIndex, setActiveMistakeIndex] = useState(0);
-  const phoneNumber = "7393062116";
+  const phoneNumber = "+919198350985";
   const activeMistake = mistakes[activeMistakeIndex] ?? mistakes[0];
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export function CounsellingMistakesSection() {
     <section className="relative overflow-hidden bg-base px-3 py-12 text-white sm:px-4 sm:py-14 md:px-8 md:py-20">
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-[#51A70A]/14 blur-[120px]"
+        className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-red-500/12 blur-[120px]"
         animate={{ x: [0, 16, 0], y: [0, -12, 0], scale: [1, 1.08, 1] }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -115,18 +115,18 @@ export function CounsellingMistakesSection() {
             viewport={{ once: true, amount: 0.3 }}
             className="relative overflow-hidden rounded-[26px] border border-white/10 bg-[#050704] shadow-[0_30px_100px_rgba(0,0,0,0.45)] sm:rounded-[32px]"
           >
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_12%,rgba(81,167,10,0.28),transparent_28%),radial-gradient(circle_at_12%_82%,rgba(34,211,238,0.11),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.08)_0%,transparent_35%,rgba(81,167,10,0.08)_100%)]" />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_12%,rgba(239,68,68,0.24),transparent_28%),radial-gradient(circle_at_12%_82%,rgba(245,158,11,0.13),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.08)_0%,transparent_35%,rgba(239,68,68,0.08)_100%)]" />
             <div className="grid-overlay pointer-events-none absolute inset-0 opacity-15" />
 
             <motion.div
               aria-hidden="true"
-              className="absolute -right-10 top-10 h-28 w-28 rounded-full border border-[#51A70A]/20 bg-white/[0.03] backdrop-blur-md"
+              className="absolute -right-10 top-10 h-28 w-28 rounded-full border border-red-400/20 bg-white/[0.03] backdrop-blur-md"
               animate={{ y: [0, -8, 0], rotate: [0, 8, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
               aria-hidden="true"
-              className="absolute right-16 top-28 h-4 w-4 rounded-full bg-[#8cef32] shadow-[0_0_28px_rgba(140,239,50,0.55)]"
+              className="absolute right-16 top-28 h-4 w-4 rounded-full bg-red-400 shadow-[0_0_28px_rgba(248,113,113,0.6)]"
               animate={{ scale: [1, 1.45, 1], opacity: [0.65, 1, 0.65] }}
               transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -138,12 +138,12 @@ export function CounsellingMistakesSection() {
             <div className="relative z-10 grid gap-9 p-4 sm:gap-10 sm:p-7 md:p-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:gap-12 lg:p-12 xl:p-14">
               <motion.div variants={itemVariants} className="flex flex-col items-start">
                 <motion.div
-                  className="inline-flex rounded-full border border-[#51A70A]/35 bg-[#51A70A]/10 px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.24em] text-[#8cef32] shadow-sm backdrop-blur-xl sm:text-xs"
+                  className="inline-flex rounded-full border border-red-400/35 bg-red-500/10 px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.24em] text-red-200 shadow-sm backdrop-blur-xl sm:text-xs"
                   animate={{
                     boxShadow: [
-                      "0 0 0 rgba(81,167,10,0)",
-                      "0 0 24px rgba(81,167,10,0.16)",
-                      "0 0 0 rgba(81,167,10,0)",
+                      "0 0 0 rgba(239,68,68,0)",
+                      "0 0 24px rgba(239,68,68,0.18)",
+                      "0 0 0 rgba(239,68,68,0)",
                     ],
                   }}
                   transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
@@ -227,7 +227,7 @@ export function CounsellingMistakesSection() {
                 variants={itemVariants}
                 className="relative flex min-h-[430px] items-center justify-center sm:min-h-[500px] lg:min-h-[540px] lg:justify-end"
               >
-                <div className="pointer-events-none absolute left-1/2 top-1/2 h-[82%] w-[82%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#51A70A]/10 blur-[80px]" />
+                <div className="pointer-events-none absolute left-1/2 top-1/2 h-[82%] w-[82%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500/10 blur-[80px]" />
 
                 <motion.div
                   className="relative w-full max-w-[460px]"
@@ -235,12 +235,12 @@ export function CounsellingMistakesSection() {
                   transition={{ type: "spring", stiffness: 220, damping: 18 }}
                 >
                   <div className="relative overflow-hidden rounded-[26px] border border-white/12 bg-white/[0.06] p-3 shadow-[0_28px_90px_rgba(0,0,0,0.38)] backdrop-blur-2xl sm:rounded-[32px] sm:p-5">
-                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(140,239,50,0.16),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.08),transparent)]" />
+                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(248,113,113,0.18),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.08),transparent)]" />
 
                     <div className="relative rounded-[22px] border border-white/10 bg-black/35 p-3 sm:rounded-[26px] sm:p-6">
                       <div className="mb-4 flex items-center justify-between gap-3 sm:mb-5">
                         <div>
-                          <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.22em] text-[#8cef32] sm:text-[10px] sm:tracking-[0.24em]">
+                          <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.22em] text-red-200 sm:text-[10px] sm:tracking-[0.24em]">
                             Risk radar
                           </p>
                           <p className="mt-1 font-display text-lg font-bold text-white sm:text-2xl">
@@ -254,7 +254,7 @@ export function CounsellingMistakesSection() {
 
                       <div className="relative mx-auto flex min-h-[330px] w-full max-w-[300px] items-center justify-center sm:min-h-[390px] sm:max-w-[340px]">
                         <motion.div
-                          className="absolute inset-0 rounded-full border border-[#51A70A]/15"
+                          className="absolute inset-0 rounded-full border border-red-400/15"
                           animate={{ rotate: 360 }}
                           transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
                         />
@@ -264,7 +264,7 @@ export function CounsellingMistakesSection() {
                           transition={{ duration: 34, repeat: Infinity, ease: "linear" }}
                         />
                         <motion.div
-                          className="absolute inset-[22%] rounded-full border border-[#51A70A]/20 bg-[#51A70A]/5"
+                          className="absolute inset-[22%] rounded-full border border-red-400/20 bg-red-500/5"
                           animate={{ scale: [1, 1.04, 1] }}
                           transition={{
                             duration: 3.5,
@@ -284,8 +284,8 @@ export function CounsellingMistakesSection() {
                               onClick={() => setActiveMistakeIndex(index)}
                               className={`absolute z-20 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border text-[9px] font-black transition-all duration-300 sm:h-10 sm:w-10 sm:text-[10px] ${
                                 active
-                                  ? "border-[#8cef32]/60 bg-[#51A70A] text-white shadow-[0_0_24px_rgba(140,239,50,0.28)]"
-                                  : "border-white/10 bg-white/[0.08] text-white/60 backdrop-blur-xl hover:border-[#51A70A]/40 hover:text-white"
+                                  ? "border-red-200/70 bg-red-500 text-white shadow-[0_0_24px_rgba(248,113,113,0.34)]"
+                                  : "border-white/10 bg-white/[0.08] text-white/60 backdrop-blur-xl hover:border-red-300/45 hover:text-white"
                               }`}
                               style={{
                                 top: position.top,
@@ -311,14 +311,14 @@ export function CounsellingMistakesSection() {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: -18, scale: 0.94 }}
                             transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-                            className="relative z-30 w-full max-w-[220px] rounded-[24px] border border-white/12 bg-[#071305]/95 p-3 text-center shadow-[0_24px_70px_rgba(0,0,0,0.42)] backdrop-blur-2xl sm:max-w-[270px] sm:rounded-[28px] sm:p-5"
+                            className="relative z-30 w-full max-w-[220px] rounded-[24px] border border-red-300/18 bg-[#160707]/95 p-3 text-center shadow-[0_24px_70px_rgba(0,0,0,0.42)] backdrop-blur-2xl sm:max-w-[270px] sm:rounded-[28px] sm:p-5"
                           >
-                            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl border border-[#51A70A]/25 bg-[#51A70A]/12 text-[#8cef32] shadow-inner sm:h-14 sm:w-14">
+                            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl border border-red-300/25 bg-red-500/12 text-red-200 shadow-inner sm:h-14 sm:w-14">
                               <MistakeIcon name={activeMistake.icon} />
                             </div>
 
-                            <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-[#8cef32] sm:mt-4 sm:px-3 sm:text-[10px] sm:tracking-[0.2em]">
-                              <CheckIcon />
+                            <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-red-300/18 bg-red-500/10 px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-red-200 sm:mt-4 sm:px-3 sm:text-[10px] sm:tracking-[0.2em]">
+                              <CrossIcon />
                               Mistake {activeMistake.number}
                             </div>
 
@@ -344,8 +344,8 @@ export function CounsellingMistakesSection() {
                               onClick={() => setActiveMistakeIndex(index)}
                               className={`h-2 rounded-full transition-all duration-300 ${
                                 active
-                                  ? "w-8 bg-[#8cef32]"
-                                  : "w-2 bg-white/20 hover:bg-white/40"
+                                  ? "w-8 bg-red-400"
+                                  : "w-2 bg-white/20 hover:bg-red-200/50"
                               }`}
                               aria-label={`Go to mistake ${mistake.number}`}
                             />
@@ -379,7 +379,7 @@ function StatPill({ label, value }: { label: string; value: string }) {
   );
 }
 
-function CheckIcon() {
+function CrossIcon() {
   return (
     <svg
       className="h-3.5 w-3.5"
@@ -391,7 +391,8 @@ function CheckIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <path d="m5 12 4 4L19 6" />
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
     </svg>
   );
 }
@@ -415,7 +416,8 @@ function MistakeIcon({ name }: { name: string }) {
           <rect x="3" y="4" width="18" height="14" rx="2" />
           <path d="M8 21h8" />
           <path d="M12 18v3" />
-          <path d="m8 11 2 2 5-5" />
+          <path d="m9 9 6 6" />
+          <path d="m15 9-6 6" />
         </svg>
       );
     case "rules":

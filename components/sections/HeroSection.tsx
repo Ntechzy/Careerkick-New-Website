@@ -121,7 +121,7 @@ export function HeroSection() {
           </motion.div>
 
           <motion.div
-            className="mt-8 flex flex-col items-center justify-center gap-3 font-body text-xs leading-relaxed text-white/70 sm:flex-row sm:flex-wrap sm:gap-4 sm:text-sm"
+            className="mx-auto mt-8 flex w-fit flex-col items-start justify-center gap-3 font-body text-xs leading-relaxed text-white/70 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 sm:text-sm"
             initial="hidden"
             animate="visible"
             variants={fadeInVariant}
