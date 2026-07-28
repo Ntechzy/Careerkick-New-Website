@@ -36,7 +36,7 @@ const pricingData: Pricing[] = [
   {
     title: "BDS / BSc Nursing / Veterinary / BPT",
     description: "All-inclusive counselling support",
-    price: "₹25,000",
+    price: "₹20,000",
     image:
       "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1775547636/bds_sldzxw.webp",
   },
@@ -118,7 +118,7 @@ export default function PricingSection() {
                     {item.price}
                   </div>
                   <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">
-                    Starting price
+                    +GST
                   </p>
                 </div>
 
