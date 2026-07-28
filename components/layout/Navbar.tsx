@@ -15,6 +15,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
+  const [desktopOpenLink, setDesktopOpenLink] = useState<string | null>(null);
   const [expandedMobileLink, setExpandedMobileLink] = useState<string | null>(null);
   const phoneNumber = "7393062116";
   const MotionLink = motion(Link);
@@ -40,6 +41,7 @@ export function Navbar() {
 
   useEffect(() => {
     setOpen(false);
+    setDesktopOpenLink(null);
     setExpandedMobileLink(null);
   }, [pathname]);
 
@@ -70,30 +72,54 @@ export function Navbar() {
             const active = isActiveLink(link);
 
             if (link.children?.length) {
+              const submenuOpen = desktopOpenLink === link.href;
+
               return (
-                <div key={link.href} className="group relative">
+                <div
+                  key={link.href}
+                  className="relative"
+                  onMouseEnter={() => setDesktopOpenLink(link.href)}
+                  onMouseLeave={() => setDesktopOpenLink(null)}
+                  onFocus={() => setDesktopOpenLink(link.href)}
+                  onBlur={(event) => {
+                    if (!event.currentTarget.contains(event.relatedTarget)) {
+                      setDesktopOpenLink(null);
+                    }
+                  }}
+                >
                   <button
                     type="button"
                     className={cn(
                       "relative inline-flex items-center gap-1 py-2 text-sm font-medium text-text-muted transition-colors hover:text-white",
                       active && "text-white",
                     )}
-                    aria-expanded={active}
+                    aria-expanded={submenuOpen}
+                    onClick={() => setDesktopOpenLink(link.href)}
                   >
                     {link.label}
                     <ChevronDown
-                      className="h-3.5 w-3.5 transition-transform group-hover:rotate-180"
+                      className={cn(
+                        "h-3.5 w-3.5 transition-transform",
+                        submenuOpen && "rotate-180",
+                      )}
                       aria-hidden="true"
                     />
                     <span
                       className={cn(
                         "absolute bottom-0 left-0 h-0.5 bg-gradient-brand transition-all duration-300",
-                        active ? "w-full" : "w-0 group-hover:w-full",
+                        active || submenuOpen ? "w-full" : "w-0",
                       )}
                     />
                   </button>
 
-                  <div className="pointer-events-none absolute left-1/2 top-full z-30 w-56 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
+                  <div
+                    className={cn(
+                      "absolute left-1/2 top-full z-30 w-56 -translate-x-1/2 pt-4 transition-all duration-200",
+                      submenuOpen
+                        ? "pointer-events-auto opacity-100"
+                        : "pointer-events-none opacity-0",
+                    )}
+                  >
                     <div className="overflow-hidden rounded-2xl border border-white/10 bg-base/92 p-2 shadow-elevated backdrop-blur-xl">
                       {link.children.map((child) => (
                         <Link
@@ -103,6 +129,7 @@ export function Navbar() {
                             "block rounded-xl px-4 py-3 text-sm font-semibold text-text-muted transition-colors hover:bg-white/8 hover:text-white",
                             pathname === child.href && "bg-[#51A70A]/12 text-white",
                           )}
+                          onClick={() => setDesktopOpenLink(null)}
                         >
                           {child.label}
                         </Link>
