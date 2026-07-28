@@ -18,6 +18,7 @@ import { FaqSection } from "@/components/sections/FaqSection";
 import { EventsSection } from "@/components/sections/EventsSection";
 import { ImportantEventsSection } from "@/components/sections/ImportantEventsSection";
 import { EBookButton } from "@/components/EBookButton";
+import { IntroAnimation } from "@/components/IntroAnimation";
 import { AdmittedStudentsSection } from "@/components/sections/AdmittedStudentsSection";
 import { OfficesSection } from "@/components/sections/OfficesSection";
 import { CounsellingMistakesSection } from "@/components/sections/CounsellingMistakesSection";
@@ -87,6 +88,7 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
+      <IntroAnimation />
       <EBookButton />
       <HeroSection />
       <StatsSection />
@@ -101,12 +103,12 @@ export default async function Home() {
       />
       <AdmissionGuidanceSection />
       <ProcessSection />
+      <AdmittedStudentsSection />
       <TestimonialsSection />
       {/* <StudentImageTestimonialsSection /> */}
       <ImportantEventsSection />
       <EventsSection />
       <OfficeMapSection />
-      <AdmittedStudentsSection />
       <FaqSection />
       {/* <HowItWorksSection /> */}
       {/* <PlatformSection /> */}

@@ -38,7 +38,7 @@ const data: Achievement[] = [
     ],
     video:
       "https://res.cloudinary.com/dhlqc0ymy/video/upload/v1775555657/experience_upjmm7.mp4",
-    stats: [{ label: "Years of experience", value: 8 }],
+    stats: [{ label: "Years of experience", value: 9 }],
   },
   {
     id: 3,

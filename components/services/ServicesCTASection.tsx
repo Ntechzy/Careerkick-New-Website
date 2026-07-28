@@ -86,7 +86,7 @@ export default function ServicesCTASection() {
             {/* Stat 3 - Center with borders */}
             <div className="flex flex-col items-center lg:items-start sm:px-4">
               <span className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tabular-nums tracking-tight">
-                8+
+                9+
               </span>
               <span className="text-[10px] sm:text-xs uppercase tracking-wider font-bold text-slate-400 mt-2 leading-tight">
                 Years of counselling experience
