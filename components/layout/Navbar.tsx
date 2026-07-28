@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,7 +17,7 @@ export function Navbar() {
   const [desktopOpenLink, setDesktopOpenLink] = useState<string | null>(null);
   const [expandedMobileLink, setExpandedMobileLink] = useState<string | null>(null);
   const phoneNumber = "7393062116";
-  const MotionLink = motion(Link);
+  const MotionAnchor = motion.a;
 
   const isActiveHref = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
@@ -56,7 +55,7 @@ export function Navbar() {
           />
         )}
 
-        <Link href="/" className="flex items-center" aria-label="Careerkick home">
+        <a href="/" className="flex items-center" aria-label="Careerkick home">
           <Image
             src="/logo-bg.png"
             alt="Careerkick"
@@ -65,7 +64,7 @@ export function Navbar() {
             priority
             className="h-10 w-auto object-contain md:h-12"
           />
-        </Link>
+        </a>
 
         <div className="hidden items-center gap-8 md:flex">
           {NAV_LINKS.map((link) => {
@@ -122,7 +121,7 @@ export function Navbar() {
                   >
                     <div className="overflow-hidden rounded-2xl border border-white/10 bg-base/92 p-2 shadow-elevated backdrop-blur-xl">
                       {link.children.map((child) => (
-                        <Link
+                        <a
                           key={child.href}
                           href={child.href}
                           className={cn(
@@ -132,7 +131,7 @@ export function Navbar() {
                           onClick={() => setDesktopOpenLink(null)}
                         >
                           {child.label}
-                        </Link>
+                        </a>
                       ))}
                     </div>
                   </div>
@@ -141,7 +140,7 @@ export function Navbar() {
             }
 
             return (
-              <Link
+              <a
                 key={link.href}
                 href={link.href}
                 className={cn(
@@ -157,7 +156,7 @@ export function Navbar() {
                     active ? "w-full" : "w-0 group-hover:w-full",
                   )}
                 />
-              </Link>
+              </a>
             );
           })}
         </div>
@@ -287,14 +286,14 @@ export function Navbar() {
                             >
                               <div className="mt-4 space-y-3 border-l border-[#51A70A]/35 pl-4">
                                 {link.children.map((child) => (
-                                  <Link
+                                  <a
                                     key={child.href}
                                     href={child.href}
                                     className="block text-base font-semibold text-white transition-colors hover:text-white"
                                     onClick={() => setOpen(false)}
                                   >
                                     {child.label}
-                                  </Link>
+                                  </a>
                                 ))}
                               </div>
                             </motion.div>
@@ -305,7 +304,7 @@ export function Navbar() {
                   }
 
                   return (
-                    <MotionLink
+                    <MotionAnchor
                       key={link.href}
                       href={link.href}
                       className="block font-display text-2xl font-semibold text-white sm:text-3xl"
@@ -315,7 +314,7 @@ export function Navbar() {
                       onClick={() => setOpen(false)}
                     >
                       {link.label}
-                    </MotionLink>
+                    </MotionAnchor>
                   );
                 })}
               </div>
