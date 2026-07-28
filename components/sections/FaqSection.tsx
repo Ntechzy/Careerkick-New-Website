@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
@@ -9,6 +10,7 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { cn } from "@/lib/utils";
 import { faqItems } from "@/data/faq";
 import { CONTACT_NUMBERS, getTelLink } from "@/lib/contactLinks";
+
 
 export function FaqSection() {
   const [openIndex, setOpenIndex] = useState(0);
@@ -27,9 +29,16 @@ export function FaqSection() {
           <h2 className="font-display text-3xl font-bold leading-tight text-white sm:text-4xl md:text-5xl">
             <GradientText>Questions</GradientText> families ask before counselling starts.
           </h2>
-          <p className="mt-5 max-w-lg text-base leading-relaxed text-text-muted sm:text-lg">
-            Careerkick keeps the process calm for students and parents. These answers cover counselling flow, course options, documents, portal support and what happens after allotment.
-          </p>
+
+          <div className="relative mt-7 aspect-[4/3] w-full max-w-[320px] sm:mt-8 md:max-w-[360px]">
+            <Image
+              src="https://res.cloudinary.com/dhlqc0ymy/image/upload/v1785259106/131-1317456_faq-icon-removebg-preview_ivkwuy.png"
+              alt=""
+              fill
+              sizes="(min-width: 768px) 360px, 100vw"
+              className="object-contain drop-shadow-[0_30px_70px_rgba(0,0,0,0.42)]"
+            />
+          </div>
 
           <GlassCard className="mt-10 overflow-hidden border-white/10 bg-surface-2/80 p-5 shadow-elevated backdrop-blur-xl sm:p-6">
             <div className="flex items-start gap-4">
@@ -92,57 +101,56 @@ export function FaqSection() {
 
         <ScrollReveal delay={0.1}>
           <div className="space-y-3">
-            {faqItems.map((item, index) => {
-              const isOpen = index === openIndex;
+              {faqItems.map((item, index) => {
+                const isOpen = index === openIndex;
 
-              return (
-                <GlassCard
-                  key={item.question}
-                  className={cn(
-                    "overflow-hidden border-white/10 bg-surface-2/80 backdrop-blur-xl transition-all duration-300",
-                    isOpen && "border-violet/30 shadow-elevated"
-                  )}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setOpenIndex(index)}
-                    className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left sm:px-5"
-                    aria-expanded={isOpen}
-                    aria-controls={`faq-panel-${index}`}
-                  >
-                    <span className="font-display text-base font-semibold leading-snug text-white sm:text-lg">
-                      {item.question}
-                    </span>
-                    <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/70 transition-transform duration-300", isOpen && "rotate-180")}>
-                      <ChevronIcon />
-                    </span>
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        id={`faq-panel-${index}`}
-                        role="region"
-                        aria-label={item.question}
-                        initial={reduceMotion ? false : { height: 0, opacity: 0 }}
-                        animate={reduceMotion ? { height: "auto", opacity: 1 } : { height: "auto", opacity: 1 }}
-                        exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
-                        transition={{ duration: 0.28, ease: "easeOut" }}
-                        className="overflow-hidden"
-                      >
-                        <div className="px-4 pb-5 sm:px-5">
-                          <div className="h-px w-full bg-white/10" />
-                          <p className="mt-4 text-sm leading-relaxed text-white/72 sm:text-base lg:text-white">
-                            {item.answer}
-                          </p>
-                        </div>
-                      </motion.div>
+                return (
+                  <GlassCard
+                    key={item.question}
+                    className={cn(
+                      "overflow-hidden border-white/10 bg-surface-2/80 backdrop-blur-xl transition-all duration-300",
+                      isOpen && "border-violet/30 shadow-elevated"
                     )}
-                  </AnimatePresence>
-                </GlassCard>
-              );
-            })}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setOpenIndex(index)}
+                      className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left sm:px-5"
+                      aria-expanded={isOpen}
+                      aria-controls={`faq-panel-${index}`}
+                    >
+                      <span className="font-display text-base font-semibold leading-snug text-white sm:text-lg">
+                        {item.question}
+                      </span>
+                      <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/70 transition-transform duration-300", isOpen && "rotate-180")}>
+                        <ChevronIcon />
+                      </span>
+                    </button>
 
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          id={`faq-panel-${index}`}
+                          role="region"
+                          aria-label={item.question}
+                          initial={reduceMotion ? false : { height: 0, opacity: 0 }}
+                          animate={reduceMotion ? { height: "auto", opacity: 1 } : { height: "auto", opacity: 1 }}
+                          exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
+                          transition={{ duration: 0.28, ease: "easeOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="px-4 pb-5 sm:px-5">
+                            <div className="h-px w-full bg-white/10" />
+                            <p className="mt-4 text-sm leading-relaxed text-white/72 sm:text-base lg:text-white">
+                              {item.answer}
+                            </p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </GlassCard>
+                );
+              })}
           </div>
         </ScrollReveal>
       </div>

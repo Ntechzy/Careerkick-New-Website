@@ -41,8 +41,7 @@ export function HeroSection() {
                   }
 
                   const highlighted =
-                    (lineIndex === 0 && index >= 6) ||
-                    (lineIndex === 1 && index >= 11);
+                    lineIndex === 1 && index >= 11;
                   return (
                     <motion.span
                       key={`${line}-${index}`}
