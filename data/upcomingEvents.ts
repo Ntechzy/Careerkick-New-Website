@@ -53,7 +53,7 @@ export const upcomingEvents: UpcomingEventCard[] = [
     location: "Gorakhpur",
     accent: "cyan",
     imageSrc: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783076166/gorakhpur_vlwinp.webp",
-    videoUrl: "",
+    videoUrl: "https://res.cloudinary.com/dhlqc0ymy/video/upload/v1785217670/Hearing_real_experiences_from_real_students_Watch_how_attending_our_Free_Medical_Counselling_Ex_f1ac0b.mp4",
     imagePrompt:
       "Create a premium event visual for Careerkick's counselling expo in Gorakhpur. Use a circular illustration with a warm seminar room atmosphere, professional counselling setting, and refined modern style. No text, no watermark, clean white or transparent background, lime green and cyan accents.",
   },
