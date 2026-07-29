@@ -77,13 +77,13 @@ export function AdmissionGuidanceSection() {
                       dataKey="year"
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fill: "#51A70A", fontSize: 12, fontFamily: "var(--font-jetbrains)" }}
+                      tick={{ fill: "#51A70A", fontSize: 12, fontFamily: "var(--font-jakarta)" }}
                       dy={8}
                     />
                     <YAxis
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fill: "#667E9F", fontSize: 11, fontFamily: "var(--font-jetbrains)" }}
+                      tick={{ fill: "#667E9F", fontSize: 11, fontFamily: "var(--font-jakarta)" }}
                       tickFormatter={(value) => `${Number(value) / 1000}k`}
                       domain={[0, 13000]}
                       width={48}

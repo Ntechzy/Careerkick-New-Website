@@ -13,7 +13,7 @@ const phoneNumber = "7393062116";
 
 export function MidHomepageCtaSection() {
   return (
-    <section className="relative overflow-hidden bg-[#f7faf4] px-4 py-10 text-slate-900 md:px-8 md:py-14">
+    <section className="relative overflow-hidden bg-[#f7faf4] px-4 py-8 text-slate-900 md:px-8 md:py-10">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#51A70A]/35 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#51A70A]/20 to-transparent" />
       <div className="absolute -left-24 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-[#51A70A]/10 blur-[110px]" />
@@ -21,9 +21,9 @@ export function MidHomepageCtaSection() {
       <div className="grid-overlay absolute inset-0 opacity-[0.18]" />
 
       <ScrollReveal className="relative mx-auto max-w-7xl">
-        <div className="relative overflow-hidden rounded-3xl border border-[#51A70A]/20 bg-white p-4 shadow-[0_20px_60px_rgba(16,24,40,0.08)] backdrop-blur-xl sm:p-5 md:p-6">
+        <div className="relative overflow-hidden rounded-3xl border border-[#51A70A]/20 bg-white p-3 shadow-[0_20px_60px_rgba(16,24,40,0.08)] backdrop-blur-xl sm:p-4 md:p-5">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_10%,rgba(81,167,10,0.10),transparent_32%),radial-gradient(circle_at_86%_78%,rgba(109,204,18,0.08),transparent_30%)]" />
-          <div className="relative grid gap-6 rounded-[24px] border border-slate-100 bg-[#fbfdf8] p-5 sm:p-6 lg:grid-cols-[1fr_auto] lg:items-center lg:p-8">
+          <div className="relative grid gap-6 rounded-[24px] border border-slate-100 bg-[#fbfdf8] p-4 sm:p-5 lg:grid-cols-[1fr_auto] lg:items-center lg:p-6">
             <div className="max-w-3xl">
               <div className="inline-flex rounded-full border border-[#51A70A]/30 bg-white px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.26em] text-[#51A70A] shadow-sm sm:px-4 sm:py-2 sm:text-xs">
                 Ready for the next step?

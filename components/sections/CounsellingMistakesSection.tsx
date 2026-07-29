@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
@@ -247,8 +248,14 @@ export function CounsellingMistakesSection() {
                             Counselling audit
                           </p>
                         </div>
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-amber/25 bg-amber/10 font-display text-xl font-black text-amber sm:h-11 sm:w-11 sm:text-2xl">
-                          !
+                        <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-amber/25 bg-amber/10 sm:h-14 sm:w-14">
+                          <Image
+                            src="/seat-lost-icon.jpeg"
+                            alt="Seat lost"
+                            fill
+                            sizes="56px"
+                            className="object-cover"
+                          />
                         </span>
                       </div>
 
@@ -317,7 +324,7 @@ export function CounsellingMistakesSection() {
                               <MistakeIcon name={activeMistake.icon} />
                             </div>
 
-                            <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-red-300/18 bg-red-500/10 px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-red-200 sm:mt-4 sm:px-3 sm:text-[10px] sm:tracking-[0.2em]">
+                            <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#7f1d1d]/55 bg-gradient-to-r from-[#2a0508] via-[#4b0b10] to-[#260306] px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-[#ffd6d6] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_12px_30px_rgba(92,10,18,0.35)] sm:mt-4 sm:px-3 sm:text-[10px] sm:tracking-[0.2em]">
                               <CrossIcon />
                               Mistake {activeMistake.number}
                             </div>
