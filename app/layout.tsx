@@ -96,7 +96,7 @@ export default function RootLayout({
           courses='["Select Course","BAMS","BHMS","BUMS","MBBS","BDS"]'
           styles="basic"
           logo={`${siteConfig.url}/logo.png`}
-          contact="+91-9198350985"
+          contact="+91-7393062116"
         ></Script>
       </body>
     </html>
