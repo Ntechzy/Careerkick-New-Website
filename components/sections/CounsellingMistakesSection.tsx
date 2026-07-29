@@ -193,7 +193,7 @@ export function CounsellingMistakesSection() {
                     onBlur={() => setShowNumber(false)}
                   >
                     <motion.a
-                      href={`tel:${phoneNumber}`}
+                      href={`tel:+919198350980`}
                       className="inline-flex w-full items-center justify-center rounded-full border border-white/12 bg-white/[0.06] px-6 py-4 font-display text-base font-bold text-white backdrop-blur-xl transition-colors hover:border-[#51A70A]/40 hover:bg-white/[0.1] sm:w-auto"
                       whileHover={{ y: -2 }}
                       whileTap={{ scale: 0.98 }}

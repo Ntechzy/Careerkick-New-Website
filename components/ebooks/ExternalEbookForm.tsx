@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { StudentFormLoader } from "@/components/StudentFormLoader";
 
 type ExternalEbookFormProps = {
   ebookId: string;
@@ -42,18 +41,11 @@ function isEbookFormMessage(value: unknown): value is EbookFormMessage {
 }
 
 export function ExternalEbookForm({
-  ebookId,
   stateSlug,
-  stateTitle,
   formContainerId = "formsID7375",
-  scriptUrl,
   allowedMessageOrigins = [],
 }: ExternalEbookFormProps) {
   const router = useRouter();
-  const [scriptKey, setScriptKey] = useState(0);
-  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
-    "loading",
-  );
 
   const handleFormSuccess = useCallback(
     (token?: string) => {
@@ -102,54 +94,11 @@ export function ExternalEbookForm({
     };
   }, [allowedMessageOrigins, handleFormSuccess, stateSlug]);
 
-  const dataAttributes = useMemo(
-    () => ({
-      "data-ebook-id": ebookId,
-      "data-state-slug": stateSlug,
-      "data-state-title": stateTitle,
-    }),
-    [ebookId, stateSlug, stateTitle],
-  );
-
   return (
-    <div className="rounded-lg border border-white/10 bg-black/20 p-5 shadow-card">
-      <StudentFormLoader
-        key={`${scriptUrl ?? "default"}-${scriptKey}`}
-        formContainerId={formContainerId}
-        scriptUrl={scriptUrl}
-        onLoad={() => setStatus("ready")}
-        onError={() => setStatus("error")}
-      />
-
-      <div className="min-h-[560px] rounded-lg border border-dashed border-violet/30 bg-violet/5 p-3 sm:min-h-[620px] sm:p-4">
-        <div id={formContainerId} {...dataAttributes} />
-        {status === "loading" ? (
-          <div className="flex h-56 items-center justify-center text-sm text-text-muted">
-            Loading the form...
-          </div>
-        ) : null}
-        {status === "error" ? (
-          <div className="flex h-56 flex-col items-center justify-center text-center">
-            <p className="font-display text-xl font-semibold text-white">
-              The form could not be loaded.
-            </p>
-            <p className="mt-2 max-w-md text-sm leading-relaxed text-text-muted">
-              Please try again, or return to the E-Book list and reopen this page.
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setStatus("loading");
-                setScriptKey((current) => current + 1);
-              }}
-              className="mt-5 inline-flex rounded-full border border-violet/30 bg-violet/10 px-5 py-3 text-sm font-semibold text-violet-glow transition-colors hover:border-violet/60 hover:bg-violet/15"
-            >
-              Retry
-            </button>
-          </div>
-        ) : null}
+    <div className="ebook-form-frame mx-auto w-full rounded-lg border border-white/10 bg-black/20 p-3 shadow-card sm:p-4">
+      <div className="mx-auto min-h-[560px] w-full max-w-[600px] rounded-lg bg-surface-2 p-3 text-white sm:min-h-[620px] sm:p-4">
+        <div id={formContainerId} className="mx-auto min-h-[520px] w-full sm:min-h-[580px]" />
       </div>
-
     </div>
   );
 }
