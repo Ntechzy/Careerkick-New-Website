@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { siteConfig } from "@/lib/site";
 
 const STUDENT_FORM_SCRIPT_ID = "student-form-loader";
+const STUDENT_FORM_METADATA_SCRIPT_ID = "student-form-loader-metadata";
 const STUDENT_FORM_SCRIPT_URL = "https://ntechzy.in/api/v1/student-form/form.js";
 const DEFAULT_FORM_CONTAINER_ID = "formsID7375";
 const DEFAULT_PATHS = ["/", "/dynamicForm/index.html", "/apply-now", "/e-books/form", "/contact"];
@@ -43,8 +44,10 @@ export function StudentFormLoader({
   useEffect(() => {
     const container = document.getElementById(formContainerId);
     const previousScript = document.getElementById(STUDENT_FORM_SCRIPT_ID);
+    const previousMetadataScript = document.getElementById(STUDENT_FORM_METADATA_SCRIPT_ID);
 
     previousScript?.remove();
+    previousMetadataScript?.remove();
 
     if (!container) {
       onErrorRef.current?.();
@@ -53,23 +56,37 @@ export function StudentFormLoader({
 
     container.replaceChildren();
 
+    const applyFormAttributes = (scriptElement: HTMLScriptElement) => {
+      scriptElement.setAttribute("path", JSON.stringify(paths));
+      scriptElement.setAttribute("divid", formContainerId);
+      scriptElement.setAttribute("courses", JSON.stringify(courses));
+      scriptElement.setAttribute("styles", styles);
+      scriptElement.setAttribute("logo", logo);
+      scriptElement.setAttribute("contact", contact);
+    };
+
     const script = document.createElement("script");
     script.id = STUDENT_FORM_SCRIPT_ID;
     script.type = "module";
     script.src = scriptUrl;
-    script.dataset.path = JSON.stringify(paths);
-    script.dataset.divid = formContainerId;
-    script.dataset.courses = JSON.stringify(courses);
-    script.dataset.styles = styles;
-    script.dataset.logo = logo;
-    script.dataset.contact = contact;
+    applyFormAttributes(script);
     script.addEventListener("load", () => onLoadRef.current?.());
     script.addEventListener("error", () => onErrorRef.current?.());
+
+    if (window.location.hostname === "localhost" && scriptUrl !== "http://localhost:4000/api/v1/student-form/form.js") {
+      const metadataScript = document.createElement("script");
+      metadataScript.id = STUDENT_FORM_METADATA_SCRIPT_ID;
+      metadataScript.type = "application/json";
+      metadataScript.src = "http://localhost:4000/api/v1/student-form/form.js";
+      applyFormAttributes(metadataScript);
+      document.body.appendChild(metadataScript);
+    }
 
     document.body.appendChild(script);
 
     return () => {
       script.remove();
+      document.getElementById(STUDENT_FORM_METADATA_SCRIPT_ID)?.remove();
     };
   }, [
     contact,
