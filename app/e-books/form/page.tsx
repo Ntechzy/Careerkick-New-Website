@@ -48,7 +48,7 @@ export default async function EbookFormPage({ searchParams }: EbookFormPageProps
           description="Please complete the form below to access the selected E-Book."
         />
         <EbookDetails ebook={ebook} />
-        <div className="mx-auto w-full max-w-5xl">
+        <div className="mx-auto w-full max-w-[680px]">
           <ExternalEbookForm
             ebookId={ebook._id}
             stateSlug={ebook.slug}
