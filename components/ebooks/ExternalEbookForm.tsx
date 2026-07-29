@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { StudentFormLoader } from "@/components/StudentFormLoader";
 
 type ExternalEbookFormProps = {
   ebookId: string;
@@ -9,95 +10,98 @@ type ExternalEbookFormProps = {
   stateTitle: string;
   formContainerId?: string;
   scriptUrl?: string;
-  allowedMessageOrigins?: string[];
 };
 
-type FormSuccessDetail = {
-  token?: string;
-};
+const FORM_API_PATH = "/api/v1/form";
 
-type EbookFormMessage = {
-  type: "ebook-form-success";
-  token?: string;
-  stateSlug?: string;
-};
-
-function isFormSuccessDetail(value: unknown): value is FormSuccessDetail {
-  return typeof value === "object" && value !== null;
-}
-
-function isEbookFormMessage(value: unknown): value is EbookFormMessage {
-  if (typeof value !== "object" || value === null) {
-    return false;
+function getFetchUrl(input: RequestInfo | URL) {
+  if (typeof input === "string") {
+    return input;
   }
 
-  const payload = value as { type?: unknown; stateSlug?: unknown; token?: unknown };
+  if (input instanceof URL) {
+    return input.href;
+  }
 
-  return (
-    payload.type === "ebook-form-success" &&
-    (payload.stateSlug === undefined || typeof payload.stateSlug === "string") &&
-    (payload.token === undefined || typeof payload.token === "string")
-  );
+  return input.url;
+}
+
+function getFetchMethod(input: RequestInfo | URL, init?: RequestInit) {
+  if (init?.method) {
+    return init.method.toUpperCase();
+  }
+
+  if (typeof input === "object" && "method" in input && input.method) {
+    return input.method.toUpperCase();
+  }
+
+  return "GET";
+}
+
+function isStudentFormSubmit(input: RequestInfo | URL, init?: RequestInit) {
+  const url = getFetchUrl(input);
+  const method = getFetchMethod(input, init);
+
+  return method === "POST" && url.includes(FORM_API_PATH);
 }
 
 export function ExternalEbookForm({
+  ebookId,
   stateSlug,
+  stateTitle,
   formContainerId = "formsID7375",
-  allowedMessageOrigins = [],
+  scriptUrl = "https://ntechzy.in/api/v1/student-form/form.js",
 }: ExternalEbookFormProps) {
   const router = useRouter();
 
-  const handleFormSuccess = useCallback(
-    (token?: string) => {
-      const params = new URLSearchParams({ state: stateSlug });
+  const goToDownload = useCallback(() => {
+    const params = new URLSearchParams({
+      state: stateSlug,
+      token: "ebook-form-submitted",
+    });
 
-      if (token) {
-        params.set("token", token);
-      }
-
-      router.push(`/e-books/download?${params.toString()}`);
-    },
-    [router, stateSlug],
-  );
+    router.push(`/e-books/download?${params.toString()}`);
+  }, [router, stateSlug]);
 
   useEffect(() => {
-    function handleCustomSuccess(event: Event) {
-      const customEvent = event as CustomEvent<unknown>;
-      const detail = customEvent.detail;
-      const token = isFormSuccessDetail(detail) ? detail.token : undefined;
+    const originalFetch = window.fetch.bind(window);
+    let hasRedirected = false;
 
-      handleFormSuccess(token);
-    }
+    window.fetch = (async (...args: Parameters<typeof window.fetch>) => {
+      const response = await originalFetch(...args);
 
-    function handleProviderMessage(event: MessageEvent<unknown>) {
-      if (!allowedMessageOrigins.includes(event.origin)) {
-        return;
+      if (!hasRedirected && response.ok && isStudentFormSubmit(args[0], args[1])) {
+        hasRedirected = true;
+        window.localStorage.setItem(
+          "ebookLeadFormData",
+          JSON.stringify({
+            ebookId,
+            stateSlug,
+            stateTitle,
+            completedAt: new Date().toISOString(),
+          }),
+        );
+        window.setTimeout(goToDownload, 300);
       }
 
-      if (!isEbookFormMessage(event.data)) {
-        return;
-      }
-
-      if (event.data.stateSlug && event.data.stateSlug !== stateSlug) {
-        return;
-      }
-
-      handleFormSuccess(event.data.token);
-    }
-
-    window.addEventListener("ebook-form-success", handleCustomSuccess);
-    window.addEventListener("message", handleProviderMessage);
+      return response;
+    }) as typeof window.fetch;
 
     return () => {
-      window.removeEventListener("ebook-form-success", handleCustomSuccess);
-      window.removeEventListener("message", handleProviderMessage);
+      window.fetch = originalFetch;
     };
-  }, [allowedMessageOrigins, handleFormSuccess, stateSlug]);
+  }, [ebookId, goToDownload, stateSlug, stateTitle]);
 
   return (
     <div className="ebook-form-frame mx-auto w-full rounded-lg border border-white/10 bg-black/20 p-3 shadow-card sm:p-4">
       <div className="mx-auto min-h-[560px] w-full max-w-[600px] rounded-lg bg-surface-2 p-3 text-white sm:min-h-[620px] sm:p-4">
         <div id={formContainerId} className="mx-auto min-h-[520px] w-full sm:min-h-[580px]" />
+        <StudentFormLoader
+          formContainerId={formContainerId}
+          scriptUrl={scriptUrl}
+          paths={["/e-books/form"]}
+          contact="+91-7393062116"
+        />
       </div>
     </div>
   );
