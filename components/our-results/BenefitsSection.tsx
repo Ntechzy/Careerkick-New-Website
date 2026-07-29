@@ -138,7 +138,7 @@ const StoryCard = ({ data, showAccent = false }: { data: CardData; showAccent?: 
       />
       <div className="relative grid h-full gap-5 px-4 py-5 sm:gap-8 sm:px-10 sm:py-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div>
-          <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 font-jetbrains text-[10px] font-semibold uppercase tracking-[0.28em] text-primary lg:text-white">
+          <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.28em] text-primary lg:text-white">
             {data.eyebrow}
           </span>
           <h3 className="mt-4 font-display text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-4xl">
@@ -150,7 +150,7 @@ const StoryCard = ({ data, showAccent = false }: { data: CardData; showAccent?: 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             {data.metrics.map((m) => (
               <div key={m.label} className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4 glass">
-                <p className="font-jetbrains text-[10px] uppercase tracking-widest text-primary lg:text-white/70">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-primary lg:text-white/70">
                   {m.label}
                 </p>
                 <p className="mt-1 text-sm font-bold text-white lg:text-white sm:text-base">

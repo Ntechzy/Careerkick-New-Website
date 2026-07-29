@@ -44,13 +44,6 @@
   --shadow-elevated: 0 20px 60px #00000099, 0 4px 12px #0000004D;
 }
 
-@font-face {
-  font-family: "Clash Display";
-  src: local("Clash Display"), local("ClashDisplay-Variable");
-  font-weight: 500 700;
-  font-display: swap;
-}
-
 * {
   box-sizing: border-box;
 }
@@ -129,7 +122,7 @@ input:focus-visible {
 
 .career-blog-content :where(h1, h2, h3, h4, h5, h6) {
   color: var(--color-text-primary);
-  font-family: var(--font-clash), var(--font-jakarta), sans-serif;
+  font-family: var(--font-jakarta), "Plus Jakarta Sans", sans-serif;
 }
 
 .career-blog-content :where(a) {
@@ -209,7 +202,7 @@ input:focus-visible {
     background: rgba(81, 167, 10, 0.10);
     padding: 0.45rem 0.9rem;
     color: var(--color-violet-glow);
-    font-family: var(--font-jetbrains), monospace;
+    font-family: var(--font-jakarta), "Plus Jakarta Sans", sans-serif;
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.22em;
@@ -219,7 +212,7 @@ input:focus-visible {
   .section-title {
     margin-top: 1rem;
     color: inherit;
-    font-family: var(--font-clash), var(--font-jakarta), sans-serif;
+    font-family: var(--font-jakarta), "Plus Jakarta Sans", sans-serif;
     font-size: clamp(2rem, 4.8vw, 4.25rem);
     font-weight: 700;
     letter-spacing: 0;

@@ -102,7 +102,7 @@ const AdmissionGraph = () => {
                   tickLine={false}
                   tickMargin={12}
                   minTickGap={15}
-                  tick={{ fontSize: 12, fill: "#667E5F", fontFamily: "var(--font-jetbrains)" }}
+                  tick={{ fontSize: 12, fill: "#667E5F", fontFamily: "var(--font-jakarta)" }}
                 />
                 <YAxis
                   axisLine={false}
@@ -112,7 +112,7 @@ const AdmissionGraph = () => {
                   domain={[0, 7500]}
                   ticks={[0, 1000, 2000, 3000, 4000, 5000, 6000, 7000]}
                   tickFormatter={(value) => `${value / 1000}k`}
-                  tick={{ fill: "#667E5F", fontFamily: "var(--font-jetbrains)" }}
+                  tick={{ fill: "#667E5F", fontFamily: "var(--font-jakarta)" }}
                 />
                 <ChartTooltip
                   cursor={{ stroke: "#51A70A", strokeOpacity: 0.18, strokeWidth: 1 }}

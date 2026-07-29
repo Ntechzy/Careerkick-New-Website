@@ -36,9 +36,10 @@ const config: Config = {
         "text-faint": "#667E9F"
       },
       fontFamily: {
-        display: ["var(--font-clash)", "Plus Jakarta Sans", "sans-serif"],
-        body: ["var(--font-jakarta)", "sans-serif"],
-        mono: ["var(--font-jetbrains)", "monospace"]
+        sans: ["var(--font-jakarta)", "Plus Jakarta Sans", "sans-serif"],
+        display: ["var(--font-jakarta)", "Plus Jakarta Sans", "sans-serif"],
+        body: ["var(--font-jakarta)", "Plus Jakarta Sans", "sans-serif"],
+        mono: ["var(--font-jakarta)", "Plus Jakarta Sans", "sans-serif"]
       },
       fontSize: {
         xs: ["0.75rem", { lineHeight: "1.1" }],
