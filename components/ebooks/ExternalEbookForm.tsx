@@ -2,14 +2,12 @@
 
 import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { StudentFormLoader } from "@/components/StudentFormLoader";
 
 type ExternalEbookFormProps = {
   ebookId: string;
   stateSlug: string;
   stateTitle: string;
   formContainerId?: string;
-  scriptUrl?: string;
 };
 
 const FORM_API_PATH = "/api/v1/form";
@@ -50,7 +48,6 @@ export function ExternalEbookForm({
   stateSlug,
   stateTitle,
   formContainerId = "formsID7375",
-  scriptUrl = "https://ntechzy.in/api/v1/student-form/form.js",
 }: ExternalEbookFormProps) {
   const router = useRouter();
 
@@ -93,15 +90,9 @@ export function ExternalEbookForm({
   }, [ebookId, goToDownload, stateSlug, stateTitle]);
 
   return (
-    <div className="ebook-form-frame mx-auto w-full rounded-lg border border-white/10 bg-black/20 p-3 shadow-card sm:p-4">
-      <div className="mx-auto min-h-[560px] w-full max-w-[600px] rounded-lg bg-surface-2 p-3 text-white sm:min-h-[620px] sm:p-4">
-        <div id={formContainerId} className="mx-auto min-h-[520px] w-full sm:min-h-[580px]" />
-        <StudentFormLoader
-          formContainerId={formContainerId}
-          scriptUrl={scriptUrl}
-          paths={["/e-books/form"]}
-          contact="+91-7393062116"
-        />
+    <div className="relative mt-6 overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-3 shadow-[0_12px_36px_rgba(0,0,0,0.28)] sm:p-4">
+      <div className="min-h-[560px] rounded-[1.2rem] bg-white p-3 text-slate-950 sm:min-h-[620px] sm:p-4">
+        <div id={formContainerId} className="min-h-[520px] sm:min-h-[580px]" />
       </div>
     </div>
   );

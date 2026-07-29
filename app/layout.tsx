@@ -91,7 +91,7 @@ export default function RootLayout({
         <Script
           type="module"
           src="https://ntechzy.in/api/v1/student-form/form.js"
-          path='["/", "/dynamicForm/index.html", "/apply-now", "/contact"]'
+          path='["/", "/dynamicForm/index.html", "/apply-now", "/e-books/form", "/contact"]'
           divid="formsID7375"
           courses='["Select Course","BAMS","BHMS","BUMS","MBBS","BDS"]'
           styles="basic"
