@@ -35,7 +35,7 @@ export default function RequestCityPage() {
             <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#51A70A]/25 bg-[#51A70A]/10 text-[#8cef32]">
               <MapPin className="h-5 w-5" aria-hidden="true" />
             </span>
-            <p className="text-sm font-semibold leading-relaxed text-white/78 sm:text-base lg:text-white">
+            <p className="text-sm font-semibold leading-relaxed text-white sm:text-base">
               Fill the form once, and we will note your city request for future
               Careerkick event planning.
             </p>
