@@ -8,25 +8,25 @@ const packages = [
   {
     title: "Ayush Counselling",
     description: "Govt + Private Colleges",
-    price: "INR 25,000",
+    price: "INR 25,000 +GST",
     highlight: false,
   },
   {
     title: "MBBS Counselling (Govt College)",
     description: "Complete admission support",
-    price: "INR 30,000",
+    price: "INR 30,000 +GST",
     highlight: true,
   },
   {
     title: "MBBS Counselling (Private College)",
     description: "Complete admission support",
-    price: "INR 50,000",
+    price: "INR 50,000 +GST",
     highlight: false,
   },
   {
     title: "BDS / BSc Nursing / Veterinary / BPT",
     description: "All-inclusive counselling support",
-    price: "INR 20,000",
+    price: "INR 20,000 +GST",
     highlight: false,
   },
 ] as const;

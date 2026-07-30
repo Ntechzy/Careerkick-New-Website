@@ -8,6 +8,8 @@ type CityRequestPayload = {
 };
 
 const validRoles = new Set(["Student", "Parent", "Guardian"]);
+const fallbackGoogleScriptUrl =
+  "https://script.google.com/macros/s/AKfycbyWDu-hyR6y-CFHcZ14sIURTxvB2y90PR2xeZmDOdetLZ5mo_WdESYjVR-_oKGuhb5AcQ/exec";
 
 function cleanText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -18,7 +20,7 @@ function cleanUrl(value: string | undefined) {
 }
 
 export async function POST(request: Request) {
-  const googleScriptUrl = cleanUrl(process.env.GOOGLE_SHEETS_EVENT_CITY_REQUEST_URL);
+  const googleScriptUrl = cleanUrl(process.env.GOOGLE_SHEETS_EVENT_CITY_REQUEST_URL) || fallbackGoogleScriptUrl;
 
   if (!googleScriptUrl) {
     return NextResponse.json(
