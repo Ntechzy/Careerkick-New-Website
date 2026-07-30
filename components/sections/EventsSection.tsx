@@ -1,8 +1,6 @@
-"use client";
-
-import { FormEvent, useState } from "react";
 import Image from "next/image";
-import { CheckCircle2, Loader2, MapPin, Send } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, MapPin } from "lucide-react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { GradientText } from "@/components/ui/GradientText";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
@@ -22,14 +20,6 @@ const accentStyles: Record<UpcomingEventCard["accent"], { border: string; badge:
 };
 
 export function EventsSection() {
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    city: "",
-    role: "Student",
-  });
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
-  const [message, setMessage] = useState("");
   const today = startOfToday();
   const futureEvents = upcomingEvents
     .map((event, index) => ({ event, index, date: parseEventDate(event.date) }))
@@ -37,40 +27,6 @@ export function EventsSection() {
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 
   const nextUpcomingIndex = futureEvents.length > 0 ? futureEvents[0].index : 0;
-
-  async function handleCityRequestSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setStatus("submitting");
-    setMessage("");
-
-    try {
-      const response = await fetch("/api/event-city-request", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const result = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(result?.message || "We could not submit your request right now.");
-      }
-
-      setStatus("success");
-      setMessage("Thank you. Our team has noted your city request.");
-      setFormData({
-        name: "",
-        phone: "",
-        city: "",
-        role: "Student",
-      });
-    } catch (error) {
-      setStatus("error");
-      setMessage(error instanceof Error ? error.message : "We could not submit your request right now.");
-    }
-  }
 
   return (
     <section id="events" className="relative overflow-hidden bg-base px-4 py-section-mobile md:px-8 md:py-section">
@@ -199,116 +155,25 @@ export function EventsSection() {
         </div>
 
         <ScrollReveal className="mt-8 sm:mt-10 lg:mt-12">
-          <div className="relative overflow-hidden rounded-[1.5rem] border border-[#51A70A]/20 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.025)),linear-gradient(135deg,rgba(7,19,5,0.96),rgba(18,26,16,0.82))] shadow-[0_22px_70px_rgba(0,0,0,0.42),0_0_64px_rgba(81,167,10,0.08)] backdrop-blur-xl">
+          <div className="relative overflow-hidden rounded-full border border-[#51A70A]/20 bg-white/[0.055] px-4 py-4 shadow-[0_18px_54px_rgba(0,0,0,0.34),0_0_44px_rgba(81,167,10,0.08)] backdrop-blur-xl sm:px-5">
             <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#8cef32]/70 to-transparent" />
-            <div className="pointer-events-none absolute -left-16 bottom-0 h-56 w-56 rounded-full bg-[#51A70A]/12 blur-[100px]" />
-            <div className="pointer-events-none absolute -right-12 top-0 h-52 w-52 rounded-full bg-[#8cef32]/10 blur-[95px]" />
-
-            <div className="relative grid gap-0 lg:grid-cols-[0.78fr_1.22fr]">
-              <div className="flex items-center gap-4 border-b border-white/10 p-4 sm:p-5 lg:border-b-0 lg:border-r lg:p-6">
-                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#51A70A]/25 bg-[#51A70A]/10 text-[#8cef32] shadow-[0_14px_36px_rgba(81,167,10,0.18)]">
-                    <MapPin className="h-5 w-5" aria-hidden="true" />
+            <div className="relative flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+              <div className="flex items-center gap-3">
+                <span className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#51A70A]/25 bg-[#51A70A]/10 text-[#8cef32] shadow-[0_14px_36px_rgba(81,167,10,0.18)] sm:inline-flex">
+                  <MapPin className="h-5 w-5" aria-hidden="true" />
                 </span>
-                <div>
-                  <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8cef32]">
-                    Request Your City
-                  </p>
-                  <h3 className="mt-2 font-display text-xl font-bold leading-tight text-white sm:text-2xl">
-                    Want Careerkick in your city? Ask now, and we will know where the next crowd is waiting.
-                  </h3>
-                </div>
+                <p className="font-display text-base font-bold leading-snug text-white sm:text-lg">
+                  Want Careerkick in your city? Tell us where to host our next counselling event.
+                </p>
               </div>
 
-              <form
-                onSubmit={handleCityRequestSubmit}
-                className="bg-black/[0.18] p-4 sm:p-5 lg:p-6"
+              <Link
+                href="/request-city"
+                className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-brand px-5 py-2.5 text-sm font-bold text-base shadow-[0_16px_38px_rgba(81,167,10,0.24)] transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-glow-violet focus-visible:shadow-[0_0_0_2px_#51A70A,0_0_0_5px_#050704]"
               >
-                <div className="rounded-[1.15rem] border border-white/10 bg-white/[0.055] p-3 shadow-[0_14px_36px_rgba(0,0,0,0.2)] sm:p-4">
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <label className="grid gap-2">
-                      <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55">
-                        Name
-                      </span>
-                      <input
-                        required
-                        value={formData.name}
-                        onChange={(event) => setFormData((current) => ({ ...current, name: event.target.value }))}
-                        placeholder="Your name"
-                        className="min-h-11 rounded-xl border border-white/10 bg-white px-3.5 py-2.5 text-sm font-semibold text-[#071305] placeholder:text-[#071305]/55 shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition-shadow focus-visible:shadow-[0_0_0_2px_#51A70A,0_10px_24px_rgba(0,0,0,0.14)]"
-                      />
-                    </label>
-
-                    <label className="grid gap-2">
-                      <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55">
-                        Phone
-                      </span>
-                      <input
-                        required
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(event) => setFormData((current) => ({ ...current, phone: event.target.value }))}
-                        placeholder="Phone number"
-                        className="min-h-11 rounded-xl border border-white/10 bg-white px-3.5 py-2.5 text-sm font-semibold text-[#071305] placeholder:text-[#071305]/55 shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition-shadow focus-visible:shadow-[0_0_0_2px_#51A70A,0_10px_24px_rgba(0,0,0,0.14)]"
-                      />
-                    </label>
-
-                    <label className="grid gap-2">
-                      <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55">
-                        Preferred City
-                      </span>
-                      <input
-                        required
-                        value={formData.city}
-                        onChange={(event) => setFormData((current) => ({ ...current, city: event.target.value }))}
-                        placeholder="City to cover next"
-                        className="min-h-11 rounded-xl border border-white/10 bg-white px-3.5 py-2.5 text-sm font-semibold text-[#071305] placeholder:text-[#071305]/55 shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition-shadow focus-visible:shadow-[0_0_0_2px_#51A70A,0_10px_24px_rgba(0,0,0,0.14)]"
-                      />
-                    </label>
-
-                    <label className="grid gap-2">
-                      <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55">
-                        I am a
-                      </span>
-                      <select
-                        value={formData.role}
-                        onChange={(event) => setFormData((current) => ({ ...current, role: event.target.value }))}
-                        className="min-h-11 rounded-xl border border-white/10 bg-white px-3.5 py-2.5 text-sm font-semibold text-[#071305] shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition-shadow focus-visible:shadow-[0_0_0_2px_#51A70A,0_10px_24px_rgba(0,0,0,0.14)]"
-                      >
-                        <option>Student</option>
-                        <option>Parent</option>
-                        <option>Guardian</option>
-                      </select>
-                    </label>
-                  </div>
-
-                  {message ? (
-                    <p
-                      className={cn(
-                        "mt-3 rounded-xl border px-3.5 py-2.5 text-sm font-semibold",
-                        status === "success"
-                          ? "border-[#51A70A]/30 bg-[#51A70A]/10 text-[#8cef32]"
-                          : "border-[#fbbf24]/30 bg-[#fbbf24]/10 text-[#fbbf24]"
-                      )}
-                    >
-                      {status === "success" ? <CheckCircle2 className="mr-2 inline h-4 w-4" aria-hidden="true" /> : null}
-                      {message}
-                    </p>
-                  ) : null}
-
-                  <button
-                    type="submit"
-                    disabled={status === "submitting"}
-                    className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-gradient-brand px-5 py-2.5 text-sm font-bold text-base shadow-[0_16px_38px_rgba(81,167,10,0.24)] transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-glow-violet disabled:cursor-not-allowed disabled:opacity-70"
-                  >
-                    {status === "submitting" ? (
-                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                    ) : (
-                      <Send className="h-4 w-4" aria-hidden="true" />
-                    )}
-                    {status === "submitting" ? "Submitting..." : "Submit City Request"}
-                  </button>
-                </div>
-              </form>
+                Request your city
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
             </div>
           </div>
         </ScrollReveal>

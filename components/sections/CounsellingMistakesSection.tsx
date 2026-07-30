@@ -244,12 +244,12 @@ export function CounsellingMistakesSection() {
                             Counselling audit
                           </p>
                         </div>
-                        <span className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-amber/25 bg-amber/10 sm:h-20 sm:w-20">
+                        <span className="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden sm:h-32 sm:w-32">
                           <Image
-                            src="/seat-lost-icon.jpeg"
+                            src="https://res.cloudinary.com/dhlqc0ymy/image/upload/v1785405237/seat-loss_fflqfm.png"
                             alt="Seat lost"
                             fill
-                            sizes="80px"
+                            sizes="(min-width: 640px) 128px, 96px"
                             className="object-cover"
                           />
                         </span>
