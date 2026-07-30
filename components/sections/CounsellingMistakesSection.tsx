@@ -154,8 +154,9 @@ export function CounsellingMistakesSection() {
 
                 <h2 className="mt-5 max-w-2xl font-display text-2xl font-bold leading-[1.06] tracking-tight text-white sm:text-3xl md:text-4xl lg:text-5xl">
                   <span className="text-white">One counselling mistake can</span>
+                  {" "}
                   <motion.span
-                    className="block bg-gradient-brand bg-clip-text pb-1 text-transparent"
+                    className="inline bg-gradient-brand bg-clip-text pb-1 text-transparent"
                     animate={{ backgroundPositionX: ["0%", "100%", "0%"] }}
                     transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
                     style={{ backgroundSize: "200% 100%" }}
@@ -169,11 +170,6 @@ export function CounsellingMistakesSection() {
                   document, quota choice, or round decision can change the entire
                   allotment outcome.
                 </p>
-
-                <div className="mt-7 grid w-full max-w-xl grid-cols-1 gap-3 sm:grid-cols-2">
-                  <StatPill label="6 common errors" value="Watch for" />
-                  <StatPill label="Seat safety" value="Stronger checks" />
-                </div>
 
                 <div className="mt-7 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                   <motion.a
@@ -248,12 +244,12 @@ export function CounsellingMistakesSection() {
                             Counselling audit
                           </p>
                         </div>
-                        <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-amber/25 bg-amber/10 sm:h-14 sm:w-14">
+                        <span className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-amber/25 bg-amber/10 sm:h-20 sm:w-20">
                           <Image
                             src="/seat-lost-icon.jpeg"
                             alt="Seat lost"
                             fill
-                            sizes="56px"
+                            sizes="80px"
                             className="object-cover"
                           />
                         </span>
@@ -368,21 +364,6 @@ export function CounsellingMistakesSection() {
         </ScrollReveal>
       </div>
     </section>
-  );
-}
-
-function StatPill({ label, value }: { label: string; value: string }) {
-  return (
-    <motion.div
-      className="rounded-2xl border border-white/10 bg-white/[0.055] px-4 py-3 shadow-sm backdrop-blur-xl"
-      whileHover={{ y: -3, scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 220, damping: 18 }}
-    >
-      <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8cef32]">
-        {label}
-      </div>
-      <div className="mt-1 font-display text-sm font-bold text-white">{value}</div>
-    </motion.div>
   );
 }
 
