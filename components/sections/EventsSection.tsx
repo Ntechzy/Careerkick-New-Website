@@ -198,44 +198,33 @@ export function EventsSection() {
           })}
         </div>
 
-        <ScrollReveal className="mt-10 sm:mt-12 lg:mt-14">
-          <div className="relative overflow-hidden rounded-[1.75rem] border border-[#51A70A]/20 bg-[linear-gradient(135deg,rgba(255,255,255,0.09),rgba(255,255,255,0.03)),linear-gradient(135deg,rgba(7,19,5,0.96),rgba(18,26,16,0.84))] shadow-[0_26px_80px_rgba(0,0,0,0.46),0_0_70px_rgba(81,167,10,0.08)] backdrop-blur-xl">
+        <ScrollReveal className="mt-8 sm:mt-10 lg:mt-12">
+          <div className="relative overflow-hidden rounded-[1.5rem] border border-[#51A70A]/20 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.025)),linear-gradient(135deg,rgba(7,19,5,0.96),rgba(18,26,16,0.82))] shadow-[0_22px_70px_rgba(0,0,0,0.42),0_0_64px_rgba(81,167,10,0.08)] backdrop-blur-xl">
             <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#8cef32]/70 to-transparent" />
-            <div className="pointer-events-none absolute -left-20 bottom-0 h-72 w-72 rounded-full bg-[#51A70A]/12 blur-[120px]" />
-            <div className="pointer-events-none absolute -right-16 top-4 h-64 w-64 rounded-full bg-[#8cef32]/10 blur-[110px]" />
+            <div className="pointer-events-none absolute -left-16 bottom-0 h-56 w-56 rounded-full bg-[#51A70A]/12 blur-[100px]" />
+            <div className="pointer-events-none absolute -right-12 top-0 h-52 w-52 rounded-full bg-[#8cef32]/10 blur-[95px]" />
 
-            <div className="relative grid gap-0 lg:grid-cols-[0.9fr_1.1fr]">
-              <div className="flex flex-col justify-between p-5 sm:p-7 lg:p-9">
-                <div>
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-[#51A70A]/25 bg-[#51A70A]/10 text-[#8cef32] shadow-[0_14px_36px_rgba(81,167,10,0.18)]">
+            <div className="relative grid gap-0 lg:grid-cols-[0.78fr_1.22fr]">
+              <div className="flex items-center gap-4 border-b border-white/10 p-4 sm:p-5 lg:border-b-0 lg:border-r lg:p-6">
+                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#51A70A]/25 bg-[#51A70A]/10 text-[#8cef32] shadow-[0_14px_36px_rgba(81,167,10,0.18)]">
                     <MapPin className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                  <p className="mt-6 font-mono text-xs font-semibold uppercase tracking-[0.24em] text-[#8cef32]">
+                </span>
+                <div>
+                  <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8cef32]">
                     Request Your City
                   </p>
-                  <h3 className="mt-3 font-display text-2xl font-bold leading-tight text-white sm:text-3xl">
-                    Tell us where to host the next counselling event
+                  <h3 className="mt-2 font-display text-xl font-bold leading-tight text-white sm:text-2xl">
+                    Want Careerkick in your city? Ask now, and we will know where the next crowd is waiting.
                   </h3>
-                  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-text-muted sm:text-base lg:text-white">
-                    Students and parents can suggest the next city for a Careerkick event. Share your preferred location, and our team will plan future sessions around the cities with the strongest demand.
-                  </p>
-                </div>
-
-                <div className="mt-7 grid gap-3 text-sm text-white/75 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-                  {["City demand", "Parent interest", "Student access"].map((item) => (
-                    <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3">
-                      <p className="font-semibold text-white">{item}</p>
-                    </div>
-                  ))}
                 </div>
               </div>
 
               <form
                 onSubmit={handleCityRequestSubmit}
-                className="border-t border-white/10 bg-black/20 p-4 sm:p-6 lg:border-l lg:border-t-0 lg:p-8"
+                className="bg-black/[0.18] p-4 sm:p-5 lg:p-6"
               >
-                <div className="rounded-[1.35rem] border border-white/10 bg-white/[0.055] p-4 shadow-[0_16px_42px_rgba(0,0,0,0.22)] sm:p-5">
-                  <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-[1.15rem] border border-white/10 bg-white/[0.055] p-3 shadow-[0_14px_36px_rgba(0,0,0,0.2)] sm:p-4">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     <label className="grid gap-2">
                       <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55">
                         Name
@@ -245,7 +234,7 @@ export function EventsSection() {
                         value={formData.name}
                         onChange={(event) => setFormData((current) => ({ ...current, name: event.target.value }))}
                         placeholder="Your name"
-                        className="min-h-12 rounded-xl border border-white/10 bg-white px-4 py-3 text-sm font-semibold text-[#071305] placeholder:text-[#071305]/55 shadow-[0_12px_28px_rgba(0,0,0,0.16)] transition-shadow focus-visible:shadow-[0_0_0_2px_#51A70A,0_12px_28px_rgba(0,0,0,0.16)]"
+                        className="min-h-11 rounded-xl border border-white/10 bg-white px-3.5 py-2.5 text-sm font-semibold text-[#071305] placeholder:text-[#071305]/55 shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition-shadow focus-visible:shadow-[0_0_0_2px_#51A70A,0_10px_24px_rgba(0,0,0,0.14)]"
                       />
                     </label>
 
@@ -259,7 +248,7 @@ export function EventsSection() {
                         value={formData.phone}
                         onChange={(event) => setFormData((current) => ({ ...current, phone: event.target.value }))}
                         placeholder="Phone number"
-                        className="min-h-12 rounded-xl border border-white/10 bg-white px-4 py-3 text-sm font-semibold text-[#071305] placeholder:text-[#071305]/55 shadow-[0_12px_28px_rgba(0,0,0,0.16)] transition-shadow focus-visible:shadow-[0_0_0_2px_#51A70A,0_12px_28px_rgba(0,0,0,0.16)]"
+                        className="min-h-11 rounded-xl border border-white/10 bg-white px-3.5 py-2.5 text-sm font-semibold text-[#071305] placeholder:text-[#071305]/55 shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition-shadow focus-visible:shadow-[0_0_0_2px_#51A70A,0_10px_24px_rgba(0,0,0,0.14)]"
                       />
                     </label>
 
@@ -272,7 +261,7 @@ export function EventsSection() {
                         value={formData.city}
                         onChange={(event) => setFormData((current) => ({ ...current, city: event.target.value }))}
                         placeholder="City to cover next"
-                        className="min-h-12 rounded-xl border border-white/10 bg-white px-4 py-3 text-sm font-semibold text-[#071305] placeholder:text-[#071305]/55 shadow-[0_12px_28px_rgba(0,0,0,0.16)] transition-shadow focus-visible:shadow-[0_0_0_2px_#51A70A,0_12px_28px_rgba(0,0,0,0.16)]"
+                        className="min-h-11 rounded-xl border border-white/10 bg-white px-3.5 py-2.5 text-sm font-semibold text-[#071305] placeholder:text-[#071305]/55 shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition-shadow focus-visible:shadow-[0_0_0_2px_#51A70A,0_10px_24px_rgba(0,0,0,0.14)]"
                       />
                     </label>
 
@@ -283,7 +272,7 @@ export function EventsSection() {
                       <select
                         value={formData.role}
                         onChange={(event) => setFormData((current) => ({ ...current, role: event.target.value }))}
-                        className="min-h-12 rounded-xl border border-white/10 bg-white px-4 py-3 text-sm font-semibold text-[#071305] shadow-[0_12px_28px_rgba(0,0,0,0.16)] transition-shadow focus-visible:shadow-[0_0_0_2px_#51A70A,0_12px_28px_rgba(0,0,0,0.16)]"
+                        className="min-h-11 rounded-xl border border-white/10 bg-white px-3.5 py-2.5 text-sm font-semibold text-[#071305] shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition-shadow focus-visible:shadow-[0_0_0_2px_#51A70A,0_10px_24px_rgba(0,0,0,0.14)]"
                       >
                         <option>Student</option>
                         <option>Parent</option>
@@ -295,7 +284,7 @@ export function EventsSection() {
                   {message ? (
                     <p
                       className={cn(
-                        "mt-4 rounded-xl border px-4 py-3 text-sm font-semibold",
+                        "mt-3 rounded-xl border px-3.5 py-2.5 text-sm font-semibold",
                         status === "success"
                           ? "border-[#51A70A]/30 bg-[#51A70A]/10 text-[#8cef32]"
                           : "border-[#fbbf24]/30 bg-[#fbbf24]/10 text-[#fbbf24]"
@@ -309,7 +298,7 @@ export function EventsSection() {
                   <button
                     type="submit"
                     disabled={status === "submitting"}
-                    className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-brand px-5 py-3 text-sm font-bold text-base shadow-[0_18px_44px_rgba(81,167,10,0.26)] transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-glow-violet disabled:cursor-not-allowed disabled:opacity-70"
+                    className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-gradient-brand px-5 py-2.5 text-sm font-bold text-base shadow-[0_16px_38px_rgba(81,167,10,0.24)] transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-glow-violet disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {status === "submitting" ? (
                       <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
