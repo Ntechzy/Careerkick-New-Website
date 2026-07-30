@@ -108,8 +108,8 @@ export default async function Home() {
       {/* <StudentImageTestimonialsSection /> */}
       <ImportantEventsSection />
       <EventsSection />
-      <OfficeMapSection />
       <FaqSection />
+      <OfficeMapSection />
       {/* <HowItWorksSection /> */}
       {/* <PlatformSection /> */}
       {/* <CollegeSection /> */}
