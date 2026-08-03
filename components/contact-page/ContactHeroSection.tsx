@@ -2,11 +2,26 @@
 
 import { motion } from "framer-motion";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { SOCIAL_LINKS } from "@/lib/contactLinks";
 
 const stats = [
-  "Admissions support",
-  "Office visits",
-  "Social media reach",
+  {
+    label: "Admissions support",
+    href: "tel:+917393062116",
+    ariaLabel: "Call Careerkick admissions support at 7393062116",
+  },
+  {
+    label: "Office visits",
+    href: "https://maps.app.goo.gl/gSmSq3VtVXv9mLib8",
+    ariaLabel: "Open Careerkick office location in Google Maps",
+    external: true,
+  },
+  {
+    label: "Social media reach",
+    href: SOCIAL_LINKS.instagram,
+    ariaLabel: "Open Careerkick Instagram page",
+    external: true,
+  },
 ];
 
 const fadeUp = {
@@ -36,7 +51,7 @@ export function ContactHeroSection() {
             <span className="text-[#8cef32] text-glow">Careerkick</span>{" "}
             Today!!
           </h1>
-          <p className="mx-auto mt-5 max-w-3xl text-sm leading-relaxed text-white/72 sm:text-base md:text-lg">
+          <p className="relative z-20 mx-auto mt-5 max-w-3xl text-sm font-medium leading-relaxed text-white sm:text-base md:text-lg lg:text-white">
             Reach the team for admissions guidance, form submissions, office
             visits, and social channels that stay close to your counselling
             journey.
@@ -54,13 +69,17 @@ export function ContactHeroSection() {
           }}
         >
           {stats.map((item) => (
-            <motion.div
-              key={item}
+            <motion.a
+              key={item.label}
+              href={item.href}
+              target={item.external ? "_blank" : undefined}
+              rel={item.external ? "noreferrer" : undefined}
+              aria-label={item.ariaLabel}
               variants={fadeUp}
-              className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-3 text-center font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-white/76 backdrop-blur-xl sm:text-xs"
+              className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-3 text-center font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-white/76 backdrop-blur-xl transition-colors hover:border-[#51A70A]/45 hover:bg-[#51A70A]/12 hover:text-white focus-visible:border-[#51A70A]/55 sm:text-xs"
             >
-              {item}
-            </motion.div>
+              {item.label}
+            </motion.a>
           ))}
         </motion.div>
       </div>
