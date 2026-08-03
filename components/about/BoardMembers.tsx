@@ -91,21 +91,23 @@ export default function BoardMembers() {
       <AnimatePresence>
         {selectedMember && (
           <motion.div
-            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/72 px-4 py-6 backdrop-blur-xl"
+            className="fixed inset-0 z-[120] flex items-start justify-center overflow-y-auto bg-black/72 px-4 py-6 backdrop-blur-xl sm:items-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             role="dialog"
             aria-modal="true"
             aria-labelledby="board-member-modal-title"
+            data-lenis-prevent
             onClick={() => setSelectedMember(null)}
           >
             <motion.div
-              className="glass relative max-h-[88dvh] w-full max-w-3xl overflow-y-auto rounded-2xl"
+              className="glass relative my-auto max-h-[calc(100dvh-3rem)] w-full max-w-3xl overflow-y-auto overscroll-contain rounded-2xl"
               initial={{ opacity: 0, y: 28, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 18, scale: 0.98 }}
               transition={{ duration: 0.25 }}
+              data-lenis-prevent
               onClick={(event) => event.stopPropagation()}
             >
               <button
