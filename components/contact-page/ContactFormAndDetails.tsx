@@ -3,6 +3,7 @@
 import type { SVGProps } from "react";
 import { motion } from "framer-motion";
 import {
+  ExternalLink,
   Mail,
   MapPin,
   Phone,
@@ -72,7 +73,12 @@ const contactPoints = [
   },
   {
     label: "Main Office",
-    value: "Kanpur, Uttar Pradesh",
+    value: "117 N 65, Raniganj, Ambedkar Nagar, Navin Nagar, Kakadeo, Kanpur, Uttar Pradesh 208025",
+    addressLines: [
+      "117 N 65, Raniganj",
+      "Ambedkar Nagar, Navin Nagar, Kakadeo",
+      "Kanpur, Uttar Pradesh 208025",
+    ],
     href: "https://www.google.com/maps/search/?api=1&query=117%20N%2065%20Rani%20Ganj%20Ambedkar%20Nagar%20Navin%20Nagar%20Kakadeo%20Kanpur%20Uttar%20Pradesh%20208025",
     icon: MapPin,
   },
@@ -176,20 +182,53 @@ export function ContactFormAndDetails() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-80px" }}
                   transition={{ duration: 0.5, delay: 0.12 + index * 0.06, ease: cardEase }}
-                  className="group rounded-[1.35rem] border border-white/10 bg-white/[0.04] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-[#51A70A]/35 hover:bg-[#51A70A]/10"
+                  className={`group rounded-[1.35rem] border border-white/10 bg-white/[0.04] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-[#51A70A]/35 hover:bg-[#51A70A]/10 ${
+                    item.addressLines || item.label === "WhatsApp"
+                      ? "sm:col-span-2"
+                      : ""
+                  } ${
+                    item.addressLines
+                      ? "bg-[linear-gradient(135deg,rgba(81,167,10,0.12),rgba(255,255,255,0.035))]"
+                      : ""
+                  }`}
                 >
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 sm:items-center">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#51A70A]/20 bg-[#51A70A]/10 text-[#8cef32]">
                       <item.icon className="h-4 w-4" />
                     </span>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-white/55">
                         {item.label}
                       </p>
-                      <p className="mt-1 font-display text-sm font-semibold text-white transition-colors group-hover:text-[#8cef32]">
-                        {item.value}
-                      </p>
+                      {item.addressLines ? (
+                        <div className="mt-2">
+                          <address className="not-italic">
+                            {item.addressLines.map((line) => (
+                              <span
+                                key={line}
+                                className="block text-sm font-medium leading-relaxed text-white transition-colors group-hover:text-[#eaffdc]"
+                              >
+                                {line}
+                              </span>
+                            ))}
+                          </address>
+                          <span className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#51A70A]/25 bg-[#51A70A]/10 px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8cef32] transition-colors group-hover:border-[#8cef32]/40 group-hover:bg-[#51A70A]/15">
+                            Open in Maps
+                            <ExternalLink className="h-3 w-3" />
+                          </span>
+                        </div>
+                      ) : (
+                        <p className="mt-1 font-display text-sm font-semibold text-white transition-colors group-hover:text-[#8cef32]">
+                          {item.value}
+                        </p>
+                      )}
                     </div>
+                    {item.label === "WhatsApp" ? (
+                      <span className="hidden shrink-0 items-center gap-2 rounded-full border border-[#51A70A]/25 bg-[#51A70A]/10 px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8cef32] transition-colors group-hover:border-[#8cef32]/40 group-hover:bg-[#51A70A]/15 sm:inline-flex">
+                        Start Chat
+                        <ExternalLink className="h-3 w-3" />
+                      </span>
+                    ) : null}
                   </div>
                 </motion.a>
               ))}
