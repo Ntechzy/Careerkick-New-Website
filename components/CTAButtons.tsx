@@ -1,35 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import {
+  COUNSELLING_PACKAGES,
+  formatIndianCurrency,
+} from "@/lib/counsellingPackages";
 import { getWhatsAppLink } from "@/lib/contactLinks";
-
-const packages = [
-  {
-    title: "Ayush Counselling",
-    description: "Govt + Private Colleges",
-    price: "INR 25,000 +GST",
-    highlight: false,
-  },
-  {
-    title: "MBBS Counselling (Govt College)",
-    description: "Complete admission support",
-    price: "INR 30,000 +GST",
-    highlight: true,
-  },
-  {
-    title: "MBBS Counselling (Private College)",
-    description: "Complete admission support",
-    price: "INR 50,000 +GST",
-    highlight: false,
-  },
-  {
-    title: "BDS / BSc Nursing / Veterinary / BPT",
-    description: "All-inclusive counselling support",
-    price: "INR 20,000 +GST",
-    highlight: false,
-  },
-] as const;
 
 export function CTAButtons() {
   const [packagesOpen, setPackagesOpen] = useState(false);
@@ -109,9 +87,9 @@ export function CTAButtons() {
 
             <div className="overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {packages.map((item) => (
+                {COUNSELLING_PACKAGES.map((item) => (
                   <article
-                    key={item.title}
+                    key={item.id}
                     className={`flex min-h-[15rem] flex-col rounded-2xl border bg-white p-5 shadow-[0_14px_38px_rgba(0,0,0,0.08)] ${
                       item.highlight ? "border-[#56b016]/35 ring-1 ring-[#56b016]/20" : "border-slate-200"
                     }`}
@@ -124,21 +102,26 @@ export function CTAButtons() {
                     <h3 className="font-display text-xl font-semibold leading-tight text-slate-950">
                       {item.title}
                     </h3>
+                    <p className="mt-1 text-sm font-semibold text-[#56b016]">
+                      {item.subtitle}
+                    </p>
                     <p className="mt-3 text-sm leading-relaxed text-slate-600">
                       {item.description}
                     </p>
                     <div className="mt-auto pt-6">
                       <p className="font-display text-2xl font-bold text-[#56b016]">
-                        {item.price}
+                        {formatIndianCurrency(item.baseAmount)}
                       </p>
-                      <a
-                        href={getWhatsAppLink(`Hello, I am interested in the ${item.title} plan priced at ${item.price}. Could you please provide more details?`)}
-                        target="_blank"
-                        rel="noreferrer"
+                      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">
+                        +GST
+                      </p>
+                      <Link
+                        href={`/checkout?package=${item.id}`}
+                        onClick={() => setPackagesOpen(false)}
                         className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-[#56b016] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#4b9914]"
                       >
-                        Get Guidance
-                      </a>
+                        Select Plan
+                      </Link>
                     </div>
                   </article>
                 ))}
@@ -150,4 +133,3 @@ export function CTAButtons() {
     </>
   );
 }
-
