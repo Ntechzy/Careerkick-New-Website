@@ -14,6 +14,11 @@ export type CounsellingPackage = {
 
 export const GST_RATE = 0.18;
 
+export const COUNSELLING_PAYMENT_NOTES = [
+  "100% payment is required before participating in the counselling process.",
+  "If the candidate does not secure a college admission, the counselling fee will be refunded after deducting the applicable 18% GST.",
+] as const;
+
 export const COURSE_OPTIONS = [
   "MBBS",
   "BDS",

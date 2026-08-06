@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   COUNSELLING_PACKAGES,
+  COUNSELLING_PAYMENT_NOTES,
   formatIndianCurrency,
 } from "@/lib/counsellingPackages";
 
@@ -90,6 +91,16 @@ export default function PricingSection() {
               </div>
             </article>
           ))}
+        </div>
+        <div className="mx-auto mt-6 max-w-4xl rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-left shadow-[0_16px_36px_rgba(220,38,38,0.08)] sm:px-5">
+          <ul className="space-y-2 text-sm font-semibold leading-relaxed text-red-700 sm:text-base">
+            {COUNSELLING_PAYMENT_NOTES.map((note) => (
+              <li key={note} className="flex gap-2">
+                <span aria-hidden="true">•</span>
+                <span>{note}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import {
   calculateCounsellingTotal,
+  COUNSELLING_PAYMENT_NOTES,
   COURSE_OPTIONS,
   formatIndianCurrency,
   type CounsellingPackage,
@@ -360,18 +361,16 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
         </header>
 
         <form onSubmit={handleSubmit} noValidate className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.95fr)] lg:items-start">
-          <div className="space-y-6 lg:order-1">
+          <div className="lg:order-1">
             <StudentDetailsForm
               form={form}
               errors={errors}
               districtOptions={districtOptions}
               updateField={updateField}
             />
-            <PostPaymentSteps />
-            <CheckoutSupport />
           </div>
 
-          <aside className="space-y-5 lg:sticky lg:top-24 lg:order-2">
+          <aside className="space-y-5 lg:sticky lg:top-24 lg:order-2 lg:row-span-2">
             <SelectedPlanCard selectedPackage={selectedPackage} />
             <OrderSummary
               pricing={pricing}
@@ -381,7 +380,13 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
               submitting={submitting}
               updateField={updateField}
             />
+            <PaymentPolicyNotes />
           </aside>
+
+          <div className="space-y-6 lg:order-3">
+            <PostPaymentSteps />
+            <CheckoutSupport />
+          </div>
         </form>
       </div>
     </main>
@@ -773,6 +778,21 @@ function OrderSummary({
         <Lock className="h-4 w-4 text-[#8cef32]" />
         Secure payment
       </p>
+    </section>
+  );
+}
+
+function PaymentPolicyNotes() {
+  return (
+    <section className="rounded-lg border border-red-300/30 bg-red-500/10 p-4 shadow-card sm:p-5">
+      <ul className="space-y-2 text-sm font-semibold leading-relaxed text-red-100">
+        {COUNSELLING_PAYMENT_NOTES.map((note) => (
+          <li key={note} className="flex gap-2">
+            <span aria-hidden="true">•</span>
+            <span>{note}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
