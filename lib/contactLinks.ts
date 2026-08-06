@@ -19,7 +19,10 @@ export const SOCIAL_ICON_URLS = {
 } as const;
 
 export function getWhatsAppLink(message = "Hello, I want to start my counselling journey.") {
-  return `https://wa.me/91${CONTACT_NUMBERS.primaryDigits.slice(2)}?text=${encodeURIComponent(message)}`;
+  const digits = CONTACT_NUMBERS.primaryDigits.replace(/\D/g, "");
+  const numberWithCountryCode = digits.startsWith("91") && digits.length === 12 ? digits : `91${digits}`;
+
+  return `https://wa.me/${numberWithCountryCode}?text=${encodeURIComponent(message)}`;
 }
 
 export function getTelLink(digits: string) {
