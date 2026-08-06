@@ -13,6 +13,7 @@ type InitiatePaymentRequest = {
   whatsapp?: string;
   course?: string;
   stateOrDomicile?: string;
+  district?: string;
   scoreOrRank?: string;
   applicationNumber?: string;
   category?: string;
@@ -65,7 +66,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Course interested in is required." }, { status: 400 });
   }
 
-  const pricing = calculateCounsellingTotal(selectedPackage.baseAmount);
+  const pricing = calculateCounsellingTotal(selectedPackage.baseAmount, selectedPackage.taxRate);
   const email = (body.email ?? "").trim().toLowerCase();
   const mobile = (body.mobile ?? "").replace(/\D/g, "");
   const whatsapp = (body.whatsapp ?? "").replace(/\D/g, "");
@@ -76,6 +77,7 @@ export async function POST(request: Request) {
     whatsapp,
     course: body.course.trim(),
     stateOrDomicile: body.stateOrDomicile?.trim(),
+    district: body.district?.trim(),
     scoreOrRank: body.scoreOrRank?.trim(),
     applicationNumber: body.applicationNumber?.trim(),
     category: body.category?.trim(),

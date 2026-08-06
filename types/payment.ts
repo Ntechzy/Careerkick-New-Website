@@ -8,6 +8,7 @@ export type CounsellingEnrollmentPayload = {
   whatsapp: string;
   course: string;
   stateOrDomicile?: string;
+  district?: string;
   scoreOrRank?: string;
   applicationNumber?: string;
   category?: string;
@@ -21,4 +22,3 @@ export type CounsellingEnrollmentPayload = {
   transactionId?: string;
   createdAt?: string;
 };
-

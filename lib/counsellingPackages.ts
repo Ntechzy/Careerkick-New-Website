@@ -4,6 +4,7 @@ export type CounsellingPackage = {
   subtitle: string;
   description: string;
   baseAmount: number;
+  taxRate?: number;
   highlight?: boolean;
   image?: string;
   defaultCourse: string;
@@ -28,32 +29,11 @@ export const COURSE_OPTIONS = [
 
 export const COUNSELLING_PACKAGES: CounsellingPackage[] = [
   {
-    id: "ayush-counselling",
-    title: "Ayush Counselling",
-    subtitle: "Govt + Private Colleges",
-    description: "Counselling support for AYUSH admission pathways.",
-    baseAmount: 25000,
-    defaultCourse: "BAMS",
-    image:
-      "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1775547635/ayush_lqnzhn.webp",
-    inclusions: [
-      "Counselling guidance",
-      "Counselling registration guidance",
-      "College selection assistance",
-      "Choice filling support",
-      "Round-wise counselling support",
-      "Documentation guidance",
-      "Seat allotment guidance",
-      "Admission process assistance",
-    ],
-    validity:
-      "Valid for the applicable counselling session/cycle and counselling rounds covered under the selected package.",
-  },
-  {
     id: "mbbs-govt-counselling",
-    title: "MBBS Counselling",
-    subtitle: "Government College",
-    description: "Complete admission support",
+    title: "Government MBBS / BDS / AYUSH / Veterinary / Other Courses Counselling",
+    subtitle: "Government Counselling",
+    description:
+      "Complete counselling support for Government MBBS, BDS, BAMS, BHMS, BUMS, Veterinary and other medical-course admissions.",
     baseAmount: 30000,
     highlight: true,
     defaultCourse: "MBBS",
@@ -74,10 +54,12 @@ export const COUNSELLING_PACKAGES: CounsellingPackage[] = [
   },
   {
     id: "mbbs-private-counselling",
-    title: "MBBS Counselling",
-    subtitle: "Private College",
-    description: "Complete admission support",
-    baseAmount: 50000,
+    title: "Private MBBS Counselling",
+    subtitle: "Private MBBS",
+    description:
+      "End-to-end guidance for private MBBS admissions, from choice filling to final admission.",
+    baseAmount: 75000,
+    taxRate: 0,
     defaultCourse: "MBBS",
     image:
       "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1775547637/mbbs_private_xlx12n.webp",
@@ -95,14 +77,16 @@ export const COUNSELLING_PACKAGES: CounsellingPackage[] = [
       "Valid for the applicable counselling session/cycle and counselling rounds covered under the selected package.",
   },
   {
-    id: "allied-medical-counselling",
-    title: "BDS / BSc Nursing / Veterinary / BPT",
-    subtitle: "Allied Medical Courses",
-    description: "All-inclusive counselling support",
-    baseAmount: 20000,
-    defaultCourse: "BDS",
+    id: "google-meet-nikhil-sir",
+    title: "Google Meet with Nikhil Sir",
+    subtitle: "One-to-one Counselling",
+    description:
+      "One-to-one professional counselling discussion and personalised guidance.",
+    baseAmount: 5000,
+    taxRate: 0,
+    defaultCourse: "Other",
     image:
-      "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1775547636/bds_sldzxw.webp",
+      "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1775547637/mbbs_private_xlx12n.webp",
     inclusions: [
       "Counselling guidance",
       "Counselling registration guidance",
@@ -122,8 +106,8 @@ export function getCounsellingPackage(packageId?: string | null) {
   return COUNSELLING_PACKAGES.find((item) => item.id === packageId);
 }
 
-export function calculateCounsellingTotal(baseAmount: number) {
-  const taxAmount = Math.round(baseAmount * GST_RATE);
+export function calculateCounsellingTotal(baseAmount: number, taxRate = GST_RATE) {
+  const taxAmount = Math.round(baseAmount * taxRate);
 
   return {
     baseAmount,
@@ -140,4 +124,3 @@ export function formatIndianCurrency(amount: number) {
     maximumFractionDigits: 0,
   }).format(amount);
 }
-
