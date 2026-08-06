@@ -146,7 +146,6 @@ export function ContactFormAndDetails() {
             <div className="min-h-[560px] rounded-[1.2rem] bg-white p-3 text-slate-950 sm:min-h-[620px] sm:p-4">
               <div id="formsID7375" className="min-h-[520px] sm:min-h-[580px]" />
             </div>
-            <StudentFormLoader />
           </div>
         </motion.div>
 
@@ -174,26 +173,18 @@ export function ContactFormAndDetails() {
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {contactPoints.map((item, index) => (
-                <motion.a
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={item.href.startsWith("http") ? "noreferrer" : undefined}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-80px" }}
-                  transition={{ duration: 0.5, delay: 0.12 + index * 0.06, ease: cardEase }}
-                  className={`group rounded-[1.35rem] border border-white/10 bg-white/[0.04] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-[#51A70A]/35 hover:bg-[#51A70A]/10 ${
-                    item.addressLines || item.label === "WhatsApp"
-                      ? "sm:col-span-2"
-                      : ""
-                  } ${
-                    item.addressLines
-                      ? "bg-[linear-gradient(135deg,rgba(81,167,10,0.12),rgba(255,255,255,0.035))]"
-                      : ""
-                  }`}
-                >
+              {contactPoints.map((item, index) => {
+                const isMainOffice = Boolean(item.addressLines);
+                const cardClassName = `group rounded-[1.35rem] border border-white/10 bg-white/[0.04] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-[#51A70A]/35 hover:bg-[#51A70A]/10 ${
+                  isMainOffice || item.label === "WhatsApp"
+                    ? "sm:col-span-2"
+                    : ""
+                } ${
+                  isMainOffice
+                    ? "cursor-default bg-[linear-gradient(135deg,rgba(81,167,10,0.12),rgba(255,255,255,0.035))]"
+                    : ""
+                }`;
+                const cardContent = (
                   <div className="flex items-start gap-3 sm:items-center">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#51A70A]/20 bg-[#51A70A]/10 text-[#8cef32]">
                       <item.icon className="h-4 w-4" />
@@ -214,10 +205,7 @@ export function ContactFormAndDetails() {
                               </span>
                             ))}
                           </address>
-                          <span className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#51A70A]/25 bg-[#51A70A]/10 px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8cef32] transition-colors group-hover:border-[#8cef32]/40 group-hover:bg-[#51A70A]/15">
-                            Open in Maps
-                            <ExternalLink className="h-3 w-3" />
-                          </span>
+                          
                         </div>
                       ) : (
                         <p className="mt-1 font-display text-sm font-semibold text-white transition-colors group-hover:text-[#8cef32]">
@@ -232,8 +220,36 @@ export function ContactFormAndDetails() {
                       </span>
                     ) : null}
                   </div>
-                </motion.a>
-              ))}
+                );
+
+                return isMainOffice ? (
+                  <motion.div
+                    key={item.label}
+                    role="note"
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ duration: 0.5, delay: 0.12 + index * 0.06, ease: cardEase }}
+                    className={cardClassName}
+                  >
+                    {cardContent}
+                  </motion.div>
+                ) : (
+                  <motion.a
+                    key={item.label}
+                    href={item.href}
+                    target={item.href.startsWith("http") ? "_blank" : undefined}
+                    rel={item.href.startsWith("http") ? "noreferrer" : undefined}
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ duration: 0.5, delay: 0.12 + index * 0.06, ease: cardEase }}
+                    className={cardClassName}
+                  >
+                    {cardContent}
+                  </motion.a>
+                );
+              })}
             </div>
 
             <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl sm:p-5">
