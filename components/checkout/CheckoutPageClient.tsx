@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type React from "react";
 import { useMemo, useState } from "react";
+import { getAllStates, getDistricts } from "india-state-district";
 import { z } from "zod";
 import {
   AlertCircle,
@@ -37,6 +38,7 @@ type FormState = {
   whatsapp: string;
   course: string;
   stateOrDomicile: string;
+  district: string;
   scoreOrRank: string;
   applicationNumber: string;
   category: string;
@@ -53,6 +55,17 @@ const CATEGORY_OPTIONS = [
   "ST",
 ] as const;
 
+const INDIAN_STATES = getAllStates();
+const STATE_OPTIONS = INDIAN_STATES.map((state) => ({
+  value: state.code,
+  label: state.name,
+}));
+const STATE_CODES = INDIAN_STATES.map((state) => state.code);
+
+function getStateName(stateCode: string) {
+  return INDIAN_STATES.find((state) => state.code === stateCode)?.name ?? stateCode;
+}
+
 const initialForm = (selectedPackage: CounsellingPackage | null): FormState => ({
   studentName: "",
   mobile: "",
@@ -60,6 +73,7 @@ const initialForm = (selectedPackage: CounsellingPackage | null): FormState => (
   whatsapp: "",
   course: selectedPackage?.defaultCourse ?? "",
   stateOrDomicile: "",
+  district: "",
   scoreOrRank: "",
   applicationNumber: "",
   category: "",
@@ -138,8 +152,11 @@ const checkoutFormSchema = z.object({
   stateOrDomicile: z
     .string()
     .trim()
-    .max(60, "State / domicile should be 60 characters or less.")
-    .regex(/^[A-Za-z .&'-]*$/, "Use a valid Indian state or domicile name."),
+    .refine(
+      (value) => !value || STATE_CODES.includes(value),
+      "Select a valid Indian state or domicile.",
+    ),
+  district: z.string().trim().max(80, "District should be 80 characters or less."),
   scoreOrRank: z
     .string()
     .trim()
@@ -160,6 +177,20 @@ const checkoutFormSchema = z.object({
   policiesAccepted: z.literal(true, {
     errorMap: () => ({ message: "Please accept the policies before payment." }),
   }),
+}).superRefine((values, context) => {
+  if (!values.district) {
+    return;
+  }
+
+  const districts = values.stateOrDomicile ? getDistricts(values.stateOrDomicile) : [];
+
+  if (!districts.includes(values.district)) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["district"],
+      message: "Select a valid district for the selected state.",
+    });
+  }
 });
 
 function getFieldError<Key extends keyof FormState>(field: Key, values: FormState) {
@@ -193,23 +224,32 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
   const [form, setForm] = useState<FormState>(() => initialForm(selectedPackage));
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
+  const districtOptions = useMemo(
+    () => (form.stateOrDomicile ? getDistricts(form.stateOrDomicile) : []),
+    [form.stateOrDomicile],
+  );
 
   const pricing = useMemo(
     () =>
       selectedPackage
-        ? calculateCounsellingTotal(selectedPackage.baseAmount)
+        ? calculateCounsellingTotal(selectedPackage.baseAmount, selectedPackage.taxRate)
         : null,
     [selectedPackage],
   );
 
   const updateField = <Key extends keyof FormState>(field: Key, value: FormState[Key]) => {
     setForm((current) => {
-      const nextForm = { ...current, [field]: value };
+      const nextForm = {
+        ...current,
+        [field]: value,
+        ...(field === "stateOrDomicile" ? { district: "" } : {}),
+      };
       const nextFieldError = getFieldError(field, nextForm);
 
       setErrors((currentErrors) => ({
         ...currentErrors,
         [field]: nextFieldError,
+        ...(field === "stateOrDomicile" ? { district: undefined } : {}),
         submit: undefined,
       }));
 
@@ -245,7 +285,8 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
           email: form.email,
           whatsapp: normalizeIndianMobile(form.whatsapp),
           course: form.course,
-          stateOrDomicile: form.stateOrDomicile,
+          stateOrDomicile: form.stateOrDomicile ? getStateName(form.stateOrDomicile) : "",
+          district: form.district,
           scoreOrRank: form.scoreOrRank,
           applicationNumber: form.applicationNumber,
           category: form.category,
@@ -320,7 +361,12 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
 
         <form onSubmit={handleSubmit} noValidate className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.95fr)] lg:items-start">
           <div className="space-y-6 lg:order-1">
-            <StudentDetailsForm form={form} errors={errors} updateField={updateField} />
+            <StudentDetailsForm
+              form={form}
+              errors={errors}
+              districtOptions={districtOptions}
+              updateField={updateField}
+            />
             <PostPaymentSteps />
             <CheckoutSupport />
           </div>
@@ -355,10 +401,12 @@ function Background() {
 function StudentDetailsForm({
   form,
   errors,
+  districtOptions,
   updateField,
 }: {
   form: FormState;
   errors: FormErrors;
+  districtOptions: string[];
   updateField: <Key extends keyof FormState>(field: Key, value: FormState[Key]) => void;
 }) {
   return (
@@ -417,11 +465,24 @@ function StudentDetailsForm({
           placeholder="Select course"
           onChange={(value) => updateField("course", value)}
         />
-        <TextField
+        <SelectField
           id="stateOrDomicile"
           label="State / Domicile"
           value={form.stateOrDomicile}
+          error={errors.stateOrDomicile}
+          options={STATE_OPTIONS}
+          placeholder="Select state"
           onChange={(value) => updateField("stateOrDomicile", value)}
+        />
+        <SelectField
+          id="district"
+          label="District"
+          value={form.district}
+          error={errors.district}
+          options={districtOptions}
+          placeholder={form.stateOrDomicile ? "Select district" : "Select state first"}
+          disabled={!form.stateOrDomicile}
+          onChange={(value) => updateField("district", value)}
         />
         <TextField
           id="scoreOrRank"
@@ -507,6 +568,7 @@ function SelectField({
   required,
   options,
   placeholder,
+  disabled,
   onChange,
 }: {
   id: keyof FormState;
@@ -514,8 +576,9 @@ function SelectField({
   value: string;
   error?: string;
   required?: boolean;
-  options: readonly string[];
+  options: readonly (string | { value: string; label: string })[];
   placeholder: string;
+  disabled?: boolean;
   onChange: (value: string) => void;
 }) {
   const errorId = `${id}-error`;
@@ -530,18 +593,22 @@ function SelectField({
         id={id}
         value={value}
         required={required}
+        disabled={disabled}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? errorId : undefined}
         onChange={(event) => onChange(event.target.value)}
         className={cn(
-          "mt-2 h-12 w-full rounded-lg border bg-white px-4 text-sm font-semibold text-[#071305] shadow-inner transition focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/20",
+          "mt-2 h-12 w-full rounded-lg border bg-white px-4 text-sm font-semibold text-[#071305] shadow-inner transition focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/20 disabled:cursor-not-allowed disabled:bg-white/70 disabled:text-[#071305]/55",
           error ? "border-red-300" : "border-white/10",
         )}
       >
         <option value="">{placeholder}</option>
         {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
+          <option
+            key={typeof option === "string" ? option : option.value}
+            value={typeof option === "string" ? option : option.value}
+          >
+            {typeof option === "string" ? option : option.label}
           </option>
         ))}
       </select>
@@ -623,10 +690,12 @@ function OrderSummary({
       <h2 className="font-display text-2xl font-semibold">Order Summary</h2>
       <div className="mt-5 space-y-3 border-b border-white/10 pb-5 text-sm">
         <SummaryRow label="Counselling Fee" value={formatIndianCurrency(pricing.baseAmount)} />
-        <SummaryRow
-          label={`GST (${Math.round(pricing.taxRate * 100)}%)`}
-          value={formatIndianCurrency(pricing.taxAmount)}
-        />
+        {pricing.taxRate > 0 ? (
+          <SummaryRow
+            label={`GST (${Math.round(pricing.taxRate * 100)}%)`}
+            value={formatIndianCurrency(pricing.taxAmount)}
+          />
+        ) : null}
       </div>
       <div className="mt-5 flex items-end justify-between gap-4">
         <div>

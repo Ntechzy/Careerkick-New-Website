@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import {
@@ -9,20 +10,18 @@ import {
 } from "@/lib/counsellingPackages";
 import { getWhatsAppLink } from "@/lib/contactLinks";
 
-export function CTAButtons() {
-  const [packagesOpen, setPackagesOpen] = useState(false);
+type CounsellingPackagesModalProps = {
+  onClose: () => void;
+};
 
+export function CounsellingPackagesModal({ onClose }: CounsellingPackagesModalProps) {
   useEffect(() => {
-    if (!packagesOpen) {
-      return;
-    }
-
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setPackagesOpen(false);
+        onClose();
       }
     };
 
@@ -32,7 +31,95 @@ export function CTAButtons() {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [packagesOpen]);
+  }, [onClose]);
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 px-3 py-6 backdrop-blur-md sm:px-5 sm:py-8"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="counselling-packages-title"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#fafaf6] text-slate-900 shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
+        <div className="sticky top-0 z-10 border-b border-slate-200 bg-[#fafaf6]/95 px-4 py-5 text-center backdrop-blur sm:px-6 sm:py-6">
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-sm font-bold text-slate-700 transition-colors hover:border-[#56b016]/40 hover:text-[#56b016] sm:right-4 sm:top-4"
+            aria-label="Close counselling packages"
+          >
+            X
+          </button>
+          <p className="px-10 font-mono text-[10px] font-semibold uppercase tracking-[0.32em] text-[#56b016] sm:text-xs">
+            Paid Counselling
+          </p>
+          <h2 id="counselling-packages-title" className="mx-auto mt-2 max-w-3xl px-2 font-display text-2xl font-bold leading-tight text-slate-950 sm:text-3xl md:text-4xl">
+            Designed for Medical & Allied Courses
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+            Choose the support that matches your course, budget, and admission goals.
+          </p>
+        </div>
+
+        <div className="overflow-y-auto px-4 py-5 sm:px-6 sm:py-7">
+          <div className="mx-auto grid max-w-3xl gap-4 md:max-w-none md:grid-cols-3 md:gap-5">
+            {COUNSELLING_PACKAGES.map((item) => (
+              <article
+                key={item.id}
+                className={`flex min-h-[22rem] flex-col rounded-2xl border bg-white p-5 text-center shadow-[0_14px_38px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1 sm:p-6 md:min-h-[25rem] ${
+                  item.highlight ? "border-[#56b016]/35 ring-1 ring-[#56b016]/20" : "border-slate-200"
+                }`}
+              >
+                {item.highlight && (
+                  <span className="mx-auto mb-4 w-fit rounded-full bg-[#56b016] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
+                    Most Popular
+                  </span>
+                )}
+                <h3 className="mx-auto max-w-[16rem] font-display text-xl font-semibold leading-tight text-slate-950 sm:text-2xl md:text-xl">
+                  {item.title}
+                </h3>
+                <p className="mt-1 text-sm font-semibold text-[#56b016]">
+                  {item.subtitle}
+                </p>
+                <p className="mx-auto mt-4 max-w-[17rem] text-sm leading-relaxed text-slate-600">
+                  {item.description}
+                </p>
+                <div className="mt-auto pt-7">
+                  <p className="font-display text-3xl font-bold text-[#56b016]">
+                    {formatIndianCurrency(item.baseAmount)}
+                  </p>
+                  {(item.taxRate ?? 0.18) > 0 ? (
+                    <p className="mt-1 h-4 text-xs uppercase tracking-[0.18em] text-slate-400">
+                      +GST
+                    </p>
+                  ) : (
+                    <span aria-hidden="true" className="mt-1 block h-4" />
+                  )}
+                  <Link
+                    href={`/checkout?package=${item.id}`}
+                    onClick={onClose}
+                    className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#56b016] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#4b9914]"
+                  >
+                    Select Plan
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+export function CTAButtons() {
+  const [packagesOpen, setPackagesOpen] = useState(false);
 
   return (
     <>
@@ -52,84 +139,9 @@ export function CTAButtons() {
         </button>
       </div>
 
-      {packagesOpen && (
-        <div
-          className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/70 px-3 py-4 backdrop-blur-md sm:px-5"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="counselling-packages-title"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) {
-              setPackagesOpen(false);
-            }
-          }}
-        >
-          <div className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#fafaf6] text-slate-900 shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
-            <div className="sticky top-0 z-10 border-b border-slate-200 bg-[#fafaf6]/95 px-4 py-4 backdrop-blur sm:px-6">
-              <button
-                type="button"
-                onClick={() => setPackagesOpen(false)}
-                className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-sm font-bold text-slate-700 transition-colors hover:border-[#56b016]/40 hover:text-[#56b016] sm:right-4 sm:top-4"
-                aria-label="Close counselling packages"
-              >
-                X
-              </button>
-              <p className="pr-12 font-mono text-[10px] font-semibold uppercase tracking-[0.32em] text-[#56b016] sm:text-xs">
-                Paid Counselling
-              </p>
-              <h2 id="counselling-packages-title" className="mt-2 pr-12 font-display text-2xl font-bold leading-tight text-slate-950 sm:text-3xl md:text-4xl">
-                Designed for Medical & Allied Courses
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-                Choose the support that matches your course, budget, and admission goals.
-              </p>
-            </div>
-
-            <div className="overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {COUNSELLING_PACKAGES.map((item) => (
-                  <article
-                    key={item.id}
-                    className={`flex min-h-[15rem] flex-col rounded-2xl border bg-white p-5 shadow-[0_14px_38px_rgba(0,0,0,0.08)] ${
-                      item.highlight ? "border-[#56b016]/35 ring-1 ring-[#56b016]/20" : "border-slate-200"
-                    }`}
-                  >
-                    {item.highlight && (
-                      <span className="mb-4 w-fit rounded-full bg-[#56b016] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
-                        Most Popular
-                      </span>
-                    )}
-                    <h3 className="font-display text-xl font-semibold leading-tight text-slate-950">
-                      {item.title}
-                    </h3>
-                    <p className="mt-1 text-sm font-semibold text-[#56b016]">
-                      {item.subtitle}
-                    </p>
-                    <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                      {item.description}
-                    </p>
-                    <div className="mt-auto pt-6">
-                      <p className="font-display text-2xl font-bold text-[#56b016]">
-                        {formatIndianCurrency(item.baseAmount)}
-                      </p>
-                      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">
-                        +GST
-                      </p>
-                      <Link
-                        href={`/checkout?package=${item.id}`}
-                        onClick={() => setPackagesOpen(false)}
-                        className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-[#56b016] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#4b9914]"
-                      >
-                        Select Plan
-                      </Link>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {packagesOpen ? (
+        <CounsellingPackagesModal onClose={() => setPackagesOpen(false)} />
+      ) : null}
     </>
   );
 }

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { NAV_LINKS } from "@/lib/constants";
+import { CounsellingPackagesModal } from "@/components/CTAButtons";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +15,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
+  const [packagesOpen, setPackagesOpen] = useState(false);
   const [desktopOpenLink, setDesktopOpenLink] = useState<string | null>(null);
   const [expandedMobileLink, setExpandedMobileLink] = useState<string | null>(null);
   const phoneNumber = "7393062116";
@@ -162,8 +164,12 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <MagneticButton href={`tel:${phoneNumber}`} className="px-5 py-2 text-sm">
-            Book Free Call
+          <MagneticButton
+            type="button"
+            onClick={() => setPackagesOpen(true)}
+            className="px-5 py-2 text-sm"
+          >
+            Get Counselling
           </MagneticButton>
 
           <div
@@ -320,8 +326,15 @@ export function Navbar() {
               </div>
               
               <div className="mt-auto w-full shrink-0 space-y-3 pt-6">
-                <MagneticButton href={`tel:${phoneNumber}`} className="w-full py-4 text-base">
-                  Book Free Call
+                <MagneticButton
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    setPackagesOpen(true);
+                  }}
+                  className="w-full py-4 text-base"
+                >
+                  Get Counselling
                 </MagneticButton>
                 <motion.a
                   href={`tel:${phoneNumber}`}
@@ -339,6 +352,9 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+      {packagesOpen ? (
+        <CounsellingPackagesModal onClose={() => setPackagesOpen(false)} />
+      ) : null}
     </header>
   );
 }
