@@ -56,7 +56,17 @@ export function StudentFormLoader({
     const script = document.createElement("script");
     script.id = STUDENT_FORM_SCRIPT_ID;
     script.type = "module";
-    script.src = scriptUrl;
+    const reloadedScriptUrl = new URL(scriptUrl, window.location.href);
+    reloadedScriptUrl.searchParams.set("ckReload", Date.now().toString());
+    script.src = reloadedScriptUrl.href;
+
+    script.setAttribute("path", JSON.stringify(paths));
+    script.setAttribute("divid", formContainerId);
+    script.setAttribute("courses", JSON.stringify(courses));
+    script.setAttribute("styles", styles);
+    script.setAttribute("logo", logo);
+    script.setAttribute("contact", contact);
+
     script.dataset.path = JSON.stringify(paths);
     script.dataset.divid = formContainerId;
     script.dataset.courses = JSON.stringify(courses);
