@@ -8,12 +8,14 @@ import { useMemo, useState } from "react";
 import { getAllStates, getDistricts } from "india-state-district";
 import {
   AlertCircle,
+  ArrowDown,
   ArrowLeft,
   Check,
   ChevronDown,
   IndianRupee,
   Loader2,
   Lock,
+  PhoneCall,
   ShieldCheck,
   Tag,
 } from "lucide-react";
@@ -240,12 +242,25 @@ function validateForm(values: FormState, netAmount: number) {
   return errors;
 }
 
+function isStudentDetailsReady(values: FormState) {
+  const requiredStudentFields: Array<keyof FormState> = [
+    "studentName",
+    "mobile",
+    "email",
+    "whatsapp",
+    "course",
+  ];
+
+  return requiredStudentFields.every((field) => !validateField(field, values));
+}
+
 export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps) {
   const router = useRouter();
   const [form, setForm] = useState<FormState>(() => initialForm(selectedPackage));
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [couponOpen, setCouponOpen] = useState(false);
+  const studentDetailsReady = isStudentDetailsReady(form);
   const districtOptions = useMemo(
     () => (form.stateOrDomicile ? getDistricts(form.stateOrDomicile) : []),
     [form.stateOrDomicile],
@@ -349,33 +364,34 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
   }
 
   return (
-    <main className="bg-[#F6F8F5] pb-24 text-slate-900 md:pb-16">
+    <main className="min-h-screen bg-[#F6F8F5] pb-28 text-slate-900 md:pb-16">
       <CheckoutHeader />
-      <div className="mx-auto max-w-[1180px] px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1180px] px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
         <CheckoutProgress />
 
-        <div className="mt-6">
-          <h1 className="text-3xl font-bold text-slate-950 sm:text-4xl">Complete Your Enrollment</h1>
+        <div className="mt-5 sm:mt-6">
+          <h1 className="text-2xl font-bold leading-tight text-slate-950 sm:text-4xl">Complete Your Enrollment</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
             Enter the student&apos;s details and review your counselling package before proceeding to payment.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} noValidate className="mt-7 grid gap-6 lg:grid-cols-[minmax(0,1fr)_370px] lg:items-start">
-          <div className="space-y-5">
+        <form onSubmit={handleSubmit} noValidate className="mt-5 grid gap-5 sm:mt-7 lg:grid-cols-[minmax(0,1fr)_370px] lg:items-start lg:gap-6">
+          <div className="order-1 space-y-4 sm:space-y-5">
             <StudentDetailsForm
               form={form}
               errors={errors}
               districtOptions={districtOptions}
               updateField={updateField}
             />
+            {studentDetailsReady ? <ScrollForPaymentPrompt /> : null}
             <SelectedPlanCard selectedPackage={selectedPackage} />
             <InfoStrip text={selectedPackage.validity} />
             <NextStepsAccordion />
             <PolicyAccordions />
           </div>
 
-          <aside className="lg:sticky lg:top-6">
+          <aside className="order-2 lg:sticky lg:top-6">
             <OrderSummary
               form={form}
               errors={errors}
@@ -400,20 +416,39 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
   );
 }
 
+function ScrollForPaymentPrompt() {
+  return (
+    <div
+      role="status"
+      className="flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-[#276005] shadow-sm md:hidden"
+    >
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#51A70A]">
+        <ArrowDown className="h-5 w-5" />
+      </span>
+      <span>Your details are complete. Scroll down to review the payment summary and continue.</span>
+    </div>
+  );
+}
+
 function CheckoutHeader() {
   return (
     <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4 lg:px-8">
         <Link href="/" className="flex items-center gap-3" aria-label="CareerKick home">
-          <Image src="/logo.png" alt="CareerKick" width={132} height={42} className="h-10 w-auto object-contain" priority />
+          <Image src="/logo.png" alt="CareerKick" width={132} height={42} className="h-8 w-auto object-contain sm:h-10" priority />
         </Link>
-        <div className="flex items-center gap-4 text-sm">
+        <div className="flex min-w-0 items-center gap-2 text-sm sm:gap-4">
           <span className="hidden items-center gap-2 font-semibold text-slate-700 sm:inline-flex">
             <ShieldCheck className="h-4 w-4 text-[#51A70A]" />
             Secure Checkout
           </span>
-          <a href={getTelLink(CONTACT_NUMBERS.primaryDigits)} className="font-semibold text-[#276005]">
-            Need Help? {CONTACT_NUMBERS.primaryDisplay}
+          <a
+            href={getTelLink(CONTACT_NUMBERS.primaryDigits)}
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 text-xs font-bold text-[#276005] sm:border-0 sm:bg-transparent sm:px-0 sm:text-sm"
+          >
+            <PhoneCall className="h-4 w-4 sm:hidden" />
+            <span className="hidden sm:inline">Need Help?</span>
+            <span>{CONTACT_NUMBERS.primaryDisplay}</span>
           </a>
         </div>
       </div>
@@ -425,19 +460,25 @@ function CheckoutProgress() {
   const steps = ["Student Details", "Review", "Payment"];
 
   return (
-    <ol className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+    <ol className="grid grid-cols-3 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm sm:flex sm:items-center sm:p-3">
       {steps.map((step, index) => (
-        <li key={step} className="flex flex-1 items-center gap-2 text-xs font-semibold text-slate-500 sm:text-sm">
+        <li
+          key={step}
+          className={cn(
+            "flex min-w-0 flex-col items-center gap-1 rounded-xl px-2 py-2 text-center text-[11px] font-semibold leading-tight text-slate-500 sm:flex-1 sm:flex-row sm:gap-2 sm:p-0 sm:text-left sm:text-sm",
+            index === 0 ? "bg-emerald-50 sm:bg-transparent" : "",
+          )}
+        >
           <span
             className={cn(
-              "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs",
+              "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs sm:h-7 sm:w-7",
               index === 0 ? "border-[#51A70A] bg-[#51A70A] text-white" : "border-slate-300 bg-white text-slate-500",
             )}
           >
             {index + 1}
           </span>
-          <span className={index === 0 ? "text-slate-950" : ""}>{step}</span>
-          {index < steps.length - 1 ? <span className="ml-auto h-px flex-1 bg-slate-200" aria-hidden="true" /> : null}
+          <span className={cn("min-w-0", index === 0 ? "text-slate-950" : "")}>{step}</span>
+          {index < steps.length - 1 ? <span className="ml-auto hidden h-px flex-1 bg-slate-200 sm:block" aria-hidden="true" /> : null}
         </li>
       ))}
     </ol>
@@ -456,12 +497,12 @@ function StudentDetailsForm({
   updateField: <Key extends keyof FormState>(field: Key, value: FormState[Key]) => void;
 }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-      <h2 className="text-xl font-bold text-slate-950">Student Details</h2>
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      <h2 className="text-lg font-bold text-slate-950 sm:text-xl">Student Details</h2>
       <p className="mt-1 text-sm text-slate-600">
         We&apos;ll use these details for payment confirmation and counselling onboarding.
       </p>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+      <div className="mt-5 grid gap-4 sm:mt-6 sm:grid-cols-2">
         <TextField id="studentName" label="Student Full Name" value={form.studentName} error={errors.studentName} required onChange={(value) => updateField("studentName", value)} />
         <TextField id="mobile" label="Mobile Number" type="tel" inputMode="numeric" value={form.mobile} error={errors.mobile} required onChange={(value) => updateField("mobile", value)} />
         <TextField id="email" label="Email Address" type="email" value={form.email} error={errors.email} required onChange={(value) => updateField("email", value)} />
@@ -512,7 +553,7 @@ function TextField({
         aria-describedby={error ? `${id}-error` : undefined}
         onChange={(event) => onChange(event.target.value)}
         className={cn(
-          "mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/15",
+          "mt-2 min-h-[52px] w-full rounded-xl border bg-white px-4 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/15 sm:h-12 sm:min-h-0 sm:text-sm",
           error ? "border-red-300" : "border-slate-300",
         )}
       />
@@ -557,7 +598,7 @@ function SelectField({
         aria-describedby={error ? `${id}-error` : undefined}
         onChange={(event) => onChange(event.target.value)}
         className={cn(
-          "mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/15 disabled:bg-slate-100 disabled:text-slate-400",
+          "mt-2 min-h-[52px] w-full rounded-xl border bg-white px-4 text-base text-slate-950 outline-none transition focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/15 disabled:bg-slate-100 disabled:text-slate-400 sm:h-12 sm:min-h-0 sm:text-sm",
           error ? "border-red-300" : "border-slate-300",
         )}
       >
@@ -584,18 +625,18 @@ function SelectedPlanCard({ selectedPackage }: { selectedPackage: CounsellingPac
   const remainingInclusions = selectedPackage.inclusions.slice(5);
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-[#276005]">Selected Counselling Plan</p>
-          <h2 className="mt-1 text-xl font-bold text-slate-950">{selectedPackage.title}</h2>
+          <h2 className="mt-1 text-lg font-bold text-slate-950 sm:text-xl">{selectedPackage.title}</h2>
           <p className="mt-1 text-sm text-slate-600">{selectedPackage.subtitle}</p>
-          <p className="mt-3 text-2xl font-bold text-slate-950">
+          <p className="mt-3 text-xl font-bold text-slate-950 sm:text-2xl">
             {formatIndianCurrency(selectedPackage.baseAmount)}
             <span className="text-sm font-semibold text-slate-500"> + GST</span>
           </p>
         </div>
-        <Link href="/services#pricing" className="inline-flex h-10 items-center justify-center rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-800 transition hover:border-[#51A70A] hover:text-[#276005]">
+        <Link href="/services#pricing" className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-800 transition hover:border-[#51A70A] hover:text-[#276005] sm:h-10 sm:w-auto">
           Change Plan
         </Link>
       </div>
@@ -611,7 +652,7 @@ function SelectedPlanCard({ selectedPackage }: { selectedPackage: CounsellingPac
 
       {remainingInclusions.length > 0 ? (
         <div className="mt-4">
-          <button type="button" onClick={() => setOpen((current) => !current)} aria-expanded={open} className="inline-flex items-center gap-2 text-sm font-semibold text-[#276005]">
+          <button type="button" onClick={() => setOpen((current) => !current)} aria-expanded={open} className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-[#276005]">
             View all inclusions
             <ChevronDown className={cn("h-4 w-4 transition", open ? "rotate-180" : "")} />
           </button>
@@ -633,7 +674,7 @@ function SelectedPlanCard({ selectedPackage }: { selectedPackage: CounsellingPac
 
 function InfoStrip({ text }: { text: string }) {
   return (
-    <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 text-sm text-slate-700">
+    <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 text-sm leading-6 text-slate-700">
       <span className="font-semibold text-slate-950">Service validity: </span>
       {text}
     </div>
@@ -684,7 +725,7 @@ function Accordion({
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
-        className="flex w-full items-center justify-between gap-4 p-5 text-left"
+        className="flex w-full items-center justify-between gap-3 p-4 text-left sm:gap-4 sm:p-5"
       >
         <span>
           <span className="block text-base font-bold text-slate-950">{title}</span>
@@ -692,7 +733,7 @@ function Accordion({
         </span>
         <ChevronDown className={cn("h-5 w-5 shrink-0 text-slate-500 transition", open ? "rotate-180" : "")} />
       </button>
-      {open ? <div className="border-t border-slate-200 px-5 pb-5 pt-4">{children}</div> : null}
+      {open ? <div className="border-t border-slate-200 px-4 pb-4 pt-4 sm:px-5 sm:pb-5">{children}</div> : null}
     </section>
   );
 }
@@ -721,9 +762,16 @@ function OrderSummary({
   const couponError = errors.couponCode ?? pricing.couponError;
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-bold text-slate-950">Order Summary</h2>
-      <p className="mt-1 text-sm text-slate-600">{selectedPackage.subtitle}</p>
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-bold text-slate-950 sm:text-xl">Order Summary</h2>
+          <p className="mt-1 text-sm text-slate-600">{selectedPackage.subtitle}</p>
+        </div>
+        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-[#276005] lg:hidden">
+          Review
+        </span>
+      </div>
 
       <div className="mt-5 space-y-3 border-b border-slate-200 pb-5 text-sm">
         <SummaryRow label="Counselling Fee" value={formatIndianCurrency(pricing.baseAmount)} />
@@ -733,11 +781,11 @@ function OrderSummary({
 
       <div className="mt-5 flex items-end justify-between gap-4">
         <span className="text-sm font-semibold text-slate-600">Total</span>
-        <span className="text-2xl font-bold text-slate-950">{formatIndianCurrency(pricing.netAmount)}</span>
+        <span className="text-xl font-bold text-slate-950 sm:text-2xl">{formatIndianCurrency(pricing.netAmount)}</span>
       </div>
 
       <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-        <button type="button" onClick={() => setCouponOpen(!couponOpen)} aria-expanded={couponOpen} className="flex w-full items-center justify-between text-sm font-semibold text-slate-800">
+        <button type="button" onClick={() => setCouponOpen(!couponOpen)} aria-expanded={couponOpen} className="flex min-h-10 w-full items-center justify-between text-sm font-semibold text-slate-800">
           <span className="inline-flex items-center gap-2">
             <Tag className="h-4 w-4 text-[#51A70A]" />
             Have a coupon?
@@ -746,7 +794,7 @@ function OrderSummary({
         </button>
         {couponOpen ? (
           <div className="mt-3">
-            <div className="flex gap-2">
+            <div className="grid gap-2 sm:flex">
               <input
                 id="couponCode"
                 value={form.couponCode}
@@ -755,11 +803,11 @@ function OrderSummary({
                 aria-describedby={couponError ? "couponCode-error" : undefined}
                 onChange={(event) => updateField("couponCode", event.target.value.toUpperCase())}
                 className={cn(
-                  "h-11 min-w-0 flex-1 rounded-xl border bg-white px-3 text-sm font-semibold uppercase tracking-[0.08em] text-slate-950 outline-none focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/15",
+                  "min-h-[48px] min-w-0 flex-1 rounded-xl border bg-white px-3 text-base font-semibold uppercase tracking-[0.08em] text-slate-950 outline-none focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/15 sm:h-11 sm:min-h-0 sm:text-sm",
                   couponError ? "border-red-300" : "border-slate-300",
                 )}
               />
-              <button type="button" onClick={handleCouponApply} className="rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800">
+              <button type="button" onClick={handleCouponApply} className="min-h-[48px] rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 sm:min-h-0">
                 Apply
               </button>
             </div>
@@ -794,11 +842,11 @@ function OrderSummary({
 
       {errors.submit ? <div role="alert" className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{errors.submit}</div> : null}
 
-      <button type="submit" disabled={submitting} className="mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#51A70A] px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-[#438c08] disabled:cursor-not-allowed disabled:opacity-70">
+      <button type="submit" disabled={submitting} className="mt-5 hidden min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#51A70A] px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-[#438c08] disabled:cursor-not-allowed disabled:opacity-70 md:flex">
         {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Lock className="h-5 w-5" />}
         {submitting ? "Preparing Payment..." : `Continue to Payment - ${formatIndianCurrency(pricing.amountPaid)}`}
       </button>
-      <p className="mt-3 flex items-center justify-center gap-2 text-sm font-medium text-slate-600">
+      <p className="mt-3 flex items-center justify-center gap-2 text-sm font-medium text-slate-600 md:mt-3">
         <Lock className="h-4 w-4 text-[#51A70A]" />
         Secure checkout experience
       </p>
@@ -828,7 +876,7 @@ function PaymentTypeControl({
             aria-pressed={form.paymentMode === mode}
             onClick={() => updateField("paymentMode", mode)}
             className={cn(
-              "rounded-lg px-3 py-2 text-sm font-semibold transition",
+              "min-h-10 rounded-lg px-2 py-2 text-sm font-semibold leading-tight transition sm:px-3",
               form.paymentMode === mode ? "bg-white text-[#276005] shadow-sm" : "text-slate-600 hover:text-slate-950",
             )}
           >
@@ -855,7 +903,7 @@ function PaymentTypeControl({
               aria-describedby={errors.partialPaymentAmount ? "partialPaymentAmount-error" : undefined}
               onChange={(event) => updateField("partialPaymentAmount", event.target.value)}
               className={cn(
-                "h-12 w-full rounded-xl border bg-white pl-9 pr-4 text-sm font-semibold text-slate-950 outline-none focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/15",
+                "min-h-[52px] w-full rounded-xl border bg-white pl-9 pr-4 text-base font-semibold text-slate-950 outline-none focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/15 sm:h-12 sm:min-h-0 sm:text-sm",
                 errors.partialPaymentAmount ? "border-red-300" : "border-slate-300",
               )}
             />
@@ -877,7 +925,7 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4">
       <span className="text-slate-600">{label}</span>
-      <span className="font-bold text-slate-950">{value}</span>
+      <span className="text-right font-bold text-slate-950">{value}</span>
     </div>
   );
 }
@@ -892,14 +940,15 @@ function MobileCheckoutBar({
   onContinue: () => void;
 }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white p-3 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] md:hidden">
-      <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold text-slate-500">Total</p>
-          <p className="text-lg font-bold text-slate-950">{formatIndianCurrency(amount)}</p>
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur md:hidden">
+      <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-3 pb-[env(safe-area-inset-bottom)]">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold text-slate-500">Pay now</p>
+          <p className="truncate text-lg font-bold text-slate-950">{formatIndianCurrency(amount)}</p>
         </div>
-        <button type="button" disabled={submitting} onClick={onContinue} className="inline-flex h-11 items-center justify-center rounded-xl bg-[#51A70A] px-5 text-sm font-bold text-white disabled:opacity-70">
-          Continue
+        <button type="button" disabled={submitting} onClick={onContinue} className="inline-flex min-h-[50px] min-w-[150px] items-center justify-center gap-2 rounded-xl bg-[#51A70A] px-5 text-sm font-bold text-white shadow-sm disabled:opacity-70">
+          {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
+          {submitting ? "Preparing..." : "Continue"}
         </button>
       </div>
     </div>
