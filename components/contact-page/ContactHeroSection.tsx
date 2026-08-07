@@ -3,10 +3,6 @@
 import { motion } from "framer-motion";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { SOCIAL_LINKS } from "@/lib/contactLinks";
-import { offices } from "@/data/offices";
-
-const mainOffice = offices.find((office) => office.id === "kanpur") ?? offices[0];
-const mainOfficeAddress = mainOffice?.address ?? "";
 
 const stats = [
   {
@@ -16,8 +12,8 @@ const stats = [
   },
   {
     label: "Office visits",
-    hoverText: mainOfficeAddress,
-    ariaLabel: `Main branch address: ${mainOfficeAddress}`,
+    href: "#contact-offices",
+    ariaLabel: "Go to Careerkick office locations",
   },
   {
     label: "Social media reach",
@@ -72,35 +68,17 @@ export function ContactHeroSection() {
           }}
         >
           {stats.map((item) => (
-            "href" in item ? (
-              <motion.a
-                key={item.label}
-                href={item.href}
-                target={item.external ? "_blank" : undefined}
-                rel={item.external ? "noreferrer" : undefined}
-                aria-label={item.ariaLabel}
-                variants={fadeUp}
-                className="flex min-h-[52px] items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-3 text-center font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-white/76 backdrop-blur-xl transition-colors hover:border-[#51A70A]/45 hover:bg-[#51A70A]/12 hover:text-white focus-visible:border-[#51A70A]/55 sm:text-xs"
-              >
-                {item.label}
-              </motion.a>
-            ) : (
-              <motion.div
-                key={item.label}
-                tabIndex={0}
-                role="note"
-                aria-label={item.ariaLabel}
-                variants={fadeUp}
-                className="group relative flex min-h-[52px] cursor-default items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/[0.04] px-4 py-3 text-center font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-white/76 backdrop-blur-xl transition-colors hover:border-[#51A70A]/45 hover:bg-[#51A70A]/12 hover:text-white focus-visible:border-[#51A70A]/55 focus-visible:bg-[#51A70A]/12 focus-visible:outline-none sm:text-xs"
-              >
-                <span className="transition-opacity duration-200 group-hover:opacity-0 group-focus-visible:opacity-0">
-                  {item.label}
-                </span>
-                <span className="absolute inset-x-3 top-1/2 -translate-y-1/2 text-[9px] font-semibold normal-case leading-snug tracking-normal text-[#eaffdc] opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 sm:text-[10px]">
-                  {item.hoverText}
-                </span>
-              </motion.div>
-            )
+            <motion.a
+              key={item.label}
+              href={item.href}
+              target={item.external ? "_blank" : undefined}
+              rel={item.external ? "noreferrer" : undefined}
+              aria-label={item.ariaLabel}
+              variants={fadeUp}
+              className="flex min-h-[52px] items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-3 text-center font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-white/76 backdrop-blur-xl transition-colors hover:border-[#51A70A]/45 hover:bg-[#51A70A]/12 hover:text-white focus-visible:border-[#51A70A]/55 sm:text-xs"
+            >
+              {item.label}
+            </motion.a>
           ))}
         </motion.div>
       </div>

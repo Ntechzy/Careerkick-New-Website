@@ -1,5 +1,5 @@
 export const CONTACT_NUMBERS = {
-  primaryDisplay: "+91 91983 50985",
+  primaryDisplay: "+91 9198350985",
   primaryDigits: "9198350985",
   secondaryDisplay: "+91 9198350980",
   secondaryDigits: "9198350980",

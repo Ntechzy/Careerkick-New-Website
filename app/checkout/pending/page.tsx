@@ -8,7 +8,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CheckoutPendingPage() {
-  return <PaymentStatePage status="pending" />;
-}
+type CheckoutPendingPageProps = {
+  searchParams?: {
+    enrollment?: string;
+    paid?: string;
+    due?: string;
+    total?: string;
+  };
+};
 
+export default function CheckoutPendingPage({ searchParams }: CheckoutPendingPageProps) {
+  return <PaymentStatePage status="pending" paymentDetails={searchParams} />;
+}

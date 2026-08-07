@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import {
-  calculateCounsellingTotal,
+  calculateCheckoutPayment,
   getCounsellingPackage,
 } from "@/lib/counsellingPackages";
 import type { CounsellingEnrollmentPayload } from "@/types/payment";
@@ -17,6 +17,8 @@ type InitiatePaymentRequest = {
   scoreOrRank?: string;
   applicationNumber?: string;
   category?: string;
+  couponCode?: string;
+  paymentAmount?: number;
 };
 
 function isValidEmail(value = "") {
@@ -26,6 +28,14 @@ function isValidEmail(value = "") {
 function isValidIndianPhone(value = "") {
   const digits = value.replace(/\D/g, "");
   return /^[6-9]\d{9}$/.test(digits);
+}
+
+function getMinimumPartialPayment(netAmount: number) {
+  if (netAmount <= 5000) {
+    return 1;
+  }
+
+  return 5000;
 }
 
 export async function POST(request: Request) {
@@ -66,11 +76,38 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Course interested in is required." }, { status: 400 });
   }
 
-  const pricing = calculateCounsellingTotal(selectedPackage.baseAmount, selectedPackage.taxRate);
+  const pricing = calculateCheckoutPayment({
+    baseAmount: selectedPackage.baseAmount,
+    taxRate: selectedPackage.taxRate,
+    couponCode: body.couponCode,
+    paymentAmount: body.paymentAmount,
+  });
+
+  if (pricing.couponError) {
+    return NextResponse.json({ message: pricing.couponError }, { status: 400 });
+  }
+
+  if (pricing.amountPaid <= 0) {
+    return NextResponse.json({ message: "Enter a valid payment amount." }, { status: 400 });
+  }
+
+  if (pricing.amountPaid < getMinimumPartialPayment(pricing.netAmount)) {
+    return NextResponse.json(
+      {
+        message: `Partial payment must be at least Rs. ${getMinimumPartialPayment(
+          pricing.netAmount,
+        ).toLocaleString("en-IN")}.`,
+      },
+      { status: 400 },
+    );
+  }
+
   const email = (body.email ?? "").trim().toLowerCase();
   const mobile = (body.mobile ?? "").replace(/\D/g, "");
   const whatsapp = (body.whatsapp ?? "").replace(/\D/g, "");
+  const enrollmentId = `CK-${Date.now().toString(36).toUpperCase()}`;
   const enrollmentDraft: CounsellingEnrollmentPayload = {
+    enrollmentId,
     studentName: body.studentName.trim(),
     email,
     mobile,
@@ -86,27 +123,30 @@ export async function POST(request: Request) {
     baseAmount: pricing.baseAmount,
     taxAmount: pricing.taxAmount,
     totalAmount: pricing.totalAmount,
-    paymentStatus: "pending",
+    discountAmount: pricing.discountAmount,
+    netAmount: pricing.netAmount,
+    amountPaid: pricing.amountPaid,
+    dueAmount: pricing.dueAmount,
+    couponCode: pricing.coupon?.code,
+    paymentStatus: pricing.paymentStatus,
+    paymentGatewayReference: `DUMMY-${enrollmentId}`,
     createdAt: new Date().toISOString(),
   };
 
-  if (!process.env.EAZYPAY_INITIATE_URL) {
-    return NextResponse.json(
-      {
-        message:
-          "Payment gateway initiation is not configured yet.",
-        enrollmentDraft,
-      },
-      { status: 501 },
-    );
-  }
+  const params = new URLSearchParams({
+    enrollment: enrollmentId,
+    paid: String(pricing.amountPaid),
+    due: String(pricing.dueAmount),
+    total: String(pricing.netAmount),
+  });
+  const redirectUrl =
+    pricing.dueAmount > 0
+      ? `/checkout/pending?${params.toString()}`
+      : `/checkout/success?${params.toString()}`;
 
-  return NextResponse.json(
-    {
-      message:
-        "Server-side EazyPay initiation must be implemented here using merchant credentials kept outside client code.",
-      enrollmentDraft,
-    },
-    { status: 501 },
-  );
+  return NextResponse.json({
+    message: "Dummy payment created successfully.",
+    redirectUrl,
+    enrollmentDraft,
+  });
 }

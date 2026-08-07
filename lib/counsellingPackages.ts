@@ -14,8 +14,43 @@ export type CounsellingPackage = {
 
 export const GST_RATE = 0.18;
 
+export type CouponType = "percentage" | "flat";
+
+export type CouponCode = {
+  code: string;
+  label: string;
+  type: CouponType;
+  value: number;
+  minimumOrderAmount?: number;
+  maxDiscount?: number;
+};
+
+export const COUPON_CODES: CouponCode[] = [
+  {
+    code: "CK10",
+    label: "10% counselling discount",
+    type: "percentage",
+    value: 10,
+    maxDiscount: 7500,
+  },
+  {
+    code: "EARLY5000",
+    label: "Early enrollment discount",
+    type: "flat",
+    value: 5000,
+    minimumOrderAmount: 25000,
+  },
+  {
+    code: "MEET1000",
+    label: "One-to-one session discount",
+    type: "flat",
+    value: 1000,
+    minimumOrderAmount: 5000,
+  },
+];
+
 export const COUNSELLING_PAYMENT_NOTES = [
-  "100% payment is required before participating in the counselling process.",
+  "Full or partial payment can be recorded during checkout. Any unpaid balance remains due until cleared by the student.",
   "If the candidate does not secure a college admission, the counselling fee will be refunded after deducting the applicable 18% GST.",
 ] as const;
 
@@ -116,9 +151,83 @@ export function calculateCounsellingTotal(baseAmount: number, taxRate = GST_RATE
 
   return {
     baseAmount,
-    taxRate: GST_RATE,
+    taxRate,
     taxAmount,
     totalAmount: baseAmount + taxAmount,
+  };
+}
+
+export function getCouponCode(code?: string | null) {
+  const normalizedCode = code?.trim().toUpperCase();
+
+  if (!normalizedCode) {
+    return null;
+  }
+
+  return COUPON_CODES.find((coupon) => coupon.code === normalizedCode) ?? null;
+}
+
+export function calculateCouponDiscount(totalAmount: number, code?: string | null) {
+  const coupon = getCouponCode(code);
+
+  if (!coupon) {
+    return {
+      coupon: null,
+      discountAmount: 0,
+      error: code?.trim() ? "Enter a valid coupon code." : undefined,
+    };
+  }
+
+  if (coupon.minimumOrderAmount && totalAmount < coupon.minimumOrderAmount) {
+    return {
+      coupon,
+      discountAmount: 0,
+      error: `${coupon.code} applies on orders of ${formatIndianCurrency(coupon.minimumOrderAmount)} or above.`,
+    };
+  }
+
+  const rawDiscount =
+    coupon.type === "percentage"
+      ? Math.round((totalAmount * coupon.value) / 100)
+      : coupon.value;
+  const cappedDiscount = coupon.maxDiscount
+    ? Math.min(rawDiscount, coupon.maxDiscount)
+    : rawDiscount;
+
+  return {
+    coupon,
+    discountAmount: Math.min(cappedDiscount, totalAmount),
+    error: undefined,
+  };
+}
+
+export function calculateCheckoutPayment({
+  baseAmount,
+  taxRate = GST_RATE,
+  couponCode,
+  paymentAmount,
+}: {
+  baseAmount: number;
+  taxRate?: number;
+  couponCode?: string | null;
+  paymentAmount?: number | null;
+}) {
+  const pricing = calculateCounsellingTotal(baseAmount, taxRate);
+  const couponResult = calculateCouponDiscount(pricing.totalAmount, couponCode);
+  const netAmount = Math.max(pricing.totalAmount - couponResult.discountAmount, 0);
+  const amountPaid = Math.min(Math.max(Math.round(paymentAmount ?? netAmount), 0), netAmount);
+  const dueAmount = Math.max(netAmount - amountPaid, 0);
+
+  return {
+    ...pricing,
+    coupon: couponResult.coupon,
+    couponCode: couponResult.coupon?.code ?? couponCode?.trim().toUpperCase() ?? "",
+    couponError: couponResult.error,
+    discountAmount: couponResult.discountAmount,
+    netAmount,
+    amountPaid,
+    dueAmount,
+    paymentStatus: dueAmount > 0 ? ("pending" as const) : ("success" as const),
   };
 }
 
