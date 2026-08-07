@@ -12,15 +12,19 @@ import {
   CheckCircle2,
   Clock,
   HelpCircle,
+  IndianRupee,
   Loader2,
   Lock,
   Mail,
   Phone,
   ShieldCheck,
+  Tag,
 } from "lucide-react";
 import {
+  calculateCheckoutPayment,
   calculateCounsellingTotal,
   COUNSELLING_PAYMENT_NOTES,
+  COUPON_CODES,
   COURSE_OPTIONS,
   formatIndianCurrency,
   type CounsellingPackage,
@@ -43,6 +47,9 @@ type FormState = {
   scoreOrRank: string;
   applicationNumber: string;
   category: string;
+  couponCode: string;
+  paymentMode: "full" | "partial";
+  partialPaymentAmount: string;
   policiesAccepted: boolean;
 };
 
@@ -78,6 +85,11 @@ const initialForm = (selectedPackage: CounsellingPackage | null): FormState => (
   scoreOrRank: "",
   applicationNumber: "",
   category: "",
+  couponCode: "",
+  paymentMode: "full",
+  partialPaymentAmount: selectedPackage
+    ? String(Math.min(10000, selectedPackage.baseAmount))
+    : "",
   policiesAccepted: false,
 });
 
@@ -99,6 +111,14 @@ const nextSteps = [
     body: "The counselling team starts support according to the selected package.",
   },
 ] as const;
+
+function getMinimumPartialPayment(netAmount: number) {
+  if (netAmount <= 5000) {
+    return 1;
+  }
+
+  return 5000;
+}
 
 function normalizeIndianMobile(value: string) {
   let digits = value.replace(/\D/g, "");
@@ -175,6 +195,12 @@ const checkoutFormSchema = z.object({
       (value) => !value || CATEGORY_OPTIONS.some((category) => category === value),
       "Select a valid category.",
     ),
+  couponCode: z.string().trim().max(24, "Coupon code should be 24 characters or less."),
+  paymentMode: z.enum(["full", "partial"]),
+  partialPaymentAmount: z
+    .string()
+    .trim()
+    .regex(/^\d*$/, "Use numbers only for partial payment amount."),
   policiesAccepted: z.literal(true, {
     errorMap: () => ({ message: "Please accept the policies before payment." }),
   }),
@@ -237,6 +263,23 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
         : null,
     [selectedPackage],
   );
+  const checkoutPricing = useMemo(() => {
+    if (!selectedPackage) {
+      return null;
+    }
+
+    const requestedPaymentAmount =
+      form.paymentMode === "partial"
+        ? Number.parseInt(form.partialPaymentAmount || "0", 10)
+        : undefined;
+
+    return calculateCheckoutPayment({
+      baseAmount: selectedPackage.baseAmount,
+      taxRate: selectedPackage.taxRate,
+      couponCode: form.couponCode,
+      paymentAmount: requestedPaymentAmount,
+    });
+  }, [form.couponCode, form.partialPaymentAmount, form.paymentMode, selectedPackage]);
 
   const updateField = <Key extends keyof FormState>(field: Key, value: FormState[Key]) => {
     setForm((current) => {
@@ -244,6 +287,9 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
         ...current,
         [field]: value,
         ...(field === "stateOrDomicile" ? { district: "" } : {}),
+        ...(field === "paymentMode" && value === "partial" && !current.partialPaymentAmount && selectedPackage
+          ? { partialPaymentAmount: String(Math.min(10000, selectedPackage.baseAmount)) }
+          : {}),
       };
       const nextFieldError = getFieldError(field, nextForm);
 
@@ -251,6 +297,8 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
         ...currentErrors,
         [field]: nextFieldError,
         ...(field === "stateOrDomicile" ? { district: undefined } : {}),
+        ...(field === "paymentMode" ? { partialPaymentAmount: undefined } : {}),
+        ...(field === "couponCode" ? { couponCode: undefined } : {}),
         submit: undefined,
       }));
 
@@ -261,12 +309,26 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!selectedPackage || !pricing) {
+    if (!selectedPackage || !pricing || !checkoutPricing) {
       setErrors({ submit: "Please select a valid counselling package first." });
       return;
     }
 
     const nextErrors = validateForm(form);
+    if (checkoutPricing.couponError) {
+      nextErrors.couponCode = checkoutPricing.couponError;
+    }
+
+    if (form.paymentMode === "partial") {
+      if (checkoutPricing.amountPaid <= 0) {
+        nextErrors.partialPaymentAmount = "Enter a partial payment amount.";
+      } else if (checkoutPricing.amountPaid < getMinimumPartialPayment(checkoutPricing.netAmount)) {
+        nextErrors.partialPaymentAmount = `Partial payment must be at least ${formatIndianCurrency(getMinimumPartialPayment(checkoutPricing.netAmount))}.`;
+      } else if (checkoutPricing.dueAmount <= 0) {
+        nextErrors.partialPaymentAmount = "Use full payment when no due amount remains.";
+      }
+    }
+
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
@@ -291,6 +353,8 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
           scoreOrRank: form.scoreOrRank,
           applicationNumber: form.applicationNumber,
           category: form.category,
+          couponCode: form.couponCode,
+          paymentAmount: checkoutPricing.amountPaid,
         }),
       });
 
@@ -315,7 +379,7 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
     }
   };
 
-  if (!selectedPackage || !pricing) {
+  if (!selectedPackage || !pricing || !checkoutPricing) {
     return (
       <main className="relative overflow-hidden bg-base px-4 pb-24 pt-28 text-white md:px-8 md:pt-32">
         <Background />
@@ -361,19 +425,21 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
         </header>
 
         <form onSubmit={handleSubmit} noValidate className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.95fr)] lg:items-start">
-          <div className="lg:order-1">
+          <div className="space-y-6">
             <StudentDetailsForm
               form={form}
               errors={errors}
               districtOptions={districtOptions}
               updateField={updateField}
             />
+            <PostPaymentSteps />
+            <CheckoutSupport />
           </div>
 
-          <aside className="space-y-5 lg:sticky lg:top-24 lg:order-2 lg:row-span-2">
+          <aside className="space-y-5 lg:sticky lg:top-24">
             <SelectedPlanCard selectedPackage={selectedPackage} />
             <OrderSummary
-              pricing={pricing}
+              pricing={checkoutPricing}
               selectedPackage={selectedPackage}
               form={form}
               errors={errors}
@@ -382,11 +448,6 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
             />
             <PaymentPolicyNotes />
           </aside>
-
-          <div className="space-y-6 lg:order-3">
-            <PostPaymentSteps />
-            <CheckoutSupport />
-          </div>
         </form>
       </div>
     </main>
@@ -683,13 +744,15 @@ function OrderSummary({
   submitting,
   updateField,
 }: {
-  pricing: ReturnType<typeof calculateCounsellingTotal>;
+  pricing: ReturnType<typeof calculateCheckoutPayment>;
   selectedPackage: CounsellingPackage;
   form: FormState;
   errors: FormErrors;
   submitting: boolean;
   updateField: <Key extends keyof FormState>(field: Key, value: FormState[Key]) => void;
 }) {
+  const couponError = errors.couponCode ?? pricing.couponError;
+
   return (
     <section className="rounded-lg border border-[#51A70A]/25 bg-[linear-gradient(135deg,rgba(255,255,255,0.09),rgba(255,255,255,0.03)),linear-gradient(135deg,rgba(11,16,9,0.96),rgba(18,26,16,0.88))] p-5 shadow-elevated sm:p-6">
       <h2 className="font-display text-2xl font-semibold">Order Summary</h2>
@@ -701,17 +764,121 @@ function OrderSummary({
             value={formatIndianCurrency(pricing.taxAmount)}
           />
         ) : null}
+        {pricing.discountAmount > 0 ? (
+          <SummaryRow
+            label={`Coupon Discount (${pricing.coupon?.code})`}
+            value={`- ${formatIndianCurrency(pricing.discountAmount)}`}
+          />
+        ) : null}
       </div>
+
+      <div className="mt-5 rounded-lg border border-white/10 bg-black/20 p-4">
+        <div className="flex items-center gap-2">
+          <Tag className="h-4 w-4 text-[#8cef32]" />
+          <label htmlFor="couponCode" className="text-sm font-semibold text-white">
+            Coupon Code
+          </label>
+        </div>
+        <input
+          id="couponCode"
+          value={form.couponCode}
+          placeholder="Try CK10"
+          aria-invalid={Boolean(couponError)}
+          aria-describedby={couponError ? "couponCode-error" : undefined}
+          onChange={(event) => updateField("couponCode", event.target.value.toUpperCase())}
+          className={cn(
+            "mt-3 h-12 w-full rounded-lg border bg-white px-4 font-mono text-sm font-bold uppercase tracking-[0.12em] text-[#071305] placeholder:text-[#071305]/45 shadow-inner transition focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/20",
+            couponError ? "border-red-300" : "border-white/10",
+          )}
+        />
+        {couponError ? (
+          <p id="couponCode-error" className="mt-2 text-sm font-medium text-red-200">
+            {couponError}
+          </p>
+        ) : pricing.coupon ? (
+          <p className="mt-2 text-sm font-semibold text-[#8cef32]">
+            {pricing.coupon.label} applied.
+          </p>
+        ) : (
+          <p className="mt-2 text-xs leading-relaxed text-text-muted">
+            Dummy codes: {COUPON_CODES.map((coupon) => coupon.code).join(", ")}
+          </p>
+        )}
+      </div>
+
       <div className="mt-5 flex items-end justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
-            Total Payable
+            Net Payable
           </p>
           <p className="mt-1 text-sm text-text-muted">{selectedPackage.title}</p>
         </div>
         <p className="font-display text-3xl font-bold text-[#8cef32] sm:text-4xl">
-          {formatIndianCurrency(pricing.totalAmount)}
+          {formatIndianCurrency(pricing.netAmount)}
         </p>
+      </div>
+
+      <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.04] p-4">
+        <p className="text-sm font-semibold text-white">Payment Type</p>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {[
+            { label: "Full Payment", value: "full" },
+            { label: "Partial Payment", value: "partial" },
+          ].map((option) => (
+            <label
+              key={option.value}
+              className={cn(
+                "flex cursor-pointer items-center justify-center rounded-full border px-3 py-2 text-center text-xs font-bold transition",
+                form.paymentMode === option.value
+                  ? "border-[#51A70A]/55 bg-[#51A70A]/15 text-[#8cef32]"
+                  : "border-white/10 bg-black/20 text-white/70 hover:border-[#51A70A]/35",
+              )}
+            >
+              <input
+                type="radio"
+                name="paymentMode"
+                value={option.value}
+                checked={form.paymentMode === option.value}
+                onChange={() => updateField("paymentMode", option.value as FormState["paymentMode"])}
+                className="sr-only"
+              />
+              {option.label}
+            </label>
+          ))}
+        </div>
+
+        {form.paymentMode === "partial" ? (
+          <div className="mt-4">
+            <label htmlFor="partialPaymentAmount" className="flex items-center gap-2 text-sm font-semibold text-white">
+              <IndianRupee className="h-4 w-4 text-[#8cef32]" />
+              Pay Now Amount
+            </label>
+            <input
+              id="partialPaymentAmount"
+              type="number"
+              min={getMinimumPartialPayment(pricing.netAmount)}
+              max={pricing.netAmount - 1}
+              value={form.partialPaymentAmount}
+              aria-invalid={Boolean(errors.partialPaymentAmount)}
+              aria-describedby={errors.partialPaymentAmount ? "partialPaymentAmount-error" : undefined}
+              onChange={(event) => updateField("partialPaymentAmount", event.target.value)}
+              className={cn(
+                "mt-2 h-12 w-full rounded-lg border bg-white px-4 text-sm font-semibold text-[#071305] shadow-inner transition focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/20",
+                errors.partialPaymentAmount ? "border-red-300" : "border-white/10",
+              )}
+            />
+            {errors.partialPaymentAmount ? (
+              <p id="partialPaymentAmount-error" className="mt-2 text-sm font-medium text-red-200">
+                {errors.partialPaymentAmount}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
+        <dl className="mt-4 grid gap-3 rounded-lg border border-[#51A70A]/20 bg-[#51A70A]/8 p-4 text-sm">
+          <SummaryRow label="Pay Now" value={formatIndianCurrency(pricing.amountPaid)} />
+          <SummaryRow label="Pending Due" value={formatIndianCurrency(pricing.dueAmount)} />
+        </dl>
       </div>
 
       <NoticeBox
@@ -772,7 +939,7 @@ function OrderSummary({
         className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-brand px-6 py-4 text-base font-bold text-white shadow-card transition hover:shadow-glow-violet disabled:cursor-not-allowed disabled:opacity-70"
       >
         {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Lock className="h-5 w-5" />}
-        Pay {formatIndianCurrency(pricing.totalAmount)} Securely
+        Pay {formatIndianCurrency(pricing.amountPaid)} Securely
       </button>
       <p className="mt-3 flex items-center justify-center gap-2 text-sm font-medium text-text-muted">
         <Lock className="h-4 w-4 text-[#8cef32]" />
@@ -916,8 +1083,15 @@ function SupportLink({
 
 export function PaymentStatePage({
   status,
+  paymentDetails,
 }: {
   status: "success" | "failure" | "pending";
+  paymentDetails?: {
+    enrollment?: string;
+    paid?: string;
+    due?: string;
+    total?: string;
+  };
 }) {
   const config = {
     success: {
@@ -949,6 +1123,9 @@ export function PaymentStatePage({
     },
   }[status];
   const Icon = config.icon;
+  const paidAmount = Number(paymentDetails?.paid ?? 0);
+  const dueAmount = Number(paymentDetails?.due ?? 0);
+  const totalAmount = Number(paymentDetails?.total ?? 0);
 
   return (
     <main className="relative overflow-hidden bg-base px-4 pb-24 pt-28 text-white md:px-8 md:pt-32">
@@ -961,16 +1138,27 @@ export function PaymentStatePage({
           {config.label}
         </p>
         <h1 className="mt-3 font-display text-3xl font-bold sm:text-4xl">{config.title}</h1>
-        <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-text-muted sm:text-base">
+        <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed !text-white sm:text-base">
           {config.body}
         </p>
 
         <div className="mx-auto mt-7 max-w-xl rounded-lg border border-white/10 bg-white/[0.04] p-4 text-left">
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
-            <ResultItem label="Enrollment ID" value="Created by backend" />
-            <ResultItem label="Transaction ID" value="Verified server-side" />
+            <ResultItem label="Enrollment ID" value={paymentDetails?.enrollment ?? "Created by backend"} />
+            <ResultItem label="Transaction ID" value={paymentDetails?.enrollment ? `DUMMY-${paymentDetails.enrollment}` : "Verified server-side"} />
             <ResultItem label="Payment Status" value={config.label} />
-            <ResultItem label="Amount" value="From trusted order record" />
+            <ResultItem
+              label="Amount Paid"
+              value={paidAmount > 0 ? formatIndianCurrency(paidAmount) : "From trusted order record"}
+            />
+            <ResultItem
+              label="Net Amount"
+              value={totalAmount > 0 ? formatIndianCurrency(totalAmount) : "From trusted order record"}
+            />
+            <ResultItem
+              label="Pending Due"
+              value={dueAmount > 0 ? formatIndianCurrency(dueAmount) : formatIndianCurrency(0)}
+            />
           </dl>
         </div>
 
@@ -987,7 +1175,7 @@ export function PaymentStatePage({
             rel="noreferrer"
             className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm font-semibold text-white transition hover:border-[#51A70A]/45"
           >
-            Contact Support
+            Contact Support: 7393062116
           </a>
         </div>
       </section>

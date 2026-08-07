@@ -10,7 +10,7 @@ const cardEase = [0.22, 1, 0.36, 1] as const;
 
 export function ContactOfficesSection() {
   return (
-    <section className="relative overflow-hidden bg-base px-4 py-12 sm:py-16 md:px-8 lg:py-20">
+    <section id="contact-offices" className="relative scroll-mt-24 overflow-hidden bg-base px-4 py-12 sm:py-16 md:px-8 lg:py-20">
       <div className="pointer-events-none absolute -left-28 top-16 h-80 w-80 rounded-full bg-[#51A70A]/12 blur-[120px]" />
       <div className="pointer-events-none absolute -right-28 bottom-10 h-96 w-96 rounded-full bg-[#6DCC12]/10 blur-[130px]" />
       <div className="grid-overlay absolute inset-0 opacity-70" />

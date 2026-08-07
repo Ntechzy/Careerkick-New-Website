@@ -8,7 +8,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CheckoutFailurePage() {
-  return <PaymentStatePage status="failure" />;
-}
+type CheckoutFailurePageProps = {
+  searchParams?: {
+    enrollment?: string;
+    paid?: string;
+    due?: string;
+    total?: string;
+  };
+};
 
+export default function CheckoutFailurePage({ searchParams }: CheckoutFailurePageProps) {
+  return <PaymentStatePage status="failure" paymentDetails={searchParams} />;
+}

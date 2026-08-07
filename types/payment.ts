@@ -17,6 +17,11 @@ export type CounsellingEnrollmentPayload = {
   baseAmount: number;
   taxAmount: number;
   totalAmount: number;
+  discountAmount?: number;
+  netAmount?: number;
+  amountPaid?: number;
+  dueAmount?: number;
+  couponCode?: string;
   paymentStatus: PaymentStatus;
   paymentGatewayReference?: string;
   transactionId?: string;
