@@ -27,25 +27,16 @@ export type CouponCode = {
 
 export const COUPON_CODES: CouponCode[] = [
   {
-    code: "CK10",
-    label: "10% counselling discount",
-    type: "percentage",
-    value: 10,
-    maxDiscount: 7500,
-  },
-  {
-    code: "EARLY5000",
-    label: "Early enrollment discount",
+    code: "CAREER500",
+    label: "Coupon applied successfully",
     type: "flat",
-    value: 5000,
-    minimumOrderAmount: 25000,
+    value: 500,
   },
   {
-    code: "MEET1000",
-    label: "One-to-one session discount",
+    code: "CK1000",
+    label: "Coupon applied successfully",
     type: "flat",
     value: 1000,
-    minimumOrderAmount: 5000,
   },
 ];
 
@@ -174,7 +165,7 @@ export function calculateCouponDiscount(totalAmount: number, code?: string | nul
     return {
       coupon: null,
       discountAmount: 0,
-      error: code?.trim() ? "Enter a valid coupon code." : undefined,
+      error: code?.trim() ? "This coupon code is not valid." : undefined,
     };
   }
 

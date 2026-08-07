@@ -1,0 +1,13 @@
+
+> careerkick-homepage@1.0.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3001
+
+ ✓ Starting...
+ ✓ Ready in 2.4s
+ ○ Compiling /payment ...
+ ✓ Compiled /payment in 2.6s (1375 modules)
+ GET /checkout?package=mbbs-govt-counselling 200 in 2967ms
+ GET /payment?package=mbbs-govt-counselling 200 in 2901ms

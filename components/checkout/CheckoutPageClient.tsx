@@ -1,42 +1,43 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type React from "react";
 import { useMemo, useState } from "react";
 import { getAllStates, getDistricts } from "india-state-district";
-import { z } from "zod";
 import {
   AlertCircle,
   ArrowLeft,
   Check,
-  CheckCircle2,
-  Clock,
-  HelpCircle,
+  ChevronDown,
   IndianRupee,
   Loader2,
   Lock,
-  Mail,
-  Phone,
   ShieldCheck,
   Tag,
 } from "lucide-react";
 import {
   calculateCheckoutPayment,
-  calculateCounsellingTotal,
   COUNSELLING_PAYMENT_NOTES,
-  COUPON_CODES,
   COURSE_OPTIONS,
   formatIndianCurrency,
   type CounsellingPackage,
 } from "@/lib/counsellingPackages";
-import { CONTACT_NUMBERS, getTelLink, getWhatsAppLink } from "@/lib/contactLinks";
+import { CONTACT_NUMBERS, getTelLink } from "@/lib/contactLinks";
+import {
+  createCheckoutSession,
+  getMinimumPartialPayment,
+  saveCheckoutSession,
+  type PaymentMode,
+} from "@/lib/mockPayment";
 import { cn } from "@/lib/utils";
 
 type CheckoutPageClientProps = {
   selectedPackage: CounsellingPackage | null;
 };
 
-type FormState = {
+type StudentFormState = {
   studentName: string;
   mobile: string;
   email: string;
@@ -47,8 +48,11 @@ type FormState = {
   scoreOrRank: string;
   applicationNumber: string;
   category: string;
+};
+
+type FormState = StudentFormState & {
   couponCode: string;
-  paymentMode: "full" | "partial";
+  paymentMode: PaymentMode;
   partialPaymentAmount: string;
   policiesAccepted: boolean;
 };
@@ -63,6 +67,39 @@ const CATEGORY_OPTIONS = [
   "ST",
 ] as const;
 
+const POLICY_SECTIONS = [
+  {
+    title: "Important Payment Information",
+    preview: "Full or partial payment can be recorded during checkout.",
+    body: COUNSELLING_PAYMENT_NOTES.join(" "),
+  },
+  {
+    title: "Admission Disclaimer",
+    preview: "Counselling support does not guarantee admission.",
+    body:
+      "CareerKick provides counselling, guidance and admission-support services. Admission or seat allotment is subject to the student's eligibility, rank/score, preferences, seat availability, counselling authority rules and participating institutions. Purchasing a counselling package does not guarantee admission to any particular college, course or seat.",
+  },
+  {
+    title: "Refund & Cancellation Policy",
+    preview: "Refund rules are shown here for review before payment.",
+    body:
+      "If the candidate does not secure a college admission, the counselling fee will be refunded after deducting the applicable 18% GST.",
+  },
+  {
+    title: "Terms & Conditions",
+    preview: "Review the service scope and excluded third-party charges.",
+    body:
+      "This payment is towards CareerKick's professional counselling and admission-guidance services. Government counselling registration fees, security deposits, college fees, hostel fees and other third-party charges are not included unless specifically stated in the selected package.",
+  },
+] as const;
+
+const NEXT_STEPS = [
+  "Payment confirmation",
+  "Counselling onboarding",
+  "Student profile completion",
+  "Counselling begins",
+] as const;
+
 const INDIAN_STATES = getAllStates();
 const STATE_OPTIONS = INDIAN_STATES.map((state) => ({
   value: state.code,
@@ -72,52 +109,6 @@ const STATE_CODES = INDIAN_STATES.map((state) => state.code);
 
 function getStateName(stateCode: string) {
   return INDIAN_STATES.find((state) => state.code === stateCode)?.name ?? stateCode;
-}
-
-const initialForm = (selectedPackage: CounsellingPackage | null): FormState => ({
-  studentName: "",
-  mobile: "",
-  email: "",
-  whatsapp: "",
-  course: selectedPackage?.defaultCourse ?? "",
-  stateOrDomicile: "",
-  district: "",
-  scoreOrRank: "",
-  applicationNumber: "",
-  category: "",
-  couponCode: "",
-  paymentMode: "full",
-  partialPaymentAmount: selectedPackage
-    ? String(Math.min(10000, selectedPackage.baseAmount))
-    : "",
-  policiesAccepted: false,
-});
-
-const nextSteps = [
-  {
-    title: "Payment Confirmation",
-    body: "The student receives confirmation after successful payment verification.",
-  },
-  {
-    title: "Counselling Onboarding",
-    body: "Careerkick contacts the student using the registered contact details.",
-  },
-  {
-    title: "Student Profile",
-    body: "Relevant academic and counselling information is collected.",
-  },
-  {
-    title: "Counselling Begins",
-    body: "The counselling team starts support according to the selected package.",
-  },
-] as const;
-
-function getMinimumPartialPayment(netAmount: number) {
-  if (netAmount <= 5000) {
-    return 1;
-  }
-
-  return 5000;
 }
 
 function normalizeIndianMobile(value: string) {
@@ -134,144 +125,139 @@ function normalizeIndianMobile(value: string) {
   return digits;
 }
 
-const checkoutFormSchema = z.object({
-  studentName: z
-    .string()
-    .trim()
-    .min(2, "Enter the student's full name.")
-    .max(80, "Name should be 80 characters or less.")
-    .regex(/^[A-Za-z][A-Za-z .'-]*$/, "Use a valid name without numbers or special symbols."),
-  mobile: z
-    .string()
-    .trim()
-    .min(1, "Enter a mobile number.")
-    .refine(
-      (value) => /^[6-9]\d{9}$/.test(normalizeIndianMobile(value)),
-      "Enter a valid mobile number.",
-    ),
-  email: z
-    .string()
-    .trim()
-    .min(1, "Enter an email address.")
-    .email("Enter a valid email address.")
-    .max(120, "Email should be 120 characters or less."),
-  whatsapp: z
-    .string()
-    .trim()
-    .min(1, "Enter a WhatsApp number.")
-    .refine(
-      (value) => /^[6-9]\d{9}$/.test(normalizeIndianMobile(value)),
-      "Enter a valid WhatsApp number.",
-    ),
-  course: z
-    .string()
-    .trim()
-    .refine(
-      (value) => COURSE_OPTIONS.some((course) => course === value),
-      "Select the course interested in.",
-    ),
-  stateOrDomicile: z
-    .string()
-    .trim()
-    .refine(
-      (value) => !value || STATE_CODES.includes(value),
-      "Select a valid Indian state or domicile.",
-    ),
-  district: z.string().trim().max(80, "District should be 80 characters or less."),
-  scoreOrRank: z
-    .string()
-    .trim()
-    .max(30, "Score or rank should be 30 characters or less.")
-    .regex(/^\d*$/, "Use numbers only for score or rank."),
-  applicationNumber: z
-    .string()
-    .trim()
-    .max(30, "Application or roll number should be 30 characters or less.")
-    .regex(/^[A-Za-z0-9 /-]*$/, "Use a valid application or roll number."),
-  category: z
-    .string()
-    .trim()
-    .refine(
-      (value) => !value || CATEGORY_OPTIONS.some((category) => category === value),
-      "Select a valid category.",
-    ),
-  couponCode: z.string().trim().max(24, "Coupon code should be 24 characters or less."),
-  paymentMode: z.enum(["full", "partial"]),
-  partialPaymentAmount: z
-    .string()
-    .trim()
-    .regex(/^\d*$/, "Use numbers only for partial payment amount."),
-  policiesAccepted: z.literal(true, {
-    errorMap: () => ({ message: "Please accept the policies before payment." }),
-  }),
-}).superRefine((values, context) => {
-  if (!values.district) {
-    return;
-  }
-
-  const districts = values.stateOrDomicile ? getDistricts(values.stateOrDomicile) : [];
-
-  if (!districts.includes(values.district)) {
-    context.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ["district"],
-      message: "Select a valid district for the selected state.",
-    });
-  }
-});
-
-function getFieldError<Key extends keyof FormState>(field: Key, values: FormState) {
-  const result = checkoutFormSchema.safeParse(values);
-
-  if (result.success) {
-    return undefined;
-  }
-
-  return result.error.issues.find((issue) => issue.path[0] === field)?.message;
+function initialForm(selectedPackage: CounsellingPackage | null): FormState {
+  return {
+    studentName: "",
+    mobile: "",
+    email: "",
+    whatsapp: "",
+    course: selectedPackage?.defaultCourse ?? "",
+    stateOrDomicile: "",
+    district: "",
+    scoreOrRank: "",
+    applicationNumber: "",
+    category: "",
+    couponCode: "",
+    paymentMode: "full",
+    partialPaymentAmount: selectedPackage ? String(Math.min(15000, selectedPackage.baseAmount)) : "",
+    policiesAccepted: false,
+  };
 }
 
-function validateForm(values: FormState) {
+function validateField(field: keyof FormState, values: FormState) {
+  if (field === "studentName" && values.studentName.trim().length < 2) {
+    return "Enter the student's full name.";
+  }
+
+  if (field === "mobile" && !/^[6-9]\d{9}$/.test(normalizeIndianMobile(values.mobile))) {
+    return "Enter a valid 10-digit Indian mobile number.";
+  }
+
+  if (field === "whatsapp" && !/^[6-9]\d{9}$/.test(normalizeIndianMobile(values.whatsapp))) {
+    return "Enter a valid 10-digit WhatsApp number.";
+  }
+
+  if (field === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
+    return "Enter a valid email address.";
+  }
+
+  if (field === "course" && !COURSE_OPTIONS.some((course) => course === values.course)) {
+    return "Select the course interested in.";
+  }
+
+  if (field === "stateOrDomicile" && values.stateOrDomicile && !STATE_CODES.includes(values.stateOrDomicile)) {
+    return "Select a valid state or domicile.";
+  }
+
+  if (field === "district") {
+    const districts = values.stateOrDomicile ? getDistricts(values.stateOrDomicile) : [];
+
+    if (values.district && !districts.includes(values.district)) {
+      return "Select a valid district for the selected state.";
+    }
+  }
+
+  if (field === "scoreOrRank" && values.scoreOrRank && !/^\d+$/.test(values.scoreOrRank.trim())) {
+    return "Use numbers only for score or rank.";
+  }
+
+  if (
+    field === "applicationNumber" &&
+    values.applicationNumber &&
+    !/^[A-Za-z0-9 /-]+$/.test(values.applicationNumber.trim())
+  ) {
+    return "Use a valid application or roll number.";
+  }
+
+  if (field === "category" && values.category && !CATEGORY_OPTIONS.some((category) => category === values.category)) {
+    return "Select a valid category.";
+  }
+
+  if (field === "policiesAccepted" && !values.policiesAccepted) {
+    return "Please accept the policies before continuing.";
+  }
+
+  return undefined;
+}
+
+function validateForm(values: FormState, netAmount: number) {
+  const fields: Array<keyof FormState> = [
+    "studentName",
+    "mobile",
+    "email",
+    "whatsapp",
+    "course",
+    "stateOrDomicile",
+    "district",
+    "scoreOrRank",
+    "applicationNumber",
+    "category",
+    "policiesAccepted",
+  ];
   const errors: FormErrors = {};
-  const result = checkoutFormSchema.safeParse(values);
 
-  if (!result.success) {
-    result.error.issues.forEach((issue) => {
-      const field = issue.path[0] as keyof FormState | undefined;
+  fields.forEach((field) => {
+    const error = validateField(field, values);
 
-      if (field && !errors[field]) {
-        errors[field] = issue.message;
-      }
-    });
+    if (error) {
+      errors[field] = error;
+    }
+  });
+
+  if (values.paymentMode === "partial") {
+    const amount = Number(values.partialPaymentAmount || 0);
+    const minimumAmount = getMinimumPartialPayment(netAmount);
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      errors.partialPaymentAmount = "Enter a partial payment amount.";
+    } else if (amount < minimumAmount) {
+      errors.partialPaymentAmount = `Minimum payment is ${formatIndianCurrency(minimumAmount)}.`;
+    } else if (amount >= netAmount) {
+      errors.partialPaymentAmount = "Use full payment when paying the complete amount.";
+    }
   }
 
   return errors;
 }
 
 export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps) {
+  const router = useRouter();
   const [form, setForm] = useState<FormState>(() => initialForm(selectedPackage));
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
+  const [couponOpen, setCouponOpen] = useState(false);
   const districtOptions = useMemo(
     () => (form.stateOrDomicile ? getDistricts(form.stateOrDomicile) : []),
     [form.stateOrDomicile],
   );
 
-  const pricing = useMemo(
-    () =>
-      selectedPackage
-        ? calculateCounsellingTotal(selectedPackage.baseAmount, selectedPackage.taxRate)
-        : null,
-    [selectedPackage],
-  );
-  const checkoutPricing = useMemo(() => {
+  const requestedPaymentAmount =
+    form.paymentMode === "partial" ? Number.parseInt(form.partialPaymentAmount || "0", 10) : undefined;
+
+  const pricing = useMemo(() => {
     if (!selectedPackage) {
       return null;
     }
-
-    const requestedPaymentAmount =
-      form.paymentMode === "partial"
-        ? Number.parseInt(form.partialPaymentAmount || "0", 10)
-        : undefined;
 
     return calculateCheckoutPayment({
       baseAmount: selectedPackage.baseAmount,
@@ -279,7 +265,7 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
       couponCode: form.couponCode,
       paymentAmount: requestedPaymentAmount,
     });
-  }, [form.couponCode, form.partialPaymentAmount, form.paymentMode, selectedPackage]);
+  }, [form.couponCode, requestedPaymentAmount, selectedPackage]);
 
   const updateField = <Key extends keyof FormState>(field: Key, value: FormState[Key]) => {
     setForm((current) => {
@@ -287,17 +273,12 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
         ...current,
         [field]: value,
         ...(field === "stateOrDomicile" ? { district: "" } : {}),
-        ...(field === "paymentMode" && value === "partial" && !current.partialPaymentAmount && selectedPackage
-          ? { partialPaymentAmount: String(Math.min(10000, selectedPackage.baseAmount)) }
-          : {}),
       };
-      const nextFieldError = getFieldError(field, nextForm);
 
       setErrors((currentErrors) => ({
         ...currentErrors,
-        [field]: nextFieldError,
+        [field]: validateField(field, nextForm),
         ...(field === "stateOrDomicile" ? { district: undefined } : {}),
-        ...(field === "paymentMode" ? { partialPaymentAmount: undefined } : {}),
         ...(field === "couponCode" ? { couponCode: undefined } : {}),
         submit: undefined,
       }));
@@ -306,27 +287,30 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
     });
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!selectedPackage || !pricing || !checkoutPricing) {
-      setErrors({ submit: "Please select a valid counselling package first." });
+  const handleCouponApply = () => {
+    if (!pricing) {
       return;
     }
 
-    const nextErrors = validateForm(form);
-    if (checkoutPricing.couponError) {
-      nextErrors.couponCode = checkoutPricing.couponError;
+    setErrors((current) => ({
+      ...current,
+      couponCode: pricing.couponError,
+      submit: undefined,
+    }));
+  };
+
+  const handleSubmit = async (event?: React.FormEvent) => {
+    event?.preventDefault();
+
+    if (!selectedPackage || !pricing) {
+      setErrors({ submit: "Selected package could not be found." });
+      return;
     }
 
-    if (form.paymentMode === "partial") {
-      if (checkoutPricing.amountPaid <= 0) {
-        nextErrors.partialPaymentAmount = "Enter a partial payment amount.";
-      } else if (checkoutPricing.amountPaid < getMinimumPartialPayment(checkoutPricing.netAmount)) {
-        nextErrors.partialPaymentAmount = `Partial payment must be at least ${formatIndianCurrency(getMinimumPartialPayment(checkoutPricing.netAmount))}.`;
-      } else if (checkoutPricing.dueAmount <= 0) {
-        nextErrors.partialPaymentAmount = "Use full payment when no due amount remains.";
-      }
+    const nextErrors = validateForm(form, pricing.netAmount);
+
+    if (pricing.couponError) {
+      nextErrors.couponCode = pricing.couponError;
     }
 
     setErrors(nextErrors);
@@ -336,131 +320,127 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
     }
 
     setSubmitting(true);
+    const session = createCheckoutSession({
+      selectedPackage,
+      couponCode: form.couponCode,
+      paymentMode: form.paymentMode,
+      paymentAmount: form.paymentMode === "partial" ? requestedPaymentAmount : undefined,
+      student: {
+        studentName: form.studentName.trim(),
+        mobile: normalizeIndianMobile(form.mobile),
+        email: form.email.trim().toLowerCase(),
+        whatsapp: normalizeIndianMobile(form.whatsapp),
+        course: form.course,
+        stateOrDomicile: form.stateOrDomicile ? getStateName(form.stateOrDomicile) : "",
+        district: form.district,
+        scoreOrRank: form.scoreOrRank.trim(),
+        applicationNumber: form.applicationNumber.trim(),
+        category: form.category,
+      },
+    });
 
-    try {
-      const response = await fetch("/api/payments/initiate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          packageId: selectedPackage.id,
-          studentName: form.studentName,
-          mobile: normalizeIndianMobile(form.mobile),
-          email: form.email,
-          whatsapp: normalizeIndianMobile(form.whatsapp),
-          course: form.course,
-          stateOrDomicile: form.stateOrDomicile ? getStateName(form.stateOrDomicile) : "",
-          district: form.district,
-          scoreOrRank: form.scoreOrRank,
-          applicationNumber: form.applicationNumber,
-          category: form.category,
-          couponCode: form.couponCode,
-          paymentAmount: checkoutPricing.amountPaid,
-        }),
-      });
-
-      const result = (await response.json()) as {
-        message?: string;
-        redirectUrl?: string;
-      };
-
-      if (!response.ok || !result.redirectUrl) {
-        throw new Error(result.message ?? "Payment could not be started.");
-      }
-
-      window.location.assign(result.redirectUrl);
-    } catch (error) {
-      setErrors({
-        submit:
-          error instanceof Error
-            ? error.message
-            : "Payment could not be started. Please try again.",
-      });
-      setSubmitting(false);
-    }
+    saveCheckoutSession(session);
+    await new Promise((resolve) => window.setTimeout(resolve, 450));
+    router.push(`/payment?package=${selectedPackage.id}`);
   };
 
-  if (!selectedPackage || !pricing || !checkoutPricing) {
-    return (
-      <main className="relative overflow-hidden bg-base px-4 pb-24 pt-28 text-white md:px-8 md:pt-32">
-        <Background />
-        <section className="relative mx-auto max-w-3xl rounded-lg border border-white/10 bg-gradient-card p-6 text-center shadow-elevated sm:p-10">
-          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-[#51A70A]/25 bg-[#51A70A]/10 text-[#8cef32]">
-            <AlertCircle className="h-6 w-6" />
-          </span>
-          <h1 className="mt-5 font-display text-3xl font-bold sm:text-4xl">
-            Select a counselling plan first
-          </h1>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-text-muted sm:text-base">
-            Checkout needs a valid package ID so pricing can be resolved from
-            trusted CareerKick package data.
-          </p>
-          <Link
-            href="/services#pricing"
-            className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-gradient-brand px-6 py-3 text-sm font-semibold text-white shadow-card transition hover:shadow-glow-violet"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Choose Plan
-          </Link>
-        </section>
-      </main>
-    );
+  if (!selectedPackage || !pricing) {
+    return <InvalidPackageState />;
   }
 
   return (
-    <main className="relative overflow-hidden bg-base px-4 pb-24 pt-28 text-white md:px-8 md:pt-32">
-      <Background />
-      <div className="relative mx-auto max-w-7xl">
-        <header className="max-w-4xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#51A70A]/30 bg-[#51A70A]/10 px-4 py-2 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#8cef32]">
-            <ShieldCheck className="h-4 w-4" />
-            Secure Checkout
-          </div>
-          <h1 className="mt-5 font-display text-4xl font-bold leading-tight sm:text-5xl">
-            Complete your counselling enrollment
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-text-muted sm:text-lg">
-            Review your selected plan, add student details, accept the service
-            policies, and continue to secure payment.
-          </p>
-        </header>
+    <main className="bg-[#F6F8F5] pb-24 text-slate-900 md:pb-16">
+      <CheckoutHeader />
+      <div className="mx-auto max-w-[1180px] px-4 py-6 sm:px-6 lg:px-8">
+        <CheckoutProgress />
 
-        <form onSubmit={handleSubmit} noValidate className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.95fr)] lg:items-start">
-          <div className="space-y-6">
+        <div className="mt-6">
+          <h1 className="text-3xl font-bold text-slate-950 sm:text-4xl">Complete Your Enrollment</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+            Enter the student&apos;s details and review your counselling package before proceeding to payment.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} noValidate className="mt-7 grid gap-6 lg:grid-cols-[minmax(0,1fr)_370px] lg:items-start">
+          <div className="space-y-5">
             <StudentDetailsForm
               form={form}
               errors={errors}
               districtOptions={districtOptions}
               updateField={updateField}
             />
-            <PostPaymentSteps />
-            <CheckoutSupport />
+            <SelectedPlanCard selectedPackage={selectedPackage} />
+            <InfoStrip text={selectedPackage.validity} />
+            <NextStepsAccordion />
+            <PolicyAccordions />
           </div>
 
-          <aside className="space-y-5 lg:sticky lg:top-24">
-            <SelectedPlanCard selectedPackage={selectedPackage} />
+          <aside className="lg:sticky lg:top-6">
             <OrderSummary
-              pricing={checkoutPricing}
-              selectedPackage={selectedPackage}
               form={form}
               errors={errors}
+              pricing={pricing}
+              selectedPackage={selectedPackage}
+              couponOpen={couponOpen}
               submitting={submitting}
+              setCouponOpen={setCouponOpen}
               updateField={updateField}
+              handleCouponApply={handleCouponApply}
             />
-            <PaymentPolicyNotes />
           </aside>
         </form>
       </div>
+
+      <MobileCheckoutBar
+        amount={pricing.amountPaid}
+        submitting={submitting}
+        onContinue={() => void handleSubmit()}
+      />
     </main>
   );
 }
 
-function Background() {
+function CheckoutHeader() {
   return (
-    <>
-      <div className="pointer-events-none absolute left-1/2 top-0 h-80 w-[72%] -translate-x-1/2 rounded-full bg-[#51A70A]/10 blur-[120px]" />
-      <div className="pointer-events-none absolute -right-24 top-40 h-96 w-96 rounded-full bg-white/6 blur-[140px]" />
-      <div className="grid-overlay pointer-events-none absolute inset-0 opacity-50" />
-    </>
+    <header className="border-b border-slate-200 bg-white">
+      <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center gap-3" aria-label="CareerKick home">
+          <Image src="/logo.png" alt="CareerKick" width={132} height={42} className="h-10 w-auto object-contain" priority />
+        </Link>
+        <div className="flex items-center gap-4 text-sm">
+          <span className="hidden items-center gap-2 font-semibold text-slate-700 sm:inline-flex">
+            <ShieldCheck className="h-4 w-4 text-[#51A70A]" />
+            Secure Checkout
+          </span>
+          <a href={getTelLink(CONTACT_NUMBERS.primaryDigits)} className="font-semibold text-[#276005]">
+            Need Help? {CONTACT_NUMBERS.primaryDisplay}
+          </a>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function CheckoutProgress() {
+  const steps = ["Student Details", "Review", "Payment"];
+
+  return (
+    <ol className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+      {steps.map((step, index) => (
+        <li key={step} className="flex flex-1 items-center gap-2 text-xs font-semibold text-slate-500 sm:text-sm">
+          <span
+            className={cn(
+              "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs",
+              index === 0 ? "border-[#51A70A] bg-[#51A70A] text-white" : "border-slate-300 bg-white text-slate-500",
+            )}
+          >
+            {index + 1}
+          </span>
+          <span className={index === 0 ? "text-slate-950" : ""}>{step}</span>
+          {index < steps.length - 1 ? <span className="ml-auto h-px flex-1 bg-slate-200" aria-hidden="true" /> : null}
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -476,101 +456,22 @@ function StudentDetailsForm({
   updateField: <Key extends keyof FormState>(field: Key, value: FormState[Key]) => void;
 }) {
   return (
-    <section className="rounded-lg border border-white/10 bg-gradient-card p-5 shadow-card sm:p-6">
-      <h2 className="font-display text-2xl font-semibold">Student Details</h2>
-      <p className="mt-2 text-sm leading-relaxed text-text-muted">
-        Use the student&apos;s active contact details for payment confirmation
-        and counselling onboarding.
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <h2 className="text-xl font-bold text-slate-950">Student Details</h2>
+      <p className="mt-1 text-sm text-slate-600">
+        We&apos;ll use these details for payment confirmation and counselling onboarding.
       </p>
-
-      <div className="mt-6 grid gap-5 sm:grid-cols-2">
-        <TextField
-          id="studentName"
-          label="Student Full Name"
-          value={form.studentName}
-          error={errors.studentName}
-          required
-          onChange={(value) => updateField("studentName", value)}
-        />
-        <TextField
-          id="mobile"
-          label="Mobile Number"
-          type="tel"
-          inputMode="numeric"
-          value={form.mobile}
-          error={errors.mobile}
-          required
-          onChange={(value) => updateField("mobile", value)}
-        />
-        <TextField
-          id="email"
-          label="Email Address"
-          type="email"
-          value={form.email}
-          error={errors.email}
-          required
-          onChange={(value) => updateField("email", value)}
-        />
-        <TextField
-          id="whatsapp"
-          label="WhatsApp Number"
-          type="tel"
-          inputMode="numeric"
-          value={form.whatsapp}
-          error={errors.whatsapp}
-          required
-          onChange={(value) => updateField("whatsapp", value)}
-        />
-        <SelectField
-          id="course"
-          label="Course Interested In"
-          value={form.course}
-          error={errors.course}
-          required
-          options={COURSE_OPTIONS}
-          placeholder="Select course"
-          onChange={(value) => updateField("course", value)}
-        />
-        <SelectField
-          id="stateOrDomicile"
-          label="State / Domicile"
-          value={form.stateOrDomicile}
-          error={errors.stateOrDomicile}
-          options={STATE_OPTIONS}
-          placeholder="Select state"
-          onChange={(value) => updateField("stateOrDomicile", value)}
-        />
-        <SelectField
-          id="district"
-          label="District"
-          value={form.district}
-          error={errors.district}
-          options={districtOptions}
-          placeholder={form.stateOrDomicile ? "Select district" : "Select state first"}
-          disabled={!form.stateOrDomicile}
-          onChange={(value) => updateField("district", value)}
-        />
-        <TextField
-          id="scoreOrRank"
-          label="NEET/JEE Score or Rank"
-          value={form.scoreOrRank}
-          onChange={(value) => updateField("scoreOrRank", value)}
-        />
-        <TextField
-          id="applicationNumber"
-          label="NEET/JEE Application/Roll Number"
-          value={form.applicationNumber}
-          onChange={(value) => updateField("applicationNumber", value)}
-        />
-        <SelectField
-          id="category"
-          label="Category"
-          value={form.category}
-          error={errors.category}
-          options={CATEGORY_OPTIONS}
-          placeholder="Select category"
-          onChange={(value) => updateField("category", value)}
-        />
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <TextField id="studentName" label="Student Full Name" value={form.studentName} error={errors.studentName} required onChange={(value) => updateField("studentName", value)} />
+        <TextField id="mobile" label="Mobile Number" type="tel" inputMode="numeric" value={form.mobile} error={errors.mobile} required onChange={(value) => updateField("mobile", value)} />
+        <TextField id="email" label="Email Address" type="email" value={form.email} error={errors.email} required onChange={(value) => updateField("email", value)} />
+        <TextField id="whatsapp" label="WhatsApp Number" type="tel" inputMode="numeric" value={form.whatsapp} error={errors.whatsapp} required onChange={(value) => updateField("whatsapp", value)} />
+        <SelectField id="course" label="Course Interested In" value={form.course} error={errors.course} required options={COURSE_OPTIONS} placeholder="Select course" onChange={(value) => updateField("course", value)} />
+        <SelectField id="stateOrDomicile" label="State / Domicile" value={form.stateOrDomicile} error={errors.stateOrDomicile} options={STATE_OPTIONS} placeholder="Select state" onChange={(value) => updateField("stateOrDomicile", value)} />
+        <SelectField id="district" label="District" value={form.district} error={errors.district} options={districtOptions} placeholder={form.stateOrDomicile ? "Select district" : "Select state first"} disabled={!form.stateOrDomicile} onChange={(value) => updateField("district", value)} />
+        <TextField id="scoreOrRank" label="NEET/JEE Score or Rank" value={form.scoreOrRank} error={errors.scoreOrRank} onChange={(value) => updateField("scoreOrRank", value)} />
+        <TextField id="applicationNumber" label="NEET/JEE Application / Roll Number" value={form.applicationNumber} error={errors.applicationNumber} onChange={(value) => updateField("applicationNumber", value)} />
+        <SelectField id="category" label="Category" value={form.category} error={errors.category} options={CATEGORY_OPTIONS} placeholder="Select category" onChange={(value) => updateField("category", value)} />
       </div>
     </section>
   );
@@ -595,13 +496,11 @@ function TextField({
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
   onChange: (value: string) => void;
 }) {
-  const errorId = `${id}-error`;
-
   return (
     <div>
-      <label htmlFor={id} className="text-sm font-semibold text-white">
+      <label htmlFor={id} className="text-sm font-semibold text-slate-800">
         {label}
-        {required ? <span className="text-[#8cef32]"> *</span> : null}
+        {required ? <span className="text-[#51A70A]"> *</span> : null}
       </label>
       <input
         id={id}
@@ -610,18 +509,14 @@ function TextField({
         value={value}
         required={required}
         aria-invalid={Boolean(error)}
-        aria-describedby={error ? errorId : undefined}
+        aria-describedby={error ? `${id}-error` : undefined}
         onChange={(event) => onChange(event.target.value)}
         className={cn(
-          "mt-2 h-12 w-full rounded-lg border bg-white px-4 text-sm font-semibold text-[#071305] placeholder:text-[#071305]/50 shadow-inner transition focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/20",
-          error ? "border-red-300" : "border-white/10",
+          "mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/15",
+          error ? "border-red-300" : "border-slate-300",
         )}
       />
-      {error ? (
-        <p id={errorId} className="mt-2 text-sm font-medium text-red-200">
-          {error}
-        </p>
-      ) : null}
+      {error ? <p id={`${id}-error`} className="mt-1.5 text-sm font-medium text-red-600">{error}</p> : null}
     </div>
   );
 }
@@ -642,18 +537,16 @@ function SelectField({
   value: string;
   error?: string;
   required?: boolean;
-  options: readonly (string | { value: string; label: string })[];
+  options: readonly string[] | Array<{ value: string; label: string }>;
   placeholder: string;
   disabled?: boolean;
   onChange: (value: string) => void;
 }) {
-  const errorId = `${id}-error`;
-
   return (
     <div>
-      <label htmlFor={id} className="text-sm font-semibold text-white">
+      <label htmlFor={id} className="text-sm font-semibold text-slate-800">
         {label}
-        {required ? <span className="text-[#8cef32]"> *</span> : null}
+        {required ? <span className="text-[#51A70A]"> *</span> : null}
       </label>
       <select
         id={id}
@@ -661,198 +554,297 @@ function SelectField({
         required={required}
         disabled={disabled}
         aria-invalid={Boolean(error)}
-        aria-describedby={error ? errorId : undefined}
+        aria-describedby={error ? `${id}-error` : undefined}
         onChange={(event) => onChange(event.target.value)}
         className={cn(
-          "mt-2 h-12 w-full rounded-lg border bg-white px-4 text-sm font-semibold text-[#071305] shadow-inner transition focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/20 disabled:cursor-not-allowed disabled:bg-white/70 disabled:text-[#071305]/55",
-          error ? "border-red-300" : "border-white/10",
+          "mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/15 disabled:bg-slate-100 disabled:text-slate-400",
+          error ? "border-red-300" : "border-slate-300",
         )}
       >
         <option value="">{placeholder}</option>
-        {options.map((option) => (
-          <option
-            key={typeof option === "string" ? option : option.value}
-            value={typeof option === "string" ? option : option.value}
-          >
-            {typeof option === "string" ? option : option.label}
-          </option>
-        ))}
+        {options.map((option) => {
+          const optionValue = typeof option === "string" ? option : option.value;
+          const optionLabel = typeof option === "string" ? option : option.label;
+
+          return (
+            <option key={optionValue} value={optionValue}>
+              {optionLabel}
+            </option>
+          );
+        })}
       </select>
-      {error ? (
-        <p id={errorId} className="mt-2 text-sm font-medium text-red-200">
-          {error}
-        </p>
-      ) : null}
+      {error ? <p id={`${id}-error`} className="mt-1.5 text-sm font-medium text-red-600">{error}</p> : null}
     </div>
   );
 }
 
 function SelectedPlanCard({ selectedPackage }: { selectedPackage: CounsellingPackage }) {
+  const [open, setOpen] = useState(false);
+  const featuredInclusions = selectedPackage.inclusions.slice(0, 5);
+  const remainingInclusions = selectedPackage.inclusions.slice(5);
+
   return (
-    <section className="rounded-lg border border-white/10 bg-gradient-card p-5 shadow-card sm:p-6">
-      <div className="flex items-start justify-between gap-4">
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8cef32]">
-            Selected Plan
-          </p>
-          <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
-            {selectedPackage.title}
-          </h2>
-          <p className="mt-1 text-sm font-semibold text-[#8cef32]">
-            {selectedPackage.subtitle}
-          </p>
-          <p className="mt-3 text-sm leading-relaxed text-text-muted">
-            {selectedPackage.description}
+          <p className="text-sm font-semibold text-[#276005]">Selected Counselling Plan</p>
+          <h2 className="mt-1 text-xl font-bold text-slate-950">{selectedPackage.title}</h2>
+          <p className="mt-1 text-sm text-slate-600">{selectedPackage.subtitle}</p>
+          <p className="mt-3 text-2xl font-bold text-slate-950">
+            {formatIndianCurrency(selectedPackage.baseAmount)}
+            <span className="text-sm font-semibold text-slate-500"> + GST</span>
           </p>
         </div>
-        <Link
-          href="/services#pricing"
-          className="shrink-0 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-semibold text-white transition hover:border-[#51A70A]/45"
-        >
+        <Link href="/services#pricing" className="inline-flex h-10 items-center justify-center rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-800 transition hover:border-[#51A70A] hover:text-[#276005]">
           Change Plan
         </Link>
       </div>
 
-      <div className="mt-5 grid gap-3">
-        {selectedPackage.inclusions.map((item) => (
-          <div key={item} className="flex items-start gap-3 text-sm text-white/78">
-            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#51A70A]/25 bg-[#51A70A]/10 text-[#8cef32]">
-              <Check className="h-3.5 w-3.5" />
-            </span>
+      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        {featuredInclusions.map((item) => (
+          <div key={item} className="flex items-start gap-2 text-sm text-slate-700">
+            <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#51A70A]" />
             <span>{item}</span>
           </div>
         ))}
       </div>
 
-      <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.04] p-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8cef32]">
-          Service Validity
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-text-muted">
-          {selectedPackage.validity}
-        </p>
-      </div>
+      {remainingInclusions.length > 0 ? (
+        <div className="mt-4">
+          <button type="button" onClick={() => setOpen((current) => !current)} aria-expanded={open} className="inline-flex items-center gap-2 text-sm font-semibold text-[#276005]">
+            View all inclusions
+            <ChevronDown className={cn("h-4 w-4 transition", open ? "rotate-180" : "")} />
+          </button>
+          {open ? (
+            <div className="mt-3 grid gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-2">
+              {remainingInclusions.map((item) => (
+                <div key={item} className="flex items-start gap-2 text-sm text-slate-700">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#51A70A]" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+function InfoStrip({ text }: { text: string }) {
+  return (
+    <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 text-sm text-slate-700">
+      <span className="font-semibold text-slate-950">Service validity: </span>
+      {text}
+    </div>
+  );
+}
+
+function NextStepsAccordion() {
+  return (
+    <Accordion title="What happens after payment?" preview="A quick look at the onboarding flow after payment.">
+      <ol className="grid gap-3 sm:grid-cols-2">
+        {NEXT_STEPS.map((step, index) => (
+          <li key={step} className="flex gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#51A70A] text-xs font-bold text-white">{index + 1}</span>
+            <span>{step}</span>
+          </li>
+        ))}
+      </ol>
+    </Accordion>
+  );
+}
+
+function PolicyAccordions() {
+  return (
+    <section className="space-y-3">
+      {POLICY_SECTIONS.map((section) => (
+        <Accordion key={section.title} title={section.title} preview={section.preview}>
+          <p className="text-sm leading-6 text-slate-700">{section.body}</p>
+        </Accordion>
+      ))}
+    </section>
+  );
+}
+
+function Accordion({
+  title,
+  preview,
+  children,
+}: {
+  title: string;
+  preview: string;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+        className="flex w-full items-center justify-between gap-4 p-5 text-left"
+      >
+        <span>
+          <span className="block text-base font-bold text-slate-950">{title}</span>
+          <span className="mt-1 block text-sm text-slate-600">{preview}</span>
+        </span>
+        <ChevronDown className={cn("h-5 w-5 shrink-0 text-slate-500 transition", open ? "rotate-180" : "")} />
+      </button>
+      {open ? <div className="border-t border-slate-200 px-5 pb-5 pt-4">{children}</div> : null}
     </section>
   );
 }
 
 function OrderSummary({
-  pricing,
-  selectedPackage,
   form,
   errors,
+  pricing,
+  selectedPackage,
+  couponOpen,
   submitting,
+  setCouponOpen,
   updateField,
+  handleCouponApply,
 }: {
-  pricing: ReturnType<typeof calculateCheckoutPayment>;
-  selectedPackage: CounsellingPackage;
   form: FormState;
   errors: FormErrors;
+  pricing: ReturnType<typeof calculateCheckoutPayment>;
+  selectedPackage: CounsellingPackage;
+  couponOpen: boolean;
   submitting: boolean;
+  setCouponOpen: (value: boolean) => void;
   updateField: <Key extends keyof FormState>(field: Key, value: FormState[Key]) => void;
+  handleCouponApply: () => void;
 }) {
   const couponError = errors.couponCode ?? pricing.couponError;
 
   return (
-    <section className="rounded-lg border border-[#51A70A]/25 bg-[linear-gradient(135deg,rgba(255,255,255,0.09),rgba(255,255,255,0.03)),linear-gradient(135deg,rgba(11,16,9,0.96),rgba(18,26,16,0.88))] p-5 shadow-elevated sm:p-6">
-      <h2 className="font-display text-2xl font-semibold">Order Summary</h2>
-      <div className="mt-5 space-y-3 border-b border-white/10 pb-5 text-sm">
-        <SummaryRow label="Counselling Fee" value={formatIndianCurrency(pricing.baseAmount)} />
-        {pricing.taxRate > 0 ? (
-          <SummaryRow
-            label={`GST (${Math.round(pricing.taxRate * 100)}%)`}
-            value={formatIndianCurrency(pricing.taxAmount)}
-          />
-        ) : null}
-        {pricing.discountAmount > 0 ? (
-          <SummaryRow
-            label={`Coupon Discount (${pricing.coupon?.code})`}
-            value={`- ${formatIndianCurrency(pricing.discountAmount)}`}
-          />
-        ) : null}
-      </div>
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 className="text-xl font-bold text-slate-950">Order Summary</h2>
+      <p className="mt-1 text-sm text-slate-600">{selectedPackage.subtitle}</p>
 
-      <div className="mt-5 rounded-lg border border-white/10 bg-black/20 p-4">
-        <div className="flex items-center gap-2">
-          <Tag className="h-4 w-4 text-[#8cef32]" />
-          <label htmlFor="couponCode" className="text-sm font-semibold text-white">
-            Coupon Code
-          </label>
-        </div>
-        <input
-          id="couponCode"
-          value={form.couponCode}
-          placeholder="Try CK10"
-          aria-invalid={Boolean(couponError)}
-          aria-describedby={couponError ? "couponCode-error" : undefined}
-          onChange={(event) => updateField("couponCode", event.target.value.toUpperCase())}
-          className={cn(
-            "mt-3 h-12 w-full rounded-lg border bg-white px-4 font-mono text-sm font-bold uppercase tracking-[0.12em] text-[#071305] placeholder:text-[#071305]/45 shadow-inner transition focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/20",
-            couponError ? "border-red-300" : "border-white/10",
-          )}
-        />
-        {couponError ? (
-          <p id="couponCode-error" className="mt-2 text-sm font-medium text-red-200">
-            {couponError}
-          </p>
-        ) : pricing.coupon ? (
-          <p className="mt-2 text-sm font-semibold text-[#8cef32]">
-            {pricing.coupon.label} applied.
-          </p>
-        ) : (
-          <p className="mt-2 text-xs leading-relaxed text-text-muted">
-            Dummy codes: {COUPON_CODES.map((coupon) => coupon.code).join(", ")}
-          </p>
-        )}
+      <div className="mt-5 space-y-3 border-b border-slate-200 pb-5 text-sm">
+        <SummaryRow label="Counselling Fee" value={formatIndianCurrency(pricing.baseAmount)} />
+        {pricing.taxRate > 0 ? <SummaryRow label={`GST (${Math.round(pricing.taxRate * 100)}%)`} value={formatIndianCurrency(pricing.taxAmount)} /> : null}
+        {pricing.discountAmount > 0 ? <SummaryRow label="Discount" value={`-${formatIndianCurrency(pricing.discountAmount)}`} /> : null}
       </div>
 
       <div className="mt-5 flex items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
-            Net Payable
-          </p>
-          <p className="mt-1 text-sm text-text-muted">{selectedPackage.title}</p>
-        </div>
-        <p className="font-display text-3xl font-bold text-[#8cef32] sm:text-4xl">
-          {formatIndianCurrency(pricing.netAmount)}
-        </p>
+        <span className="text-sm font-semibold text-slate-600">Total</span>
+        <span className="text-2xl font-bold text-slate-950">{formatIndianCurrency(pricing.netAmount)}</span>
       </div>
 
-      <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.04] p-4">
-        <p className="text-sm font-semibold text-white">Payment Type</p>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          {[
-            { label: "Full Payment", value: "full" },
-            { label: "Partial Payment", value: "partial" },
-          ].map((option) => (
-            <label
-              key={option.value}
-              className={cn(
-                "flex cursor-pointer items-center justify-center rounded-full border px-3 py-2 text-center text-xs font-bold transition",
-                form.paymentMode === option.value
-                  ? "border-[#51A70A]/55 bg-[#51A70A]/15 text-[#8cef32]"
-                  : "border-white/10 bg-black/20 text-white/70 hover:border-[#51A70A]/35",
-              )}
-            >
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <button type="button" onClick={() => setCouponOpen(!couponOpen)} aria-expanded={couponOpen} className="flex w-full items-center justify-between text-sm font-semibold text-slate-800">
+          <span className="inline-flex items-center gap-2">
+            <Tag className="h-4 w-4 text-[#51A70A]" />
+            Have a coupon?
+          </span>
+          <ChevronDown className={cn("h-4 w-4 transition", couponOpen ? "rotate-180" : "")} />
+        </button>
+        {couponOpen ? (
+          <div className="mt-3">
+            <div className="flex gap-2">
               <input
-                type="radio"
-                name="paymentMode"
-                value={option.value}
-                checked={form.paymentMode === option.value}
-                onChange={() => updateField("paymentMode", option.value as FormState["paymentMode"])}
-                className="sr-only"
+                id="couponCode"
+                value={form.couponCode}
+                placeholder="Enter coupon code"
+                aria-invalid={Boolean(couponError)}
+                aria-describedby={couponError ? "couponCode-error" : undefined}
+                onChange={(event) => updateField("couponCode", event.target.value.toUpperCase())}
+                className={cn(
+                  "h-11 min-w-0 flex-1 rounded-xl border bg-white px-3 text-sm font-semibold uppercase tracking-[0.08em] text-slate-950 outline-none focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/15",
+                  couponError ? "border-red-300" : "border-slate-300",
+                )}
               />
-              {option.label}
-            </label>
-          ))}
-        </div>
+              <button type="button" onClick={handleCouponApply} className="rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800">
+                Apply
+              </button>
+            </div>
+            {couponError ? <p id="couponCode-error" className="mt-2 text-sm font-medium text-red-600">{couponError}</p> : null}
+            {pricing.coupon && !couponError ? <p className="mt-2 text-sm font-semibold text-green-700">Coupon applied successfully</p> : null}
+          </div>
+        ) : null}
+      </div>
 
-        {form.paymentMode === "partial" ? (
-          <div className="mt-4">
-            <label htmlFor="partialPaymentAmount" className="flex items-center gap-2 text-sm font-semibold text-white">
-              <IndianRupee className="h-4 w-4 text-[#8cef32]" />
-              Pay Now Amount
-            </label>
+      <PaymentTypeControl form={form} pricing={pricing} errors={errors} updateField={updateField} />
+
+      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700 focus-within:border-[#51A70A]">
+        <input
+          type="checkbox"
+          checked={form.policiesAccepted}
+          required
+          aria-invalid={Boolean(errors.policiesAccepted)}
+          aria-describedby={errors.policiesAccepted ? "policiesAccepted-error" : undefined}
+          onChange={(event) => updateField("policiesAccepted", event.target.checked)}
+          className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 accent-[#51A70A]"
+        />
+        <span>
+          I agree to CareerKick&apos;s{" "}
+          <Link href="/policies/terms" target="_blank" className="font-semibold text-[#276005] hover:underline">Terms & Conditions</Link>
+          ,{" "}
+          <Link href="/policies/privacy" target="_blank" className="font-semibold text-[#276005] hover:underline">Privacy Policy</Link>
+          {" "}and{" "}
+          <Link href="/policies/refund" target="_blank" className="font-semibold text-[#276005] hover:underline">Refund & Cancellation Policy</Link>.
+        </span>
+      </label>
+      {errors.policiesAccepted ? <p id="policiesAccepted-error" className="mt-2 text-sm font-medium text-red-600">{errors.policiesAccepted}</p> : null}
+
+      {errors.submit ? <div role="alert" className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{errors.submit}</div> : null}
+
+      <button type="submit" disabled={submitting} className="mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#51A70A] px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-[#438c08] disabled:cursor-not-allowed disabled:opacity-70">
+        {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Lock className="h-5 w-5" />}
+        {submitting ? "Preparing Payment..." : `Continue to Payment - ${formatIndianCurrency(pricing.amountPaid)}`}
+      </button>
+      <p className="mt-3 flex items-center justify-center gap-2 text-sm font-medium text-slate-600">
+        <Lock className="h-4 w-4 text-[#51A70A]" />
+        Secure checkout experience
+      </p>
+    </section>
+  );
+}
+
+function PaymentTypeControl({
+  form,
+  pricing,
+  errors,
+  updateField,
+}: {
+  form: FormState;
+  pricing: ReturnType<typeof calculateCheckoutPayment>;
+  errors: FormErrors;
+  updateField: <Key extends keyof FormState>(field: Key, value: FormState[Key]) => void;
+}) {
+  return (
+    <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4">
+      <p className="text-sm font-bold text-slate-950">Payment Type</p>
+      <div className="mt-3 grid grid-cols-2 rounded-xl bg-slate-100 p-1">
+        {(["full", "partial"] as const).map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            aria-pressed={form.paymentMode === mode}
+            onClick={() => updateField("paymentMode", mode)}
+            className={cn(
+              "rounded-lg px-3 py-2 text-sm font-semibold transition",
+              form.paymentMode === mode ? "bg-white text-[#276005] shadow-sm" : "text-slate-600 hover:text-slate-950",
+            )}
+          >
+            {mode === "full" ? "Full Payment" : "Partial Payment"}
+          </button>
+        ))}
+      </div>
+
+      {form.paymentMode === "partial" ? (
+        <div className="mt-4 space-y-3">
+          <SummaryRow label="Total payable" value={formatIndianCurrency(pricing.netAmount)} />
+          <label htmlFor="partialPaymentAmount" className="block text-sm font-semibold text-slate-800">
+            Amount to pay now
+          </label>
+          <div className="relative">
+            <IndianRupee className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               id="partialPaymentAmount"
               type="number"
@@ -863,331 +855,73 @@ function OrderSummary({
               aria-describedby={errors.partialPaymentAmount ? "partialPaymentAmount-error" : undefined}
               onChange={(event) => updateField("partialPaymentAmount", event.target.value)}
               className={cn(
-                "mt-2 h-12 w-full rounded-lg border bg-white px-4 text-sm font-semibold text-[#071305] shadow-inner transition focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/20",
-                errors.partialPaymentAmount ? "border-red-300" : "border-white/10",
+                "h-12 w-full rounded-xl border bg-white pl-9 pr-4 text-sm font-semibold text-slate-950 outline-none focus:border-[#51A70A] focus:ring-4 focus:ring-[#51A70A]/15",
+                errors.partialPaymentAmount ? "border-red-300" : "border-slate-300",
               )}
             />
-            {errors.partialPaymentAmount ? (
-              <p id="partialPaymentAmount-error" className="mt-2 text-sm font-medium text-red-200">
-                {errors.partialPaymentAmount}
-              </p>
-            ) : null}
           </div>
-        ) : null}
-
-        <dl className="mt-4 grid gap-3 rounded-lg border border-[#51A70A]/20 bg-[#51A70A]/8 p-4 text-sm">
-          <SummaryRow label="Pay Now" value={formatIndianCurrency(pricing.amountPaid)} />
-          <SummaryRow label="Pending Due" value={formatIndianCurrency(pricing.dueAmount)} />
-        </dl>
-      </div>
-
-      <NoticeBox
-        className="mt-5"
-        icon={<AlertCircle className="h-5 w-5" />}
-        title="Important"
-        body="This payment is towards CareerKick's professional counselling and admission-guidance services. Government counselling registration fees, security deposits, college fees, hostel fees and other third-party charges are not included unless specifically stated in the selected package."
-      />
-
-      <NoticeBox
-        className="mt-4"
-        icon={<ShieldCheck className="h-5 w-5" />}
-        title="Admission Disclaimer"
-        body="CareerKick provides counselling, guidance and admission-support services. Admission or seat allotment is subject to the student's eligibility, rank/score, preferences, seat availability, counselling authority rules and participating institutions. Purchasing a counselling package does not guarantee admission to any particular college, course or seat."
-      />
-
-      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-lg border border-white/10 bg-black/20 p-4 text-sm leading-relaxed text-text-muted transition focus-within:border-[#51A70A]/45">
-        <input
-          type="checkbox"
-          checked={form.policiesAccepted}
-          required
-          aria-invalid={Boolean(errors.policiesAccepted)}
-          aria-describedby={errors.policiesAccepted ? "policiesAccepted-error" : undefined}
-          onChange={(event) => updateField("policiesAccepted", event.target.checked)}
-          className="mt-1 h-4 w-4 shrink-0 rounded border-white/20 accent-[#51A70A]"
-        />
-        <span>
-          I have read and agree to CareerKick&apos;s{" "}
-          <Link href="/policies/terms" className="font-semibold text-[#8cef32] hover:underline">
-            Terms & Conditions
-          </Link>
-          ,{" "}
-          <Link href="/policies/privacy" className="font-semibold text-[#8cef32] hover:underline">
-            Privacy Policy
-          </Link>
-          {" "}and{" "}
-          <Link href="/policies/refund" className="font-semibold text-[#8cef32] hover:underline">
-            Refund & Cancellation Policy
-          </Link>
-          .
-        </span>
-      </label>
-      {errors.policiesAccepted ? (
-        <p id="policiesAccepted-error" className="mt-2 text-sm font-medium text-red-200">
-          {errors.policiesAccepted}
-        </p>
-      ) : null}
-
-      {errors.submit ? (
-        <div role="alert" className="mt-4 rounded-lg border border-red-300/25 bg-red-500/10 p-4 text-sm leading-relaxed text-red-100">
-          {errors.submit}
+          <p className="text-xs text-slate-500">Minimum payment: {formatIndianCurrency(getMinimumPartialPayment(pricing.netAmount))}</p>
+          {errors.partialPaymentAmount ? <p id="partialPaymentAmount-error" className="text-sm font-medium text-red-600">{errors.partialPaymentAmount}</p> : null}
         </div>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-brand px-6 py-4 text-base font-bold text-white shadow-card transition hover:shadow-glow-violet disabled:cursor-not-allowed disabled:opacity-70"
-      >
-        {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Lock className="h-5 w-5" />}
-        Pay {formatIndianCurrency(pricing.amountPaid)} Securely
-      </button>
-      <p className="mt-3 flex items-center justify-center gap-2 text-sm font-medium text-text-muted">
-        <Lock className="h-4 w-4 text-[#8cef32]" />
-        Secure payment
-      </p>
-    </section>
-  );
-}
-
-function PaymentPolicyNotes() {
-  return (
-    <section className="rounded-lg border border-red-300/30 bg-red-500/10 p-4 shadow-card sm:p-5">
-      <ul className="space-y-2 text-sm font-semibold leading-relaxed text-red-100">
-        {COUNSELLING_PAYMENT_NOTES.map((note) => (
-          <li key={note} className="flex gap-2">
-            <span aria-hidden="true">•</span>
-            <span>{note}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
+      <dl className="mt-4 space-y-2 rounded-xl bg-emerald-50 p-3 text-sm">
+        <SummaryRow label="Pay Now" value={formatIndianCurrency(pricing.amountPaid)} />
+        <SummaryRow label="Pending" value={formatIndianCurrency(pricing.dueAmount)} />
+      </dl>
+    </div>
   );
 }
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <span className="text-text-muted">{label}</span>
-      <span className="font-semibold text-white">{value}</span>
+      <span className="text-slate-600">{label}</span>
+      <span className="font-bold text-slate-950">{value}</span>
     </div>
   );
 }
 
-function NoticeBox({
-  icon,
-  title,
-  body,
-  className,
+function MobileCheckoutBar({
+  amount,
+  submitting,
+  onContinue,
 }: {
-  icon: React.ReactNode;
-  title: string;
-  body: string;
-  className?: string;
+  amount: number;
+  submitting: boolean;
+  onContinue: () => void;
 }) {
   return (
-    <div className={cn("rounded-lg border border-[#51A70A]/18 bg-[#51A70A]/8 p-4", className)}>
-      <div className="flex items-start gap-3">
-        <span className="mt-0.5 text-[#8cef32]">{icon}</span>
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white p-3 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] md:hidden">
+      <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-3">
         <div>
-          <p className="font-semibold text-white">{title}</p>
-          <p className="mt-1 text-sm leading-relaxed text-text-muted">{body}</p>
+          <p className="text-xs font-semibold text-slate-500">Total</p>
+          <p className="text-lg font-bold text-slate-950">{formatIndianCurrency(amount)}</p>
         </div>
+        <button type="button" disabled={submitting} onClick={onContinue} className="inline-flex h-11 items-center justify-center rounded-xl bg-[#51A70A] px-5 text-sm font-bold text-white disabled:opacity-70">
+          Continue
+        </button>
       </div>
     </div>
   );
 }
 
-function PostPaymentSteps() {
+function InvalidPackageState() {
   return (
-    <section className="rounded-lg border border-white/10 bg-gradient-card p-5 shadow-card sm:p-6">
-      <h2 className="font-display text-2xl font-semibold">What happens after payment?</h2>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        {nextSteps.map((step, index) => (
-          <div key={step.title} className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
-            <div className="flex items-start gap-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#51A70A]/30 bg-[#51A70A]/10 text-sm font-bold text-[#8cef32]">
-                {index + 1}
-              </span>
-              <div>
-                <h3 className="font-semibold text-white">{step.title}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-text-muted">{step.body}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function CheckoutSupport() {
-  return (
-    <section className="rounded-lg border border-white/10 bg-gradient-card p-5 shadow-card sm:p-6">
-      <h2 className="font-display text-2xl font-semibold">Need help with your payment?</h2>
-      <p className="mt-2 text-sm leading-relaxed text-text-muted">
-        Contact the CareerKick counselling team using the official details below.
-      </p>
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
-        <SupportLink
-          href={getTelLink(CONTACT_NUMBERS.primaryDigits)}
-          icon={<Phone className="h-4 w-4" />}
-          label="Call"
-          value={CONTACT_NUMBERS.primaryDisplay}
-        />
-        <SupportLink
-          href={getWhatsAppLink("Hello, I need help with my CareerKick counselling payment.")}
-          icon={<HelpCircle className="h-4 w-4" />}
-          label="WhatsApp"
-          value={CONTACT_NUMBERS.primaryDisplay}
-          external
-        />
-        <SupportLink
-          href="mailto:info@careerkick.in"
-          icon={<Mail className="h-4 w-4" />}
-          label="Email"
-          value="info@careerkick.in"
-        />
-      </div>
-    </section>
-  );
-}
-
-function SupportLink({
-  href,
-  icon,
-  label,
-  value,
-  external,
-}: {
-  href: string;
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  external?: boolean;
-}) {
-  return (
-    <a
-      href={href}
-      target={external ? "_blank" : undefined}
-      rel={external ? "noreferrer" : undefined}
-      className="rounded-lg border border-white/10 bg-white/[0.04] p-4 transition hover:border-[#51A70A]/40"
-    >
-      <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#8cef32]">
-        {icon}
-        {label}
-      </span>
-      <span className="mt-2 block text-sm font-semibold text-white">{value}</span>
-    </a>
-  );
-}
-
-export function PaymentStatePage({
-  status,
-  paymentDetails,
-}: {
-  status: "success" | "failure" | "pending";
-  paymentDetails?: {
-    enrollment?: string;
-    paid?: string;
-    due?: string;
-    total?: string;
-  };
-}) {
-  const config = {
-    success: {
-      icon: CheckCircle2,
-      label: "Payment Successful",
-      title: "Your counselling enrollment has been received.",
-      body: "This page should be shown only after server-side gateway verification confirms a successful payment.",
-      tone: "text-[#8cef32]",
-      cta: "Continue",
-      href: "/",
-    },
-    failure: {
-      icon: AlertCircle,
-      label: "Payment Unsuccessful",
-      title: "We couldn't confirm your payment.",
-      body: "If money has been debited, please avoid making another payment immediately and contact support with your Enrollment/Order ID.",
-      tone: "text-red-200",
-      cta: "Retry Payment",
-      href: "/services#pricing",
-    },
-    pending: {
-      icon: Clock,
-      label: "Payment Verification in Progress",
-      title: "Your payment status is being verified.",
-      body: "Some transactions take extra time to confirm. CareerKick should update this state after verified gateway callback or server-side polling.",
-      tone: "text-amber",
-      cta: "Contact Counselling Team",
-      href: getWhatsAppLink("Hello, I need help checking my CareerKick payment status."),
-    },
-  }[status];
-  const Icon = config.icon;
-  const paidAmount = Number(paymentDetails?.paid ?? 0);
-  const dueAmount = Number(paymentDetails?.due ?? 0);
-  const totalAmount = Number(paymentDetails?.total ?? 0);
-
-  return (
-    <main className="relative overflow-hidden bg-base px-4 pb-24 pt-28 text-white md:px-8 md:pt-32">
-      <Background />
-      <section className="relative mx-auto max-w-3xl rounded-lg border border-white/10 bg-gradient-card p-6 text-center shadow-elevated sm:p-10">
-        <span className={cn("mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/[0.04]", config.tone)}>
-          <Icon className="h-7 w-7" />
+    <main className="bg-[#F6F8F5] px-4 py-20 text-slate-900">
+      <section className="mx-auto max-w-xl rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
+          <AlertCircle className="h-6 w-6" />
         </span>
-        <p className="mt-5 font-mono text-xs font-semibold uppercase tracking-[0.22em] text-[#8cef32]">
-          {config.label}
+        <h1 className="mt-5 text-2xl font-bold text-slate-950">Selected package could not be found</h1>
+        <p className="mt-3 text-sm leading-6 text-slate-600">
+          Please choose a valid counselling plan before continuing to checkout.
         </p>
-        <h1 className="mt-3 font-display text-3xl font-bold sm:text-4xl">{config.title}</h1>
-        <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed !text-white sm:text-base">
-          {config.body}
-        </p>
-
-        <div className="mx-auto mt-7 max-w-xl rounded-lg border border-white/10 bg-white/[0.04] p-4 text-left">
-          <dl className="grid gap-3 text-sm sm:grid-cols-2">
-            <ResultItem label="Enrollment ID" value={paymentDetails?.enrollment ?? "Created by backend"} />
-            <ResultItem label="Transaction ID" value={paymentDetails?.enrollment ? `DUMMY-${paymentDetails.enrollment}` : "Verified server-side"} />
-            <ResultItem label="Payment Status" value={config.label} />
-            <ResultItem
-              label="Amount Paid"
-              value={paidAmount > 0 ? formatIndianCurrency(paidAmount) : "From trusted order record"}
-            />
-            <ResultItem
-              label="Net Amount"
-              value={totalAmount > 0 ? formatIndianCurrency(totalAmount) : "From trusted order record"}
-            />
-            <ResultItem
-              label="Pending Due"
-              value={dueAmount > 0 ? formatIndianCurrency(dueAmount) : formatIndianCurrency(0)}
-            />
-          </dl>
-        </div>
-
-        <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-          <Link
-            href={config.href}
-            className="inline-flex items-center justify-center rounded-full bg-gradient-brand px-6 py-3 text-sm font-semibold text-white shadow-card transition hover:shadow-glow-violet"
-          >
-            {config.cta}
-          </Link>
-          <a
-            href={getWhatsAppLink("Hello, I need help with my CareerKick payment.")}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm font-semibold text-white transition hover:border-[#51A70A]/45"
-          >
-            Contact Support: 7393062116
-          </a>
-        </div>
+        <Link href="/services#pricing" className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-[#51A70A] px-5 py-3 text-sm font-bold text-white">
+          <ArrowLeft className="h-4 w-4" />
+          View Counselling Plans
+        </Link>
       </section>
     </main>
-  );
-}
-
-function ResultItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="text-xs font-semibold uppercase tracking-[0.16em] text-text-faint">{label}</dt>
-      <dd className="mt-1 font-semibold text-white">{value}</dd>
-    </div>
   );
 }
