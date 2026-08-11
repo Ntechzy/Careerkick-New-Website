@@ -10,6 +10,9 @@ import type {
 
 const API_BASE = "https://blogs.careerkick.in/wp-json/wp/v2";
 const REVALIDATE_SECONDS = 3600;
+const POST_LIST_FIELDS =
+  "id,date,modified,slug,link,title,excerpt,_embedded.author,_embedded.wp:featuredmedia,_embedded.wp:term";
+const POST_REFERENCE_FIELDS = "id,date,slug,title";
 
 const htmlEntityMap: Record<string, string> = {
   amp: "&",
@@ -160,23 +163,26 @@ function termsByTaxonomy(post: WPRawPost, taxonomy: "category" | "post_tag"): Bl
 export function normalizePost(post: WPRawPost): WPPost {
   const featured = post._embedded?.["wp:featuredmedia"]?.[0] ?? null;
   const author = post._embedded?.author?.[0] ?? null;
-  const reading = calculateReadingTime(post.content.rendered);
+  const renderedTitle = post.title?.rendered ?? "";
+  const renderedExcerpt = post.excerpt?.rendered ?? "";
+  const renderedContent = post.content?.rendered ?? renderedExcerpt;
+  const reading = calculateReadingTime(renderedContent);
 
   return {
     id: post.id,
     slug: post.slug,
     link: post.link,
-    title: decodeHtml(stripHtml(post.title.rendered)),
-    excerpt: truncateText(post.excerpt.rendered, 170),
-    content: sanitizePostHtml(post.content.rendered),
-    rawContent: post.content.rendered,
+    title: decodeHtml(stripHtml(renderedTitle)),
+    excerpt: truncateText(renderedExcerpt, 170),
+    content: sanitizePostHtml(renderedContent),
+    rawContent: renderedContent,
     date: post.date,
     modified: post.modified,
     featuredImage: featured
       ? {
           id: featured.id,
           url: featured.source_url,
-          alt: featured.alt_text || decodeHtml(stripHtml(post.title.rendered)),
+          alt: featured.alt_text || decodeHtml(stripHtml(renderedTitle)),
           width: featured.media_details?.width,
           height: featured.media_details?.height,
         }
@@ -200,6 +206,7 @@ export async function getPosts(query: PostsQuery = {}) {
   const data = await wpFetch<WPRawPost[]>(
     buildUrl("/posts", {
       _embed: 1,
+      _fields: query.includeContent ? undefined : POST_LIST_FIELDS,
       per_page: query.perPage ?? 12,
       page: query.page,
       search: query.search,
@@ -233,6 +240,39 @@ export async function getAllPosts(query: Omit<PostsQuery, "page" | "perPage"> = 
   return posts;
 }
 
+export async function getAllPostReferences() {
+  const perPage = 100;
+  const posts: Array<Pick<WPPost, "id" | "slug" | "title" | "date">> = [];
+
+  for (let page = 1; page <= 100; page += 1) {
+    const data = await wpFetch<WPRawPost[]>(
+      buildUrl("/posts", {
+        _fields: POST_REFERENCE_FIELDS,
+        per_page: perPage,
+        page,
+        order: "desc",
+        orderby: "date",
+      }),
+    );
+
+    const pagePosts =
+      data?.map((post) => ({
+        id: post.id,
+        slug: post.slug,
+        title: decodeHtml(stripHtml(post.title?.rendered ?? "")),
+        date: post.date,
+      })) ?? [];
+
+    posts.push(...pagePosts);
+
+    if (pagePosts.length < perPage) {
+      break;
+    }
+  }
+
+  return posts;
+}
+
 export async function getLatestPosts(count: number) {
   return getPosts({ perPage: count });
 }
@@ -242,6 +282,7 @@ export async function getPost(slug: string) {
     buildUrl("/posts", {
       slug,
       _embed: 1,
+      _fields: "id,date,modified,slug,status,type,link,title,content,excerpt,author,featured_media,categories,tags,_embedded",
     }),
   );
 

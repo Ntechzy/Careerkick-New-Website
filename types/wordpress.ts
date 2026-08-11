@@ -51,9 +51,9 @@ export type WPRawPost = {
   status: string;
   type: string;
   link: string;
-  title: RenderedText;
-  content: RenderedText;
-  excerpt: RenderedText;
+  title?: RenderedText;
+  content?: RenderedText;
+  excerpt?: RenderedText;
   author: number;
   featured_media: number;
   categories: number[];
@@ -108,4 +108,5 @@ export type PostsQuery = {
   category?: number | string;
   order?: "asc" | "desc";
   orderBy?: "date" | "modified" | "title";
+  includeContent?: boolean;
 };

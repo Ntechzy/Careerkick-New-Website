@@ -9,7 +9,7 @@ import { RelatedBlogs } from "@/components/blog/RelatedBlogs";
 import { ShareButtons } from "@/components/blog/ShareButtons";
 import {
   formatPostDate,
-  getAllPosts,
+  getAllPostReferences,
   getCategories,
   getLatestPosts,
   getPostBySlug,
@@ -25,7 +25,7 @@ type SingleBlogPageProps = {
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const posts = await getAllPosts();
+  const posts = await getAllPostReferences();
 
   return posts.map((post) => ({
     slug: post.slug,
@@ -78,7 +78,7 @@ export default async function SingleBlogPage({ params }: SingleBlogPageProps) {
     getCategories(),
     getLatestPosts(5),
     getRelatedPosts(post, 3),
-    getAllPosts(),
+    getAllPostReferences(),
   ]);
 
   const currentIndex = allPosts.findIndex((item) => item.id === post.id);
