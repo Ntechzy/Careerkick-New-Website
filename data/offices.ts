@@ -6,7 +6,7 @@ export const offices: OfficeBranch[] = [
     branch: "Kanpur",
     image: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783162422/kanpur_fzmknv.png",
     address:
-      "117 N 65, Rani Ganj, Kakadeo, Kanpur, Uttar Pradesh 208025",
+      "117/H, Pandu Nagar near JK, 1/606, Temple Kanpur, Kanpur Nagar, Uttar Pradesh, India, 208005",
     contacts: ["+91 7521050567", "+91 8429133397", "+91 7275179977"],
     mapUrl:
       "https://www.google.com/maps/search/?api=1&query=117%20N%2065%20Rani%20Ganj%20Ambedkar%20Nagar%20Navin%20Nagar%20Kakadeo%20Kanpur%20Uttar%20Pradesh%20208025",

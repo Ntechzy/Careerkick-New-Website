@@ -49,9 +49,9 @@ export function BlogSearch({ defaultValue = "" }: BlogSearchProps) {
         value={value}
         onChange={(event) => setValue(event.target.value)}
         placeholder="Search guides, cut-offs, counselling..."
-        className="h-12 w-full rounded-full border border-white/10 bg-white/[0.04] px-5 pr-12 text-sm text-white placeholder:text-text-faint shadow-card backdrop-blur-xl transition-colors focus:border-violet/50"
+        className="h-12 w-full rounded-full border border-[#dce9d4] bg-white px-5 pr-16 text-sm text-[#182413] placeholder:text-[#819078] shadow-sm transition-colors focus:border-violet/50"
       />
-      <span className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-[10px] uppercase tracking-widest text-violet-glow">
+      <span className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-[10px] uppercase tracking-widest text-violet">
         {isPending ? "..." : "Search"}
       </span>
     </div>

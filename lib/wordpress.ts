@@ -212,8 +212,25 @@ export async function getPosts(query: PostsQuery = {}) {
   return data?.map(normalizePost) ?? [];
 }
 
-export async function getAllPosts() {
-  return getPosts({ perPage: 100 });
+export async function getAllPosts(query: Omit<PostsQuery, "page" | "perPage"> = {}) {
+  const perPage = 100;
+  const posts: WPPost[] = [];
+
+  for (let page = 1; page <= 100; page += 1) {
+    const pagePosts = await getPosts({
+      ...query,
+      page,
+      perPage,
+    });
+
+    posts.push(...pagePosts);
+
+    if (pagePosts.length < perPage) {
+      break;
+    }
+  }
+
+  return posts;
 }
 
 export async function getLatestPosts(count: number) {

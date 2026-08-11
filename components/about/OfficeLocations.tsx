@@ -21,7 +21,7 @@ const OFFICE_CARDS: OfficeCardItem[] = [
     name: "Careerkick Services",
     branch: "Kanpur Branch",
     city: "Kanpur",
-    address: "117 N 65, Rani Ganj, Kakadeo, Kanpur, 208025",
+    address: "117/H, Pandu Nagar near JK, 1/606, Temple Kanpur, Kanpur Nagar, Uttar Pradesh, India, 208005",
     hours: "10 AM - 6 PM",
     href: "https://maps.app.goo.gl/C7fjCr7jsH5zcAPE8",
     center: [80.2894, 26.4783],
