@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AlertCircle, ArrowLeft, Check, Download, Phone, Printer, RotateCcw, X } from "lucide-react";
+import { AlertCircle, Check, Download, Phone, Printer, X } from "lucide-react";
 import { formatIndianCurrency } from "@/lib/counsellingPackages";
 import { CONTACT_NUMBERS, getTelLink, getWhatsAppLink } from "@/lib/contactLinks";
 import { getPaymentRecord, type PaymentRecord } from "@/lib/mockPayment";
@@ -23,7 +23,7 @@ export function PaymentResultPageClient({ status }: { status: "success" | "faile
     const savedRecord = getPaymentRecord(status);
 
     if (!savedRecord) {
-      router.replace("/checkout?package=mbbs-govt-counselling");
+      router.replace("/services#pricing");
       return;
     }
 
@@ -120,20 +120,6 @@ function PaymentFailed({ record }: { record: PaymentRecord }) {
             <li>Authentication could not be completed</li>
             <li>Bank/UPI service may be temporarily unavailable</li>
           </ul>
-        </div>
-
-        <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-          <Link href={`/payment?package=${record.packageId}`} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#51A70A] px-5 text-sm font-bold text-white">
-            <RotateCcw className="h-4 w-4" />
-            Try Payment Again
-          </Link>
-          <Link href={`/payment?package=${record.packageId}`} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-5 text-sm font-bold text-slate-800">
-            Change Payment Method
-          </Link>
-          <Link href={`/checkout?package=${record.packageId}`} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 px-5 text-sm font-bold text-slate-800">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Checkout
-          </Link>
         </div>
 
         <HelpBlock />
