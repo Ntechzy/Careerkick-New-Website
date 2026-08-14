@@ -1,7 +1,6 @@
 import {
   calculateCheckoutPayment,
   formatIndianCurrency,
-  getCounsellingPackage,
   type CounsellingPackage,
 } from "@/lib/counsellingPackages";
 
@@ -37,12 +36,14 @@ export type CheckoutSession = {
   amountPaid: number;
   dueAmount: number;
   paymentMode: PaymentMode;
+  merchantTxnNo?: string;
   createdAt: string;
 };
 
 export type PaymentRecord = CheckoutSession & {
   transactionId?: string;
   attemptId?: string;
+  gatewayStatusResponse?: Record<string, unknown>;
   paymentMethod: PaymentMethod;
   paymentStatus: "success" | "failed";
   paymentDate: string;
@@ -198,10 +199,6 @@ export async function processMockPayment({
     attemptId: generateAttemptId(),
     paymentStatus: "failed" as const,
   };
-}
-
-export function getPackageFromSession(session: CheckoutSession | null) {
-  return getCounsellingPackage(session?.packageId) ?? null;
 }
 
 export function describePaymentAmount(session: CheckoutSession) {

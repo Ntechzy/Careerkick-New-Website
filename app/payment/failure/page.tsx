@@ -1,31 +1,26 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { PaymentResultPageClient } from "@/components/payment/PaymentResultPageClient";
 import { PaymentStatusVerifier } from "@/components/payment/PaymentStatusVerifier";
 
 export const metadata: Metadata = {
-  title: "Payment Unsuccessful | CareerKick",
+  title: "Verifying Payment | CareerKick",
   alternates: {
-    canonical: "/payment/failed",
+    canonical: "/payment/failure",
   },
 };
 
-type PaymentFailedPageProps = {
+type PaymentFailurePageProps = {
   searchParams?: {
     merchantTxnNo?: string;
   };
 };
 
-export default function PaymentFailedPage({ searchParams }: PaymentFailedPageProps) {
-  if (searchParams?.merchantTxnNo) {
-    return (
-      <Suspense fallback={<PaymentVerifyFallback />}>
-        <PaymentStatusVerifier merchantTxnNo={searchParams.merchantTxnNo} />
-      </Suspense>
-    );
-  }
-
-  return <PaymentResultPageClient status="failed" />;
+export default function PaymentFailurePage({ searchParams }: PaymentFailurePageProps) {
+  return (
+    <Suspense fallback={<PaymentVerifyFallback />}>
+      <PaymentStatusVerifier merchantTxnNo={searchParams?.merchantTxnNo} />
+    </Suspense>
+  );
 }
 
 function PaymentVerifyFallback() {
