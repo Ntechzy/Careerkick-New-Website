@@ -9,6 +9,7 @@ import { WhatsAppFloatingButton } from "@/components/WhatsAppFloatingButton";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
+import StoreProvider from "./StoreProvider";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -81,13 +82,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn(jakarta.variable)}>
       <body>
-        <SmoothScrollProvider>
-          <CursorGlow />
-          <Navbar />
-          <main className="overflow-x-hidden">{children}</main>
-          <WhatsAppFloatingButton />
-          <Footer />
-        </SmoothScrollProvider>
+        <StoreProvider>
+          <SmoothScrollProvider>
+            <CursorGlow />
+            <Navbar />
+            <main className="overflow-x-hidden">{children}</main>
+            <WhatsAppFloatingButton />
+            <Footer />
+          </SmoothScrollProvider>
+        </StoreProvider>
+
         <Script
           type="module"
           src="https://ntechzy.in/api/v1/student-form/form.js"
@@ -97,7 +101,7 @@ export default function RootLayout({
           styles="basic"
           logo={`${siteConfig.url}/logo.png`}
           contact="+91-7393062116"
-        ></Script>
+        />
       </body>
     </html>
   );

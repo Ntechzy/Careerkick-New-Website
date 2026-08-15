@@ -1,14 +1,26 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
+import { fetchPlans } from "@/lib/features/plansSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
-  COUNSELLING_PACKAGES,
   COUNSELLING_PAYMENT_NOTES,
   formatIndianCurrency,
 } from "@/lib/counsellingPackages";
 
 export default function PricingSection() {
+  const dispatch = useAppDispatch();
+  const { items: plans, status, error } = useAppSelector((state) => state.plans);
+
+  useEffect(() => {
+    if (status === "idle") {
+      void dispatch(fetchPlans({ page: 1, limit: 20 }));
+    }
+  }, [dispatch, status]);
+
   return (
     <section id="pricing" className="relative scroll-mt-28 overflow-hidden bg-[#fafaf6] px-4 py-16 text-slate-900 sm:py-20 md:px-8 lg:py-24">
       <div className="pointer-events-none absolute left-1/2 top-0 h-72 w-[78%] -translate-x-1/2 rounded-full bg-[#56b016]/10 blur-[120px]" />
@@ -28,68 +40,63 @@ export default function PricingSection() {
           </p>
         </div>
 
+        {status === "loading" ? (
+          <div className="mx-auto mt-8 flex max-w-4xl items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600">
+            <Loader2 className="h-4 w-4 animate-spin text-[#56b016]" />
+            Loading plans...
+          </div>
+        ) : null}
+        {status === "failed" ? (
+          <div className="mx-auto mt-8 max-w-4xl rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+            {error ?? "Unable to load live plans."}
+          </div>
+        ) : null}
+        {status === "succeeded" && plans.length === 0 ? (
+          <div className="mx-auto mt-8 max-w-4xl rounded-xl border border-slate-200 bg-white px-4 py-6 text-center text-sm font-semibold text-slate-600">
+            No active counselling plans are available right now.
+          </div>
+        ) : null}
+
         <div className="mx-auto mt-10 grid max-w-6xl gap-5 sm:mt-12 md:grid-cols-3 lg:gap-6">
-          {COUNSELLING_PACKAGES.map((item) => (
-            <article
-              key={item.id}
-              className={`group relative flex min-h-[35rem] flex-col overflow-hidden rounded-[1.75rem] border bg-white shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1 ${
-                item.highlight
-                  ? "border-[#56b016]/30 ring-1 ring-[#56b016]/20"
-                  : "border-slate-200"
-              }`}
-            >
-              <div className="relative h-56 shrink-0 overflow-hidden sm:h-60">
-                <Image
-                  src={item.image ?? "/logo.png"}
-                  alt={item.title}
-                  fill
-                  sizes="(min-width: 768px) 33vw, 100vw"
-                  className="h-full w-full object-cover object-center transition duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.06),rgba(0,0,0,0.35))]" />
-                {item.highlight && (
-                  <span className="absolute right-3 top-3 rounded-full bg-[#56b016] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white shadow-[0_12px_24px_rgba(86,176,22,0.3)]">
-                    Most Popular
-                  </span>
-                )}
-              </div>
-
-              <div className="flex flex-1 flex-col p-5 text-center sm:p-6">
-                <h3 className="mx-auto max-w-[19rem] font-display text-xl font-semibold leading-tight text-slate-950 sm:text-2xl md:text-xl lg:text-2xl">
-                  {item.title}
-                </h3>
-                <p className="mt-1 text-sm font-semibold text-[#56b016]">
-                  {item.subtitle}
-                </p>
-                <p className="mx-auto mt-4 max-w-[20rem] text-sm leading-relaxed text-slate-600">
-                  {item.description}
-                </p>
-
-                <div className="mt-auto pt-7">
-                  <div className="font-display text-3xl font-bold text-[#56b016]">
-                    {formatIndianCurrency(item.baseAmount)}
-                  </div>
-                  {(item.taxRate ?? 0.18) > 0 ? (
-                    <p className="mt-1 h-4 text-xs uppercase tracking-[0.18em] text-slate-400">
-                      +GST
-                    </p>
-                  ) : (
-                    <span aria-hidden="true" className="mt-1 block h-4" />
-                  )}
+          {plans.map((item) => (
+              <article
+                key={item._id}
+                className="group relative flex min-h-[35rem] flex-col overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1"
+              >
+                <div className="relative h-56 shrink-0 overflow-hidden sm:h-60">
+                  <Image
+                    src="/logo.png"
+                    alt={item.title}
+                    fill
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    className="h-full w-full object-contain object-center p-10 transition duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(86,176,22,0.04),rgba(86,176,22,0.14))]" />
                 </div>
 
-                <Link
-                  href={`/checkout?package=${item.id}`}
-                  className={`mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full border px-4 py-3 text-sm font-semibold transition ${
-                    item.highlight
-                      ? "border-[#56b016] bg-[#56b016] text-white hover:bg-[#4b9914]"
-                      : "border-[#56b016]/25 bg-[#56b016]/8 text-[#56b016] hover:bg-[#56b016]/14"
-                  }`}
-                >
-                  Select Plan
-                </Link>
-              </div>
-            </article>
+                <div className="flex flex-1 flex-col p-5 text-center sm:p-6">
+                  <h3 className="mx-auto max-w-[19rem] font-display text-xl font-semibold leading-tight text-slate-950 sm:text-2xl md:text-xl lg:text-2xl">
+                    {item.title}
+                  </h3>
+                  <p className="mx-auto mt-4 max-w-[20rem] text-sm leading-relaxed text-slate-600">
+                    {item.description}
+                  </p>
+
+                  <div className="mt-auto pt-7">
+                    <div className="font-display text-3xl font-bold text-[#56b016]">
+                      {formatIndianCurrency(item.totalAmount)}
+                    </div>
+                    <span aria-hidden="true" className="mt-1 block h-4" />
+                  </div>
+
+                  <Link
+                    href={`/checkout?package=${item._id}`}
+                    className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full border border-[#56b016]/25 bg-[#56b016]/8 px-4 py-3 text-sm font-semibold text-[#56b016] transition hover:bg-[#56b016]/14"
+                  >
+                    Select Plan
+                  </Link>
+                </div>
+              </article>
           ))}
         </div>
         <div className="mx-auto mt-6 max-w-4xl rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-left shadow-[0_16px_36px_rgba(220,38,38,0.08)] sm:px-5">

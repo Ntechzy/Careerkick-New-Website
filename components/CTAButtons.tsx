@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { fetchPlans } from "@/lib/features/plansSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
-  COUNSELLING_PACKAGES,
   COUNSELLING_PAYMENT_NOTES,
   formatIndianCurrency,
 } from "@/lib/counsellingPackages";
@@ -16,6 +18,9 @@ type CounsellingPackagesModalProps = {
 };
 
 export function CounsellingPackagesModal({ onClose }: CounsellingPackagesModalProps) {
+  const dispatch = useAppDispatch();
+  const { items: plans, status, error } = useAppSelector((state) => state.plans);
+
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
@@ -36,6 +41,12 @@ export function CounsellingPackagesModal({ onClose }: CounsellingPackagesModalPr
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [onClose]);
+
+  useEffect(() => {
+    if (status === "idle") {
+      void dispatch(fetchPlans({ page: 1, limit: 20 }));
+    }
+  }, [dispatch, status]);
 
   return createPortal(
     <div
@@ -87,41 +98,41 @@ export function CounsellingPackagesModal({ onClose }: CounsellingPackagesModalPr
               ))}
             </ul>
           </div>
+          {status === "loading" ? (
+            <div className="mx-auto mb-4 flex max-w-4xl items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600">
+              <Loader2 className="h-4 w-4 animate-spin text-[#56b016]" />
+              Loading plans...
+            </div>
+          ) : null}
+          {status === "failed" ? (
+            <div className="mx-auto mb-4 max-w-4xl rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+              {error ?? "Unable to load live plans."}
+            </div>
+          ) : null}
+          {status === "succeeded" && plans.length === 0 ? (
+            <div className="mx-auto mb-4 max-w-4xl rounded-xl border border-slate-200 bg-white px-4 py-6 text-center text-sm font-semibold text-slate-600">
+              No active counselling plans are available right now.
+            </div>
+          ) : null}
           <div className="mx-auto grid max-w-4xl gap-4 md:grid-cols-3 md:gap-5">
-            {COUNSELLING_PACKAGES.map((item) => (
+            {plans.map((item) => (
               <article
-                key={item.id}
-                className={`flex min-h-[19rem] flex-col rounded-2xl border bg-white p-5 text-center shadow-[0_14px_38px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1 md:min-h-[21rem] ${
-                  item.highlight ? "border-[#56b016]/35 ring-1 ring-[#56b016]/20" : "border-slate-200"
-                }`}
+                key={item._id}
+                className="flex min-h-[19rem] flex-col rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-[0_14px_38px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1 md:min-h-[21rem]"
               >
-                {item.highlight && (
-                  <span className="mx-auto mb-3 w-fit rounded-full bg-[#56b016] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
-                    Most Popular
-                  </span>
-                )}
                 <h3 className="mx-auto max-w-[16rem] font-display text-xl font-semibold leading-tight text-slate-950 md:text-[1.35rem]">
                   {item.title}
                 </h3>
-                <p className="mt-1 text-sm font-semibold text-[#56b016]">
-                  {item.subtitle}
-                </p>
                 <p className="mx-auto mt-3 max-w-[17rem] text-sm leading-relaxed text-slate-600">
                   {item.description}
                 </p>
                 <div className="mt-auto pt-5">
                   <p className="font-display text-3xl font-bold leading-none text-[#56b016]">
-                    {formatIndianCurrency(item.baseAmount)}
+                    {formatIndianCurrency(item.totalAmount)}
                   </p>
-                  {(item.taxRate ?? 0.18) > 0 ? (
-                    <p className="mt-1 h-4 text-xs uppercase tracking-[0.18em] text-slate-400">
-                      +GST
-                    </p>
-                  ) : (
-                    <span aria-hidden="true" className="mt-1 block h-4" />
-                  )}
+                  <span aria-hidden="true" className="mt-1 block h-4" />
                   <Link
-                    href={`/checkout?package=${item.id}`}
+                    href={`/checkout?package=${item._id}`}
                     onClick={onClose}
                     className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#56b016] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#4b9914]"
                   >

@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import type React from "react";
 import { useMemo, useState } from "react";
 import { getAllStates, getDistricts } from "india-state-district";
@@ -27,6 +26,8 @@ import {
   type CounsellingPackage,
 } from "@/lib/counsellingPackages";
 import { CONTACT_NUMBERS, getTelLink } from "@/lib/contactLinks";
+import { initiatePayment } from "@/lib/features/paymentSlice";
+import { useAppDispatch } from "@/lib/hooks";
 import {
   createCheckoutSession,
   getMinimumPartialPayment,
@@ -62,11 +63,11 @@ type FormState = StudentFormState & {
 type FormErrors = Partial<Record<keyof FormState | "submit", string>>;
 
 const CATEGORY_OPTIONS = [
-  "General / Unreserved",
-  "General-EWS",
+  "General",
   "OBC",
   "SC",
   "ST",
+  "EWS",
 ] as const;
 
 const POLICY_SECTIONS = [
@@ -125,6 +126,10 @@ function normalizeIndianMobile(value: string) {
   }
 
   return digits;
+}
+
+function getExamType(course: string) {
+  return course.toLowerCase().includes("jee") ? "JEE" : "NEET";
 }
 
 function initialForm(selectedPackage: CounsellingPackage | null): FormState {
@@ -255,7 +260,7 @@ function isStudentDetailsReady(values: FormState) {
 }
 
 export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps) {
-  const router = useRouter();
+  const dispatch = useAppDispatch();
   const [form, setForm] = useState<FormState>(() => initialForm(selectedPackage));
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
@@ -355,8 +360,42 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
     });
 
     saveCheckoutSession(session);
-    await new Promise((resolve) => window.setTimeout(resolve, 450));
-    router.push(`/payment?package=${selectedPackage.id}`);
+    const paymentResult = await dispatch(
+      initiatePayment({
+        planId: selectedPackage.id,
+        amount: pricing.amountPaid,
+        student: {
+          name: form.studentName.trim(),
+          email: form.email.trim().toLowerCase(),
+          number: normalizeIndianMobile(form.mobile),
+          whatsappNo: normalizeIndianMobile(form.whatsapp),
+          course: form.course,
+          state: form.stateOrDomicile ? getStateName(form.stateOrDomicile) : "",
+          district: form.district,
+          examType: getExamType(form.course),
+          examScoreOrRank: Number.parseInt(form.scoreOrRank || "0", 10),
+          examAppOrRollNo: form.applicationNumber.trim(),
+          category: form.category,
+        },
+      }),
+    );
+
+    if (initiatePayment.fulfilled.match(paymentResult)) {
+      saveCheckoutSession({
+        ...session,
+        merchantTxnNo: paymentResult.payload.merchantTxnNo ?? undefined,
+      });
+      window.location.assign(paymentResult.payload.redirectUrl);
+      return;
+    }
+
+    setSubmitting(false);
+    setErrors({
+      submit:
+        paymentResult.payload ??
+        paymentResult.error.message ??
+        "Unable to initiate payment.",
+    });
   };
 
   if (!selectedPackage || !pricing) {
