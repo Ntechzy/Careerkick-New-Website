@@ -1,0 +1,190 @@
+{
+  "source": {
+    "fileName": "List of Denied Ayurveda Colleges for the Academic Year 2026–27.pdf",
+    "extractedFrom": "C:\\Users\\ntech\\Downloads\\List of Denied Ayurveda Colleges for the Academic Year 2026–27.pdf",
+    "academicYear": "2026-27",
+    "status": "Denied",
+    "pages": 2
+  },
+  "columns": [
+    "S. No",
+    "College ID",
+    "State",
+    "Name of the College",
+    "District",
+    "Govt./Aided/Private/Deemed",
+    "Final Permission Details"
+  ],
+  "colleges": [
+    {
+      "sourcePage": 1,
+      "serialNumber": 1,
+      "collegeId": "AYU0062",
+      "state": "Karnataka",
+      "collegeName": "Amrutha Ayurvedic Medical College & Hospital Behind Onake Obavva Stadium Dist. Chitradurga-577501, Karnataka",
+      "district": "Chitradurga",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to Amrutha Ayurvedic Medical College & Hospital, Behind Onake Obavva Stadium Dist. Chitradurga-577501, Karnataka (Inst. ID- AYU0062) with an intake capacity of 60 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27 due to non- compliance with inspection process."
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 2,
+      "collegeId": "AYU0069",
+      "state": "Karnataka",
+      "collegeName": "Mahaganpati Ayurvedic College, Hoysalnagar, Halyal Road, Distt. Dharwad- 580003, Karnataka",
+      "district": "Dharwad",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to Mahaganpati Ayurvedic College, Hoysalnagar, Halyal Road, Distt. Dharwad-580003, Karnataka (Inst. ID-AYU0069) with an intake capacity of 60 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27 due to non-compliance with inspection process."
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 3,
+      "collegeId": "AYU0079",
+      "state": "Karnataka",
+      "collegeName": "S.S.V. Samiti’s Shri SBS Ayurvedic Medical College, Mundargi, Distt. Gadag-582118, Karnataka",
+      "district": "Gadag",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to S.S.V. Samiti’s Shri SBS Ayurvedic Medical College, Mundargi, Distt. Gadag-582118, Karnataka (Inst. ID AYU0079) with an intake capacity of 60 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27 due to non-compliance with inspection process."
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 4,
+      "collegeId": "AYU0135",
+      "state": "Madhya Pradesh",
+      "collegeName": "Rajiv Gandhi Ayurvedic College & Hospital E- 8, Trilanga Colony Shahpura, Bhopal- 462039, Madhya Pradesh",
+      "district": "Bhopal",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to Rajiv Gandhi Ayurvedic College & Hospital, E-8, Trilanga Colony Shahpura, Bhopal-462039, Madhya Pradesh (Inst. ID:- AYU0135) with an intake capacity of 50 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27."
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 5,
+      "collegeId": "AYU0137",
+      "state": "Madhya Pradesh",
+      "collegeName": "Veenavadini Ayurved College & Hospital, Akbarpur, Phase-II, Behind Kanhakunj, Kolar Road, Bhopal-462042, Madhya Pradesh",
+      "district": "Bhopal",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Permission to Veenavadini Ayurved College & Hospital, Akbarpur, Phase-II, Behind Kanhakunj, Kolar Road,Bhopal-462042, Madhya Pradesh (Inst. ID-AYU0137) with an intake capacity of 60 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27 due to noncompliance with inspection process."
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 6,
+      "collegeId": "AYU0214",
+      "state": "Punjab",
+      "collegeName": "Sri Satya Sai Murlidhar Ayurvedic College & Hospital, Vill. Duneke, G.T. Road, Distt. Moga- 142001, Punjab",
+      "district": "Moga",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to Sri Satya Sai Murlidhar Ayurvedic College & Hospital, Vill. Duneke, G.T. Road, Distt. Moga-142001, Punjab (Inst. ID AYU0214) with intake capacity of 60 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27."
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 7,
+      "collegeId": "AYU0362",
+      "state": "Madhya Pradesh",
+      "collegeName": "Parashar Ayurvedic Medical College & Hospital, Zirniya narsinggard Road, Parvalia, Bhopal-462030, Madhya Pradesh",
+      "district": "Bhopal",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to Parashar Ayurvedic Medical College & Hospital, Jamunia, Zirnia Narsingrah Road, Bhopal-462030, Madhya Pradesh (Inst. ID- AYU0362) with an intake capacity of 60 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27."
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 8,
+      "collegeId": "AYU0391",
+      "state": "Karnataka",
+      "collegeName": "Sharada Ayurvedic Medical College & Hospital, At Mundarga, Distt. Yadgir-585202, Karnataka",
+      "district": "Yadgir",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission (on the basis of request of the college) to Sharada Ayurvedic Medical College & Hospital, at Mundarga, Distt. Yadgir-585202, Karnataka (Inst. ID – AYU0391) with intake capacity of 60 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27."
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 9,
+      "collegeId": "AYU0401",
+      "state": "Chhattisgarh",
+      "collegeName": "Bharti Ayurved Medical College & Hospital, Pulgaon Chowk, Durg-491001, Chhatisgarh",
+      "district": "Durg",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to Bharti Ayurved Medical College & Hospital, Pulgaon Chowk Durg-491001, Chhattisgarh (Inst. ID AYU0401) with an intake capacity of 100 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27 due to non-compliance with inspection process."
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 10,
+      "collegeId": "AYU0436",
+      "state": "Uttar Pradesh",
+      "collegeName": "Dr. Vijay Ayurvedic Medical College, Hospital & Research Centre, Village-Bhandaha Kala, Post-Kaithi, Varanasi-221116, Uttar Pradesh",
+      "district": "Varanasi",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to Dr. Vijay Ayurvedic Medical College, Hospital & Research Centre, Village-Bhandaha Kala, Post-Kaithi, Varanasi-221116, Uttar Pradesh (Inst. ID-AYU0436) with an intake capacity of 100 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27 due to non-compliance with inspection process."
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 11,
+      "collegeId": "AYU0459",
+      "state": "Uttarakhand",
+      "collegeName": "Smt. Manjira Devi Ayurvedic Medical College And Hospital, Rukmani Nagar, Hitanu Dhanari, Uttarkashi-249151, Uttarakhand",
+      "district": "Uttarkashi",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to Smt. Manjira Devi Ayurvedic Medical College and Hospital, Rukmani Nagar, Hitanu Dhanari, Uttarkashi-249151, Uttarakhand (Inst. ID-AYU0459) with intake capacity of 60 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27."
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 12,
+      "collegeId": "AYU0585",
+      "state": "Madhya Pradesh",
+      "collegeName": "Dr. Shankar Dayal Sharma Ayurved college, KH No. 38-481211,38-481012 Gran Bhouri Bhopal-Indore by Pass Road, Bhopal, Madhya Pradesh",
+      "district": "Bhopal",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to Dr. Shankar Dayal Sharma Ayurvedic College & Hospital, Near Central Forensic Science Laboratory, Indore-Bhopal Bypass, Gram Bhouri, Bhopal-462030, Madhya Pradesh (Inst. ID-AYU0585) with an intake capacity of 60 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27 due to non- compliance with inspection process."
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 13,
+      "collegeId": "AYU0586",
+      "state": "Maharashtra",
+      "collegeName": "Dr. Deepak Patil Ayurvedic Medical College & Research Center, A/p Borpadale, Tal. Panhala, Dist. Kolhapur-416213, Maharashtra",
+      "district": "Kolhapur",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to Dr. Deepak Patil Ayurvedic Medical College & Research Center, A/P Borpadale, Tal. Panhala, Dist. Kolhapur-416213, Maharashtra (Inst. ID-AYU0586) with an intake capacity of 60 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic year 2026- 27 due to the non compliance inspection process."
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 14,
+      "collegeId": "AYU0645",
+      "state": "Madhya Pradesh",
+      "collegeName": "Department of Ayurveda and Community, IES University, Kalkheda Ratibad Main Road, Bhopal-462044, Madhya Pradesh",
+      "district": "Bhopal",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to Department of Ayurveda and Community, IES University, Kalkheda Ratibad Main Road, Bhopal-462044, Madhya Pradesh (Inst. ID AYU0645) with an intake capacity of 60 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27."
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 15,
+      "collegeId": "AYU0646",
+      "state": "Madhya Pradesh",
+      "collegeName": "School of Ayurveda & Siddha Studies, Pachama, Sehore-466001, Madhya Pradesh",
+      "district": "Sehore",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to School of Ayurveda & Siddha Studies, SH-18, Bhopal-Indore Road, Pachama,Sehore-466001, Madhya Pradesh,(Inst. ID:- AYU0646) with an intake capacity of 100 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27."
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 16,
+      "collegeId": "AYU0668",
+      "state": "Karnataka",
+      "collegeName": "Swamy Vivekananda Ayurvedic Medical College and Hospital, Kesaratti Lingasgur, Distt. Raichur- 584122, Karnataka",
+      "district": "Raichur",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of Yearly Permission to Swamy Vivekananda Ayurvedic Medical College and Hospital, Kesarattingasgur, Distt. Raichur, Karnataka- 584122 (Inst. ID- AYU0668) with an intake capacity of 60 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic session 2026-27 due to non- compliance with inspection process."
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 17,
+      "collegeId": "AYU0779",
+      "state": "Haryana",
+      "collegeName": "BDM College of Ayurveda Science and Hospital, VPO-Chhuchhakwas, Jhajjar-12410, Haryana",
+      "district": "Jhajjar",
+      "managementType": "Private",
+      "finalPermissionDetails": "Denial of yearly Permission to BDM College of Ayurveda Science and Hospital, VPO-Chhuchhakwas, Jhajjar Haryana-124106 (Inst. ID: - AYU0779) with an intake capacity of 100 seats in UG (BAMS) course under section 28 of NCISM Act, 2020 for the academic year 2026-27 due to non compliance with inspection process."
+    }
+  ]
+}

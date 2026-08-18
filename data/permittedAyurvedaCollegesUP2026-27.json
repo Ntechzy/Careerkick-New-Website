@@ -1,0 +1,200 @@
+{
+  "source": {
+    "fileName": "NCISM PERMISSION 2026 - UP.pdf",
+    "extractedFrom": "C:\\Users\\ntech\\Downloads\\NCISM PERMISSION 2026 - UP.pdf",
+    "academicYear": "2026-27",
+    "state": "Uttar Pradesh",
+    "pages": 2
+  },
+  "columns": [
+    "S. No",
+    "Name of the College",
+    "District",
+    "Sanction seats (UG) without EWS"
+  ],
+  "totalSanctionSeatsUgWithoutEws": 2160,
+  "colleges": [
+    {
+      "sourcePage": 1,
+      "serialNumber": 1,
+      "collegeName": "Vaidya Yagya Dutt Sharma Ayurved Mahavidyalaya, Opposite Dharpa Power House, Distt. Bulandshahar, G.T. Road, Khurza- 203131, Uttar Pradesh",
+      "district": "Khurja",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 2,
+      "collegeName": "Major S.D. Singh Ayurvedic Medical College & Hospital, Baikunthpuri (baghar) Bewar Road, Fatehgarh, Distt. Farrukhabad-209625, Uttar Pradesh",
+      "district": "Farrukhabad",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 3,
+      "collegeName": "Shivalik Ayurvedic Medical College & Hospital, Vill.- Bijarwa, post-bankat Azamgarh-276125, Uttar Pradesh",
+      "district": "Azamgarh",
+      "sanctionSeatsUgWithoutEws": 60
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 4,
+      "collegeName": "Shri Krishna Ayurvedic Medical College & Hospital, Rona Khurd Cholapur, Varanasi-221101, Uttar Pradesh",
+      "district": "Varanasi",
+      "sanctionSeatsUgWithoutEws": 60
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 5,
+      "collegeName": "Shri Babu Singh Jay Singh Ayurvedic Medical College & Hospital Bhaupur, Bewar Road, Fatehgarh, Dist. Farrukhabad -209602, Uttar Pradesh",
+      "district": "Farrukhabad",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 6,
+      "collegeName": "Jeevak Ayurved Medical College & Hospital, Research Centre, at Kamlapur, Akauni Chandauli, Uttar Pradesh",
+      "district": "Chandauli",
+      "sanctionSeatsUgWithoutEws": 60
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 7,
+      "collegeName": "Vivek College of Ayurvedic Sciences & Hospital, Moradabad Road, Post-Agri, Distt. Bijnor-246701, Uttar Pradesh",
+      "district": "Bijnor",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 8,
+      "collegeName": "R.B. Ayurvedic Medical College & Hospital, At Jalesar Road, Agra-207302, Uttar Pradesh (RB)",
+      "district": "Agra",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 9,
+      "collegeName": "Dhanvantari Ayurvedic Medical College & Hospital, Vill. Chitauli, P.O. Fatehganj (W), Distt. Bareilly-243501, Uttar Pradesh",
+      "district": "Bareilly",
+      "sanctionSeatsUgWithoutEws": 60
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 10,
+      "collegeName": "Bapu Ayurvedic Medical College Evam Hospital, Ladanpur, Kopaganj, Distt. Mau-275101, Uttar Pradesh",
+      "district": "Mau",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 11,
+      "collegeName": "Institute of AYUSH Medical Sciences, Vimalarjun nagar, Bhagoo Kheda, Mohanlal Ganj, Lucknow-261005, Uttar Pradesh",
+      "district": "Lucknow",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 12,
+      "collegeName": "Mahaveer Ayurvedic Medical College & Hospital, Pohalli Saradhana Road, Meerut-250341, Uttar Pradesh",
+      "district": "Meerut",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 1,
+      "serialNumber": 13,
+      "collegeName": "Divya Jyoti Ayurvedic Medical College & Hospital, Niwari Road, Modinagar, Distt. Ghaziabad-201204, Uttar Pradesh",
+      "district": "Modinagar",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 14,
+      "collegeName": "SAS Ayurvedic Medical College & Hospital, Rameshwar Road, Harhua-221105, Uttar Pradesh",
+      "district": "Varanasi",
+      "sanctionSeatsUgWithoutEws": 60
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 15,
+      "collegeName": "SKS Ayurvedic Medical College & Hospital, NH-2, Village-Chaumuhan, Distt- Chhata Mathura-281406, Uttar Pradesh",
+      "district": "Mathura",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 16,
+      "collegeName": "APEX Institute of Ayurvedic Medicine & Hospital, Nh-7, Mirzapur-Varanasi Road, Samaspur, Chunar, Mirzapur-231304, Uttar Pradesh",
+      "district": "Mirzapur",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 17,
+      "collegeName": "Ankerite Ayurvedic Medical College & Hospital, Village Parverpurab, Post-Mohanlalganj, Lucknow-226301, Uttar Pradesh",
+      "district": "Lucknow",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 18,
+      "collegeName": "Sardar Patel Institute of Ayurvedic Medical Science & Research Centre, Kankaha, Raibarely Road, Mohan Lal Ganj, Lucknow-226301, Uttar Pradesh",
+      "district": "Lucknow",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 19,
+      "collegeName": "C.S Ayurvedic Medical College & Hospital, Near P.A.C compound, Marehara Road, Distt. Etah, Uttar Pradesh",
+      "district": "Etah",
+      "sanctionSeatsUgWithoutEws": 60
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 20,
+      "collegeName": "Guru Gorakshnath Institute of Medical Sciences, Sonbarsa, Balapar Maniram, Gorakhpur-273007, Uttar Pradesh",
+      "district": "Gorakhpur",
+      "sanctionSeatsUgWithoutEws": 100
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 21,
+      "collegeName": "R.K Institute of Ayurvedic Medical Sciences Dewraniya, Faridpur-Bukhara Road, Bareily- 243503, Uttar Pradesh",
+      "district": "Bareilly",
+      "sanctionSeatsUgWithoutEws": 60
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 22,
+      "collegeName": "Sarvdev Ayurvedic Medical College & Mahamritunjay Hospital, Ltaura Chandeshwar, Azamgarh-276128, Uttar Pradesh",
+      "district": "Azamgarh",
+      "sanctionSeatsUgWithoutEws": 60
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 23,
+      "collegeName": "Arnav Ayurvedic Medical College, Gata no 1907, Satrikh harakh road, Satrikh, Barabanki -225122, Uttar Pradesh",
+      "district": "BarabankI",
+      "sanctionSeatsUgWithoutEws": 60
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 24,
+      "collegeName": "Vimla Family Ayurvedic Medical College & Hospital, Gram/Post-Hardoli (Ramaipur Jhanabad Road), Kanpur Nagar-209214, Uttar Pradesh",
+      "district": "Kanpur",
+      "sanctionSeatsUgWithoutEws": 60
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 25,
+      "collegeName": "Rajshree Ayurvedic Medical College & Hospital, Gata No.-292, 16th KM, NH-30, Bareilly-Pilibhit Road, Vill-Labhera URF Buland Nagar, Post-Rithora, Tehsil Nawabganj, Dist-Bareilly-243122, Uttar Pradesh",
+      "district": "Bareilly",
+      "sanctionSeatsUgWithoutEws": 60
+    },
+    {
+      "sourcePage": 2,
+      "serialNumber": 26,
+      "collegeName": "Mahatma Gandhi Ayurvedic Medical College & Reseach Centre, Vill-Khasarwara, Post - Banthara Lucknow 226401 Uttar Pradesh",
+      "district": "Lucknow",
+      "sanctionSeatsUgWithoutEws": 100
+    }
+  ]
+}
