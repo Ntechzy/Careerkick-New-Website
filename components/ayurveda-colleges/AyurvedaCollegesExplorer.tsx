@@ -33,6 +33,18 @@ function valueToText(value: AnyRecord[string]) {
   return String(value);
 }
 
+function isNumericColumn(key: string) {
+  return (
+    key === "serialNumber" ||
+    key.toLowerCase().includes("seats") ||
+    key.toLowerCase().includes("number")
+  );
+}
+
+function isLongTextColumn(key: string) {
+  return key === "collegeName" || key.toLowerCase().includes("permission");
+}
+
 export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerProps) {
   const [activeId, setActiveId] = useState(datasets[0]?.id ?? "");
   const [query, setQuery] = useState("");
@@ -144,17 +156,25 @@ export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerP
           Swipe horizontally to view all columns.
         </div>
 
-        <div className="overflow-x-auto overscroll-x-contain" data-lenis-prevent>
+        <div className="max-h-[72vh] overflow-auto overscroll-contain" data-lenis-prevent>
           <table
             className={cn(
-              "w-full table-fixed border-collapse text-left text-sm",
+              "w-full table-fixed border-separate border-spacing-0 text-left text-sm",
               activeDataset.tableClassName ?? "min-w-[1100px]",
             )}
           >
-            <thead>
-              <tr className="border-b border-white/10 bg-white/[0.035] text-xs uppercase text-text-faint">
+            <thead className="sticky top-0 z-10">
+              <tr className="bg-[#0c1308] text-xs uppercase text-text-faint shadow-[0_1px_0_rgba(255,255,255,0.1)]">
                 {activeDataset.columns.map((column) => (
-                  <th key={column.key} className={cn("px-3 py-4 font-bold", column.className)}>
+                  <th
+                    key={column.key}
+                    className={cn(
+                      "border-r border-white/[0.07] px-4 py-3.5 font-bold leading-5 last:border-r-0",
+                      isNumericColumn(column.key) && "text-right tabular-nums",
+                      column.key === "serialNumber" && "text-center",
+                      column.className,
+                    )}
+                  >
                     {column.label}
                   </th>
                 ))}
@@ -164,14 +184,18 @@ export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerP
               {filteredRows.map((row, index) => (
                 <tr
                   key={`${activeDataset.id}-${row.serialNumber}-${index}`}
-                  className="border-b border-white/[0.07] transition-colors hover:bg-[#51A70A]/10"
+                  className="transition-colors odd:bg-white/[0.018] hover:bg-[#51A70A]/10"
                 >
                   {activeDataset.columns.map((column) => (
                     <td
                       key={column.key}
                       className={cn(
-                        "whitespace-normal break-words align-top px-3 py-4 font-medium leading-6 text-text-muted",
-                        column.key === "serialNumber" && "font-bold text-white",
+                        "border-b border-r border-white/[0.07] px-4 py-3.5 align-top font-medium leading-6 text-text-muted last:border-r-0",
+                        isLongTextColumn(column.key)
+                          ? "whitespace-normal break-words"
+                          : "whitespace-nowrap",
+                        isNumericColumn(column.key) && "text-right tabular-nums text-white/85",
+                        column.key === "serialNumber" && "text-center font-bold text-white",
                         column.key === "collegeName" && "text-white",
                         column.className,
                       )}
