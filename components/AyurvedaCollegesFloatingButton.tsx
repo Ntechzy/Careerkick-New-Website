@@ -1,6 +1,15 @@
+"use client";
+
 import { GraduationCap } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export function AyurvedaCollegesFloatingButton() {
+  const pathname = usePathname();
+
+  if (pathname === "/") {
+    return null;
+  }
+
   return (
     <a
       href="/ayurveda-colleges-2026-27"

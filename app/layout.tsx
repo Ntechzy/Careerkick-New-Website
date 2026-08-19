@@ -6,7 +6,6 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CursorGlow } from "@/components/ui/CursorGlow";
 import { WhatsAppFloatingButton } from "@/components/WhatsAppFloatingButton";
-import { AyurvedaCollegesFloatingButton } from "@/components/AyurvedaCollegesFloatingButton";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
@@ -89,7 +88,6 @@ export default function RootLayout({
             <Navbar />
             <main className="overflow-x-hidden">{children}</main>
             <WhatsAppFloatingButton />
-            <AyurvedaCollegesFloatingButton />
             <Footer />
           </SmoothScrollProvider>
         </StoreProvider>

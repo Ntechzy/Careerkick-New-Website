@@ -58,6 +58,7 @@ export const NAV_LINKS: NavLink[] = [
   },
   { label: "Services", href: "/services" },
   { label: "Blogs", href: "/blog" },
+  { label: "Permitted Colleges", href: "/ayurveda-colleges-2026-27" },
   { label: "Our Results", href: "/our-results" },
   { label: "Contact", href: "/contact" },
   { label: "Careers", href: "/careers" },
