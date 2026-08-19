@@ -26,6 +26,31 @@ const nextConfig = {
         hostname: "cdn.sanity.io",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "i.pinimg.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "i.ytimg.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "thumbs.dreamstime.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "pohcdn.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.britannica.com",
+        pathname: "/**",
+      },
     ],
   },
 };
