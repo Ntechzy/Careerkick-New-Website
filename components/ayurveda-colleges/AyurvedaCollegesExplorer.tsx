@@ -64,8 +64,8 @@ export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerP
 
   return (
     <section className="relative mx-auto w-full max-w-[1800px] px-3 pb-20 md:px-4 md:pb-28">
-      <div className="rounded-lg border border-white/10 bg-white/[0.035] shadow-card backdrop-blur-xl">
-        <div className="border-b border-white/10 p-4 md:p-5">
+      <div className="rounded-lg border border-[#dce9d4] bg-white shadow-[0_12px_34px_rgba(31,61,21,0.08)]">
+        <div className="border-b border-[#dce9d4] p-4 md:p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="grid gap-2 sm:flex sm:flex-wrap">
               {datasets.map((dataset) => {
@@ -81,8 +81,8 @@ export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerP
                     className={cn(
                       "inline-flex min-h-11 items-center gap-2 rounded-md border px-4 py-2 text-sm font-semibold transition-colors",
                       active
-                        ? "border-[#51A70A]/55 bg-[#51A70A]/18 text-white"
-                        : "border-white/10 bg-white/[0.035] text-text-muted hover:border-[#51A70A]/35 hover:text-white",
+                        ? "border-[#51A70A]/45 bg-[#edf7e7] text-violet shadow-sm"
+                        : "border-[#dce9d4] bg-white text-[#52644b] hover:border-[#51A70A]/35 hover:text-violet",
                     )}
                   >
                     {dataset.id === "denied" ? (
@@ -99,7 +99,7 @@ export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerP
             <label className="relative block w-full lg:max-w-md">
               <span className="sr-only">Search colleges</span>
               <Search
-                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8cef32]"
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-violet"
                 aria-hidden="true"
               />
               <input
@@ -107,23 +107,22 @@ export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerP
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search by college, district, state, ID..."
-                className="h-12 w-full rounded-md border border-white/10 bg-[#071005] pl-10 pr-4 text-sm font-medium text-white shadow-inner outline-none placeholder:text-text-faint focus:border-[#51A70A]/55"
+                className="h-12 w-full rounded-md border border-[#dce9d4] bg-[#fbfdf9] pl-10 pr-4 text-sm font-medium text-[#182413] shadow-inner outline-none placeholder:text-[#7b8d72] focus:border-[#51A70A]/55"
               />
             </label>
           </div>
         </div>
 
-        <div className="grid gap-4 border-b border-white/10 p-4 md:grid-cols-[1.2fr_1fr] md:p-5">
+        <div className="grid gap-4 border-b border-[#dce9d4] p-4 md:grid-cols-[1.2fr_1fr] md:p-5">
           <div>
-            <p className="text-xs font-bold uppercase text-[#8cef32]">
+            <p className="text-xs font-bold uppercase text-violet">
               {activeDataset.eyebrow}
             </p>
-            <h2 className="mt-2 text-2xl font-bold text-white md:text-3xl">
+            <h2 className="mt-2 text-2xl font-bold text-[#13220f] md:text-3xl">
               {activeDataset.label}
             </h2>
             <p
-              className="mt-3 max-w-3xl text-sm font-medium leading-7 !text-white md:text-base"
-              style={{ color: "#ffffff" }}
+              className="mt-3 max-w-3xl text-sm font-medium leading-7 text-[#52644b] md:text-base"
             >
               {activeDataset.description}
             </p>
@@ -133,26 +132,26 @@ export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerP
             {activeDataset.stats.map((stat) => (
               <div
                 key={stat.label}
-                className="rounded-md border border-white/10 bg-black/20 p-3"
+                className="rounded-md border border-[#dce9d4] bg-[#fbfdf9] p-3"
               >
-                <p className="text-xs font-semibold uppercase text-text-faint">
+                <p className="text-xs font-semibold uppercase text-[#728067]">
                   {stat.label}
                 </p>
-                <p className="mt-2 text-xl font-bold text-white">{stat.value}</p>
+                <p className="mt-2 text-xl font-bold text-[#13220f]">{stat.value}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 border-b border-white/10 px-4 py-3 text-sm font-semibold text-text-muted sm:flex-row sm:items-center sm:justify-between md:px-5">
+        <div className="flex flex-col gap-3 border-b border-[#dce9d4] px-4 py-3 text-sm font-semibold text-[#52644b] sm:flex-row sm:items-center sm:justify-between md:px-5">
           <span className="inline-flex items-center gap-2">
-            <ListFilter className="h-4 w-4 text-[#8cef32]" aria-hidden="true" />
+            <ListFilter className="h-4 w-4 text-violet" aria-hidden="true" />
             Showing {filteredRows.length} of {activeDataset.rows.length} records
           </span>
           {query ? <span>Filtered by: {query}</span> : null}
         </div>
 
-        <div className="border-b border-white/10 px-4 py-2 text-xs font-semibold text-text-faint md:hidden">
+        <div className="border-b border-[#dce9d4] bg-[#fbfdf9] px-4 py-2 text-xs font-semibold text-[#728067] md:hidden">
           Swipe horizontally to view all columns.
         </div>
 
@@ -164,12 +163,12 @@ export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerP
             )}
           >
             <thead className="sticky top-0 z-10">
-              <tr className="bg-[#0c1308] text-xs uppercase text-text-faint shadow-[0_1px_0_rgba(255,255,255,0.1)]">
+              <tr className="bg-[#edf7e7] text-xs uppercase text-[#5a704f] shadow-[0_1px_0_rgba(220,233,212,1)]">
                 {activeDataset.columns.map((column) => (
                   <th
                     key={column.key}
                     className={cn(
-                      "border-r border-white/[0.07] px-4 py-3.5 font-bold leading-5 last:border-r-0",
+                      "border-r border-[#dce9d4] px-4 py-3.5 font-bold leading-5 last:border-r-0",
                       isNumericColumn(column.key) && "text-right tabular-nums",
                       column.key === "serialNumber" && "text-center",
                       column.className,
@@ -184,19 +183,19 @@ export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerP
               {filteredRows.map((row, index) => (
                 <tr
                   key={`${activeDataset.id}-${row.serialNumber}-${index}`}
-                  className="transition-colors odd:bg-white/[0.018] hover:bg-[#51A70A]/10"
+                  className="transition-colors odd:bg-[#fbfdf9] hover:bg-[#edf7e7]"
                 >
                   {activeDataset.columns.map((column) => (
                     <td
                       key={column.key}
                       className={cn(
-                        "border-b border-r border-white/[0.07] px-4 py-3.5 align-top font-medium leading-6 text-text-muted last:border-r-0",
+                        "border-b border-r border-[#dce9d4] px-4 py-3.5 align-top font-medium leading-6 text-[#52644b] last:border-r-0",
                         isLongTextColumn(column.key)
                           ? "whitespace-normal break-words"
                           : "whitespace-nowrap",
-                        isNumericColumn(column.key) && "text-right tabular-nums text-white/85",
-                        column.key === "serialNumber" && "text-center font-bold text-white",
-                        column.key === "collegeName" && "text-white",
+                        isNumericColumn(column.key) && "text-right tabular-nums text-[#26351f]",
+                        column.key === "serialNumber" && "text-center font-bold text-[#13220f]",
+                        column.key === "collegeName" && "text-[#13220f]",
                         column.className,
                       )}
                     >
@@ -211,8 +210,8 @@ export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerP
 
         {!filteredRows.length ? (
           <div className="px-5 py-12 text-center">
-            <p className="text-lg font-bold text-white">No records found</p>
-            <p className="mt-2 text-sm font-medium text-text-muted">
+            <p className="text-lg font-bold text-[#13220f]">No records found</p>
+            <p className="mt-2 text-sm font-medium text-[#52644b]">
               Try another college name, district, state, or college ID.
             </p>
           </div>
