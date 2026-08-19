@@ -140,7 +140,11 @@ export function ContactFormAndDetails() {
             right support.
           </p>
 
-          <div id="formsID7375" />
+          <div className="mt-6 overflow-hidden rounded-[1.25rem] bg-white p-2 shadow-[0_16px_42px_rgba(0,0,0,0.26)] sm:p-3">
+            <div className="max-w-full overflow-x-auto">
+              <div id="formsID7375" />
+            </div>
+          </div>
         </motion.div>
 
         <motion.aside
