@@ -91,16 +91,22 @@ export function EventsSection() {
                             </div>
                           </>
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center bg-[#081609] px-4 text-center">
-                            <div>
-                              <p className="font-display text-sm font-bold text-white sm:text-base">
-                                Replay coming soon
-                              </p>
-                              <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.22em] text-white/55">
-                                Add videoUrl in data
-                              </p>
+                          <>
+                            <Image
+                              src={event.imageSrc}
+                              alt={event.title}
+                              fill
+                              sizes="(max-width: 1280px) 50vw, 20vw"
+                              className="object-cover"
+                              priority={index < 2}
+                            />
+                            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(5,7,4,0.75),transparent_40%),linear-gradient(to_bottom,rgba(5,7,4,0.15),transparent_25%)]" />
+                            <div className="absolute left-4 top-4">
+                              <span className={cn("rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.28em] sm:px-3 sm:text-[10px]", accent.badge)}>
+                                Closed
+                              </span>
                             </div>
-                          </div>
+                          </>
                         )}
                       </div>
                       <div className="border-t border-white/10 px-4 py-4 text-center">

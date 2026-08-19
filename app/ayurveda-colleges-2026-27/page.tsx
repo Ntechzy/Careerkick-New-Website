@@ -179,48 +179,34 @@ const structuredData = {
 
 export default function AyurvedaColleges202627Page() {
   return (
-    <>
+    <main className="bg-[#f7faf4] text-[#182413]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <section className="section-shell noise-overlay pt-28 md:pt-36">
+      <section className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#edf7e7_100%)] px-4 pb-14 pt-32 md:px-8 md:pb-20 md:pt-40">
+        <div className="absolute -left-32 top-20 h-96 w-96 rounded-full bg-violet/12 blur-[120px]" />
+        <div className="absolute -right-40 top-40 h-96 w-96 rounded-full bg-amber/20 blur-[120px]" />
+        <div className="grid-overlay absolute inset-0 opacity-80" />
         <div className="relative mx-auto max-w-7xl px-4 md:px-8">
           <div className="max-w-4xl">
-            <p className="section-kicker">NCISM Ayurveda College Lists</p>
-            <h1 className="section-title">
+            <p className="inline-flex items-center justify-center rounded-full border border-violet/25 bg-white px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-violet shadow-sm">
+              NCISM Ayurveda College Lists
+            </p>
+            <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-[#13220f] md:text-6xl lg:text-7xl">
               Ayurveda Colleges 2026-27 Permission and Denial Lists
             </h1>
+            <p className="mt-6 max-w-3xl text-base leading-relaxed text-[#4f6447] md:text-lg">
+              Search permitted, Uttar Pradesh permitted, and denied Ayurveda colleges
+              with seat details, districts, and permission notes.
+            </p>
           </div>
         </div>
       </section>
 
       <AyurvedaCollegesExplorer datasets={datasets} />
 
-      <section className="mx-auto max-w-7xl px-4 pb-24 md:px-8">
-        <div className="rounded-lg border border-white/10 bg-white/[0.035] p-6 shadow-card md:p-8">
-          <h2 className="text-2xl font-bold text-white">
-            NCISM Ayurveda Colleges 2026-27 Data
-          </h2>
-          <div className="mt-4 grid gap-5 text-sm font-medium leading-7 text-text-muted md:grid-cols-3">
-            <p>
-              The permitted Ayurveda colleges table includes college IDs, states,
-              districts, ownership type, UG seat intake with EWS details, PG seats, and
-              the full permission remarks.
-            </p>
-            <p>
-              The Uttar Pradesh tab focuses on the UP permitted BAMS colleges list and
-              sanctioned UG seats without EWS, making it easier to search by district or
-              college name.
-            </p>
-            <p>
-              The denied colleges tab lists institutes denied permission for academic
-              year 2026-27, including the denial details exactly extracted from the
-              source document table.
-            </p>
-          </div>
-        </div>
-      </section>
-    </>
+      
+    </main>
   );
 }
