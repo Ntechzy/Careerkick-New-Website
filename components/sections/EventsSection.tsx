@@ -23,7 +23,7 @@ export function EventsSection() {
   const today = startOfToday();
   const futureEvents = upcomingEvents
     .map((event, index) => ({ event, index, date: parseEventDate(event.date) }))
-    .filter(({ date }) => date >= today)
+    .filter(({ event, date }) => parseEventDate(event.endDate ?? event.date) >= today)
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 
   const nextUpcomingIndex = futureEvents.length > 0 ? futureEvents[0].index : 0;
@@ -49,11 +49,14 @@ export function EventsSection() {
           {upcomingEvents.map((event, index) => {
             const accent = accentStyles[event.accent];
             const eventDate = parseEventDate(event.date);
-            const isPast = eventDate < today;
+            const eventEndDate = parseEventDate(event.endDate ?? event.date);
+            const isPast = eventEndDate < today;
             const videoUrl = event.videoUrl?.trim();
             const hasVideo = Boolean(videoUrl);
             const isUpcoming = index === nextUpcomingIndex;
             const badgeText = isPast ? (hasVideo ? "Replay" : "Closed") : isUpcoming ? "Next" : "Upcoming";
+            const displayDate = formatEventDate(event.date, event.endDate);
+            const eventYear = eventDate.getFullYear();
 
             return (
               <ScrollReveal key={event.id} delay={0.05 + index * 0.05} className="mx-auto h-full w-full max-w-[340px] sm:max-w-none">
@@ -116,7 +119,7 @@ export function EventsSection() {
                           {badgeText}
                         </span>
                         <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.28em] text-white/60 sm:px-3 sm:text-[10px]">
-                          2026
+                          {eventYear}
                         </span>
                       </div>
 
@@ -137,7 +140,7 @@ export function EventsSection() {
                       <p className="mt-2 text-center text-xs leading-relaxed text-white/75 sm:mt-3 sm:text-sm lg:text-white">
                         {isUpcoming ? event.location : event.title}
                       </p>
-                      <p className="mt-2 text-center font-display text-base font-semibold text-white/90 sm:mt-3 sm:text-lg">{event.date}</p>
+                      <p className="mt-2 text-center font-display text-base font-semibold text-white/90 sm:mt-3 sm:text-lg">{displayDate}</p>
                       <a
                         href={registrationUrl}
                         target="_blank"
@@ -183,8 +186,24 @@ export function EventsSection() {
 }
 
 function parseEventDate(dateText: string) {
-  const parsed = new Date(dateText);
+  const parsed = new Date(`${dateText}T00:00:00`);
   return Number.isNaN(parsed.getTime()) ? new Date("9999-12-31T00:00:00Z") : parsed;
+}
+
+function formatEventDate(dateText: string, endDateText?: string) {
+  const start = parseEventDate(dateText);
+  const end = endDateText ? parseEventDate(endDateText) : undefined;
+  const formatter = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "long", year: "numeric" });
+
+  if (!end || start.toDateString() === end.toDateString()) {
+    return formatter.format(start);
+  }
+
+  if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+    return `${start.getDate()}-${end.getDate()} ${formatter.formatToParts(start).find((part) => part.type === "month")?.value} ${start.getFullYear()}`;
+  }
+
+  return `${formatter.format(start)} - ${formatter.format(end)}`;
 }
 
 function startOfToday() {

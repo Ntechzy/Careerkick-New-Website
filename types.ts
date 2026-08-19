@@ -52,6 +52,7 @@ export type UpcomingEventCard = {
   id: string;
   title: string;
   date: string;
+  endDate?: string;
   location: string;
   highlight?: boolean;
   accent: "violet" | "cyan" | "emerald" | "amber" | "blue";

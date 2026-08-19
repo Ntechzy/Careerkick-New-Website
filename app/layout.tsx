@@ -6,6 +6,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CursorGlow } from "@/components/ui/CursorGlow";
 import { WhatsAppFloatingButton } from "@/components/WhatsAppFloatingButton";
+import { AyurvedaCollegesFloatingButton } from "@/components/AyurvedaCollegesFloatingButton";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
@@ -13,7 +14,7 @@ import StoreProvider from "./StoreProvider";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-jakarta",
   display: "swap",
 });
@@ -88,6 +89,7 @@ export default function RootLayout({
             <Navbar />
             <main className="overflow-x-hidden">{children}</main>
             <WhatsAppFloatingButton />
+            <AyurvedaCollegesFloatingButton />
             <Footer />
           </SmoothScrollProvider>
         </StoreProvider>

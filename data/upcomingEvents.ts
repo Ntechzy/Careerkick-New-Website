@@ -2,66 +2,92 @@ import type { UpcomingEventCard } from "@/types";
 
 export const upcomingEvents: UpcomingEventCard[] = [
   {
-    id: "kanpur",
-    title: "Kanpur",
-    date: "28 June 2026",
-    location: "Kanpur",
+    id: "kanpur-free-week",
+    title: "Kanpur Free Week",
+    date: "2026-08-02",
+    endDate: "2026-08-07",
+    location: "Rani Ganj, Kanpur",
     accent: "violet",
-    imageSrc: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783076187/kanpur_owhvat.webp",
-    videoUrl: "https://res.cloudinary.com/dhlqc0ymy/video/upload/v1783418115/kanpur_van9di.mp4",
+    imageSrc: "https://i.pinimg.com/1200x/0f/88/5d/0f885d84d15fc97c4a557c238f4e8671.jpg",
     imagePrompt:
-      "Create a premium event visual for Careerkick's counselling expo in Kanpur. Use a clean circular illustration with a city-inspired backdrop, a subtle counselling desk, and a polished modern academic feel. No text, no watermark, no busy background, with lime green and violet accents on a white or transparent base.",
+      "Kanpur city event visual for Careerkick counselling expo.",
+  },
+  {
+    id: "varanasi",
+    title: "Varanasi",
+    date: "2026-08-08",
+    location: "Venue to be announced",
+    accent: "amber",
+    imageSrc: "https://i.pinimg.com/736x/d3/3e/e0/d33ee06ea37b93ec649fd05b03902a39.jpg",
+    imagePrompt:
+      "Varanasi city event visual for Careerkick counselling expo.",
+  },
+  {
+    id: "prayagraj",
+    title: "Prayagraj",
+    date: "2026-08-09",
+    location: "Venue to be announced",
+    accent: "blue",
+    imageSrc: "https://i.ytimg.com/vi/kDlavpEkbb8/sddefault.jpg",
+    imagePrompt:
+      "Prayagraj city event visual for Careerkick counselling expo.",
   },
   {
     id: "lucknow",
     title: "Lucknow",
-    date: "05 July 2026",
-    location: "12th Floor, Summit Space Coworking, Wing-B, Summit Building, Vibhuti Khand, Gomti Nagar, Lucknow - 226010",
+    date: "2026-08-10",
+    location: "Venue to be announced",
     accent: "emerald",
-    highlight: true,
-    imageSrc: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783076188/lucknow_biuj2i.webp",
-    videoUrl: "https://res.cloudinary.com/dhlqc0ymy/video/upload/v1783418113/lucknow_km48k2.mp4",
+    imageSrc: "https://i.pinimg.com/1200x/e2/9e/78/e29e78c6ae95638004721954dd13f8f2.jpg",
     imagePrompt:
-      "Create a premium event visual for Careerkick's upcoming counselling expo in Lucknow. Use a modern circular city illustration with a refined office venue feel, subtle map pin, and premium counselling branding. No text, no watermark, white or transparent background, lime green highlight with emerald and cyan accents.",
+      "Lucknow city event visual for Careerkick counselling expo.",
   },
-  // {
-  //   id: "varanasi",
-  //   title: "Varanasi",
-  //   date: "12 July 2026",
-  //   location: "Varanasi",
-  //   accent: "amber",
-  //   imageSrc: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783076190/varanasi_x5h7vn.webp",
-  //   videoUrl: "",
-  //   imagePrompt:
-  //     "Create a premium event visual for Careerkick's counselling expo in Varanasi. Use a circular illustration with a cultural city backdrop and a clean professional counselling atmosphere. No text, no watermark, no clutter, lime green and amber accents on a white or transparent base.",
-  // },
+  {
+    id: "indore",
+    title: "Indore",
+    date: "2026-08-15",
+    endDate: "2026-08-16",
+    location: "Venue to be announced",
+    accent: "cyan",
+    imageSrc: "https://thumbs.dreamstime.com/b/i-love-indore-slogan-board-installed-campus-apartment-205403429.jpg?w=768",
+    imagePrompt:
+      "Indore city event visual for Careerkick counselling expo.",
+  },
   {
     id: "greater-noida",
     title: "Greater Noida",
-    date: "19 July 2026",
-    location: "2nd floor, AA -007, Block A, Ansal Golf Link -1, Greater Noida, Uttar Pradesh 201315",
+    date: "2026-08-22",
+    location: "Knowledge Park II, Greater Noida",
     accent: "blue",
-    imageSrc: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783076186/greater-noida_usr4x9.webp",
-    videoUrl: "https://res.cloudinary.com/dhlqc0ymy/video/upload/v1784785459/AQOZzuUgwAlssR_oAxWGh1tRrFYaS1-rZQJpjvYLQSQu2LqPAhkbHTlKKX17hCza31DmUofsDeJ_a-zEop_2Si5Ou87N_DRl6KGzkHg_pru2up.mp4",
+    highlight: true,
+    imageSrc: "https://i.pinimg.com/736x/0a/fe/eb/0afeeb47c5a0f088aa1ae1b2fc3dde6a.jpg",
     imagePrompt:
-      "Create a premium event visual for Careerkick's counselling expo in Greater Noida. Use a circular illustration with a modern campus and office-inspired backdrop, subtle map pin, and polished admissions theme. No text, no watermark, white or transparent background, lime green and blue accents.",
+      "Greater Noida city event visual for Careerkick counselling expo.",
   },
   {
-    id: "gorakhpur",
-    title: "Gorakhpur",
-    date: "26 July 2026",
-    location: "Gorakhpur",
-    accent: "cyan",
-    imageSrc: "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783076166/gorakhpur_vlwinp.webp",
-    videoUrl: "https://res.cloudinary.com/dhlqc0ymy/video/upload/v1785217670/Hearing_real_experiences_from_real_students_Watch_how_attending_our_Free_Medical_Counselling_Ex_f1ac0b.mp4",
+    id: "delhi",
+    title: "Delhi",
+    date: "2026-08-23",
+    location: "Venue to be announced",
+    accent: "violet",
+    imageSrc: "https://pohcdn.com/sites/default/files/styles/node__blog_post__bp_banner/public/live_banner/New-Delhi-2.jpg",
     imagePrompt:
-      "Create a premium event visual for Careerkick's counselling expo in Gorakhpur. Use a circular illustration with a warm seminar room atmosphere, professional counselling setting, and refined modern style. No text, no watermark, clean white or transparent background, lime green and cyan accents.",
+      "Delhi city event visual for Careerkick counselling expo.",
+  },
+  {
+    id: "agra",
+    title: "Agra",
+    date: "2026-08-30",
+    location: "Venue to be announced",
+    accent: "amber",
+    imageSrc: "https://cdn.britannica.com/45/248845-050-9ED3B824/Aerial-view-of-Taj-Mahal-Agra-India.jpg",
+    imagePrompt:
+      "Agra city event visual for Careerkick counselling expo.",
   },
 ];
 
 export const featuredUpcomingEvent = {
   title: "Medical Counselling Expo 2026",
-  date: "05 July 2026",
-  location:
-    "12th Floor, Summit Space Coworking, Wing-B, Summit Building, Vibhuti Khand, Gomti Nagar, Lucknow - 226010",
+  date: "22 August 2026",
+  location: "Knowledge Park II, Greater Noida",
 };

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, GraduationCap } from "lucide-react";
 import { NAV_LINKS } from "@/lib/constants";
 import { CounsellingPackagesModal } from "@/components/CTAButtons";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -57,7 +57,7 @@ export function Navbar() {
           />
         )}
 
-        <a href="/" className="flex items-center" aria-label="Careerkick home">
+        <a href="/" className="flex shrink-0 items-center" aria-label="Careerkick home">
           <Image
             src="/logo-bg.png"
             alt="Careerkick"
@@ -68,7 +68,7 @@ export function Navbar() {
           />
         </a>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-4 lg:gap-8 md:flex">
           {NAV_LINKS.map((link) => {
             const active = isActiveLink(link);
 
@@ -163,11 +163,11 @@ export function Navbar() {
           })}
         </div>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden shrink-0 items-center gap-2 lg:gap-3 md:flex">
           <MagneticButton
             type="button"
             onClick={() => setPackagesOpen(true)}
-            className="px-5 py-2 text-sm"
+            className="px-4 py-2 text-xs lg:px-5 lg:text-sm"
           >
             Get Counselling
           </MagneticButton>
@@ -181,7 +181,7 @@ export function Navbar() {
           >
             <motion.a
               href={`tel:${phoneNumber}`}
-              className="inline-flex items-center justify-center rounded-full border border-[#51A70A]/25 bg-white px-5 py-2 text-sm font-semibold text-slate-900 transition-colors hover:border-[#51A70A]/45 hover:bg-[#51A70A]/5 hover:text-white"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-[#51A70A]/25 bg-white px-4 py-2 text-xs font-semibold text-slate-900 transition-colors hover:border-[#51A70A]/45 hover:bg-[#51A70A]/5 hover:text-white lg:px-5 lg:text-sm"
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -336,6 +336,16 @@ export function Navbar() {
                 >
                   Get Counselling
                 </MagneticButton>
+                <motion.a
+                  href="/ayurveda-colleges-2026-27"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#51A70A]/25 bg-white/[0.08] px-6 py-4 text-base font-semibold text-white"
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setOpen(false)}
+                >
+                  <GraduationCap className="h-5 w-5" aria-hidden="true" />
+                  Ayurveda Colleges
+                </motion.a>
                 <motion.a
                   href={`tel:${phoneNumber}`}
                   className="inline-flex w-full items-center justify-center rounded-full border border-[#51A70A]/25 bg-white px-6 py-4 text-base font-semibold text-slate-900"
