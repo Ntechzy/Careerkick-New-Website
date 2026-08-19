@@ -140,11 +140,7 @@ export function ContactFormAndDetails() {
             right support.
           </p>
 
-          <div className="ebook-form-frame relative mt-6 overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-3 shadow-[0_12px_36px_rgba(0,0,0,0.28)] sm:p-4">
-            <div className="min-h-[560px] rounded-[1.2rem] bg-white p-3 text-slate-950 sm:min-h-[620px] sm:p-4">
-              <div id="formsID7375" className="min-h-[520px] sm:min-h-[580px]" />
-            </div>
-          </div>
+          <div id="formsID7375" />
         </motion.div>
 
         <motion.aside
