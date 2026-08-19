@@ -36,9 +36,9 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    icon: [{ url: "/logo.png", type: "image/png" }],
-    shortcut: ["/logo.png"],
-    apple: [{ url: "/logo.png", type: "image/png" }],
+    icon: [{ url: "/favicon-c.png", type: "image/png" }],
+    shortcut: ["/favicon-c.png"],
+    apple: [{ url: "/favicon-c.png", type: "image/png" }],
   },
   openGraph: {
     title: siteConfig.title,
