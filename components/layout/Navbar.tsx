@@ -4,7 +4,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, GraduationCap } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { NAV_LINKS } from "@/lib/constants";
 import { CounsellingPackagesModal } from "@/components/CTAButtons";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -20,6 +20,8 @@ export function Navbar() {
   const [expandedMobileLink, setExpandedMobileLink] = useState<string | null>(null);
   const phoneNumber = "7393062116";
   const MotionAnchor = motion.a;
+  const isLightNavbar =
+    !scrolled && (pathname === "/blog" || pathname.startsWith("/blog/") || pathname === "/ayurveda-colleges-2026-27");
 
   const isActiveHref = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
@@ -48,14 +50,15 @@ export function Navbar() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-[100]">
-      <motion.nav className="relative mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:h-[72px] md:px-8">
-        {scrolled && (
-          <motion.div
-            layoutId="navbar-bg"
-            className="absolute inset-x-2 inset-y-2 -z-10 rounded-full border border-white/5 bg-base/80 shadow-card backdrop-blur-xl md:inset-x-6"
-            transition={{ duration: 0.35 }}
-          />
-        )}
+      <motion.nav className="relative mx-auto flex h-16 max-w-[1480px] items-center justify-between px-4 md:h-[72px] md:px-6 xl:px-8">
+        <motion.div
+          layoutId="navbar-bg"
+          className={cn(
+            "absolute inset-x-2 inset-y-2 -z-10 rounded-full border border-white/5 bg-base/80 shadow-card backdrop-blur-xl md:inset-x-4 xl:inset-x-6",
+            !scrolled && "hidden md:block",
+          )}
+          transition={{ duration: 0.35 }}
+        />
 
         <a href="/" className="flex shrink-0 items-center" aria-label="Careerkick home">
           <Image
@@ -64,11 +67,11 @@ export function Navbar() {
             width={1000}
             height={250}
             priority
-            className="h-10 w-auto object-contain md:h-12"
+            className="h-10 w-auto object-contain xl:h-12"
           />
         </a>
 
-        <div className="hidden items-center gap-4 lg:gap-8 md:flex">
+        <div className="hidden flex-1 items-center justify-center gap-2 px-3 lg:gap-3 xl:gap-5 md:flex">
           {NAV_LINKS.map((link) => {
             const active = isActiveLink(link);
 
@@ -91,8 +94,11 @@ export function Navbar() {
                   <button
                     type="button"
                     className={cn(
-                      "relative inline-flex items-center gap-1 py-2 text-sm font-medium text-text-muted transition-colors hover:text-white",
-                      active && "text-white",
+                      "relative inline-flex items-center gap-1 whitespace-nowrap py-2 text-xs font-medium transition-colors lg:text-sm",
+                      isLightNavbar
+                        ? "text-[#7a8f72] hover:text-[#13220f] md:text-text-muted md:hover:text-white"
+                        : "text-text-muted hover:text-white",
+                      active && (isLightNavbar ? "text-[#13220f] md:text-white" : "text-white"),
                     )}
                     aria-expanded={submenuOpen}
                     onClick={() => setDesktopOpenLink(link.href)}
@@ -146,8 +152,11 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "group relative py-2 text-sm font-medium text-text-muted transition-colors hover:text-white",
-                  active && "text-white",
+                  "group relative whitespace-nowrap py-2 text-xs font-medium transition-colors lg:text-sm",
+                  isLightNavbar
+                    ? "text-[#7a8f72] hover:text-[#13220f] md:text-text-muted md:hover:text-white"
+                    : "text-text-muted hover:text-white",
+                  active && (isLightNavbar ? "text-[#13220f] md:text-white" : "text-white"),
                 )}
                 aria-current={pathname === link.href ? "page" : undefined}
               >
@@ -163,11 +172,11 @@ export function Navbar() {
           })}
         </div>
 
-        <div className="hidden shrink-0 items-center gap-2 lg:gap-3 md:flex">
+        <div className="hidden shrink-0 items-center gap-2 md:flex">
           <MagneticButton
             type="button"
             onClick={() => setPackagesOpen(true)}
-            className="px-4 py-2 text-xs lg:px-5 lg:text-sm"
+            className="px-3 py-2 text-xs xl:px-5 xl:text-sm"
           >
             Get Counselling
           </MagneticButton>
@@ -181,7 +190,7 @@ export function Navbar() {
           >
             <motion.a
               href={`tel:${phoneNumber}`}
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-[#51A70A]/25 bg-white px-4 py-2 text-xs font-semibold text-slate-900 transition-colors hover:border-[#51A70A]/45 hover:bg-[#51A70A]/5 hover:text-white lg:px-5 lg:text-sm"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-[#51A70A]/25 bg-white px-3 py-2 text-xs font-semibold text-slate-900 transition-colors hover:border-[#51A70A]/45 hover:bg-[#51A70A]/5 hover:text-white xl:px-5 xl:text-sm"
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -336,16 +345,6 @@ export function Navbar() {
                 >
                   Get Counselling
                 </MagneticButton>
-                <motion.a
-                  href="/ayurveda-colleges-2026-27"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#51A70A]/25 bg-white/[0.08] px-6 py-4 text-base font-semibold text-white"
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setOpen(false)}
-                >
-                  <GraduationCap className="h-5 w-5" aria-hidden="true" />
-                  Ayurveda Colleges
-                </motion.a>
                 <motion.a
                   href={`tel:${phoneNumber}`}
                   className="inline-flex w-full items-center justify-center rounded-full border border-[#51A70A]/25 bg-white px-6 py-4 text-base font-semibold text-slate-900"
