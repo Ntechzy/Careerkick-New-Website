@@ -2,6 +2,19 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  async headers() {
+    return [
+      {
+        source: "/checkout",
+        headers: [
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+    ];
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 7,
