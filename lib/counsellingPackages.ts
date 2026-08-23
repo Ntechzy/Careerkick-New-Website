@@ -5,6 +5,7 @@ export type CounsellingPackage = {
   description: string;
   baseAmount: number;
   taxRate?: number;
+  gstInclusive?: boolean;
   highlight?: boolean;
   image?: string;
   defaultCourse: string;
@@ -13,6 +14,11 @@ export type CounsellingPackage = {
 };
 
 export const GST_RATE = 0.18;
+export const GST_INCLUSIVE_PLAN_AMOUNT = 30000;
+
+export function isGstInclusivePlanAmount(amount: number) {
+  return Math.round(amount) === GST_INCLUSIVE_PLAN_AMOUNT;
+}
 
 export type CouponType = "percentage" | "flat";
 
@@ -66,6 +72,8 @@ export const COUNSELLING_PACKAGES: CounsellingPackage[] = [
     description:
       "Complete counselling support for Government MBBS, BDS, BAMS, BHMS, BUMS, Veterinary and other medical-course admissions.",
     baseAmount: 30000,
+    taxRate: 0,
+    gstInclusive: true,
     highlight: true,
     defaultCourse: "MBBS",
     image:

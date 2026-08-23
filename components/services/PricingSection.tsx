@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
   COUNSELLING_PAYMENT_NOTES,
   formatIndianCurrency,
+  isGstInclusivePlanAmount,
 } from "@/lib/counsellingPackages";
 
 export default function PricingSection() {
@@ -86,7 +87,9 @@ export default function PricingSection() {
                     <div className="font-display text-3xl font-bold text-[#56b016]">
                       {formatIndianCurrency(item.totalAmount)}
                     </div>
-                    <span aria-hidden="true" className="mt-1 block h-4" />
+                    <span className="mt-1 block min-h-4 text-xs font-semibold text-slate-500">
+                      {isGstInclusivePlanAmount(item.totalAmount) ? "18% GST inclusive" : ""}
+                    </span>
                   </div>
 
                   <Link
