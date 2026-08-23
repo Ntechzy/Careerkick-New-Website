@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
   COUNSELLING_PAYMENT_NOTES,
   formatIndianCurrency,
+  isGstInclusivePlanAmount,
 } from "@/lib/counsellingPackages";
 import { getWhatsAppLink } from "@/lib/contactLinks";
 
@@ -130,7 +131,9 @@ export function CounsellingPackagesModal({ onClose }: CounsellingPackagesModalPr
                   <p className="font-display text-3xl font-bold leading-none text-[#56b016]">
                     {formatIndianCurrency(item.totalAmount)}
                   </p>
-                  <span aria-hidden="true" className="mt-1 block h-4" />
+                  <span className="mt-1 block min-h-4 text-xs font-semibold text-slate-500">
+                    {isGstInclusivePlanAmount(item.totalAmount) ? "18% GST inclusive" : ""}
+                  </span>
                   <Link
                     href={`/checkout?package=${item._id}`}
                     onClick={onClose}
