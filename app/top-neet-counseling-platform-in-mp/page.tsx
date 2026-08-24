@@ -8,8 +8,10 @@ import {
   CheckCircle2,
   FileText,
   GraduationCap,
+  MapPin,
   MessageCircle,
   Newspaper,
+  Phone,
   Search,
   Share2,
 } from "lucide-react";
@@ -17,12 +19,12 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
 import { siteConfig } from "@/lib/site";
 
 const route = "/top-neet-counseling-platform-in-mp";
-const pageTitle = "Top neet counseling platform in MP";
+const pageTitle = "Top NEET counseling platform in MP";
 const pageDescription =
   "Careerkick helps NEET aspirants in Madhya Pradesh with MP NEET counselling, choice filling, merit list tracking, college prediction, cutoffs, and MBBS/BDS admission guidance.";
 
 const keywords = [
-  "Top neet counseling platform in MP",
+  "Top NEET counseling platform in MP",
   "best NEET counselling in MP",
   "MP NEET counselling 2026",
   "Madhya Pradesh NEET counselling",
@@ -252,7 +254,7 @@ export default function TopNeetCounselingPlatformInMpPage() {
               MP NEET Counselling Hub
             </SectionLabel>
             <h1 className="font-display text-4xl font-bold leading-tight text-[#13220f] md:text-6xl lg:text-7xl">
-              Top neet counseling platform in MP
+              Top NEET counseling platform in MP
             </h1>
             <p className="mt-6 max-w-3xl text-base leading-relaxed text-[#4f6447] md:text-lg">
               Careerkick brings MP NEET counselling updates, expert blogs,
@@ -428,12 +430,28 @@ export default function TopNeetCounselingPlatformInMpPage() {
       </section>
 
       <section className="px-4 pb-20 md:px-8 md:pb-28">
-        <div className="mx-auto flex max-w-7xl flex-col gap-5 rounded-lg border border-[#dce9d4] bg-white p-6 shadow-[0_12px_34px_rgba(31,61,21,0.08)] md:flex-row md:items-center md:justify-between md:p-8">
-          <div>
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 rounded-lg border border-[#dce9d4] bg-white p-6 shadow-[0_12px_34px_rgba(31,61,21,0.08)] md:flex-row md:items-center md:justify-between md:p-8">
+          <div className="max-w-3xl">
             <p className="text-xs font-bold uppercase text-violet">Careerkick MP desk</p>
             <h2 className="mt-2 font-display text-2xl font-bold text-[#13220f] md:text-3xl">
               Start your Madhya Pradesh MBBS/BDS counselling plan
             </h2>
+            <div className="mt-5 space-y-3 text-sm font-medium leading-6 text-[#52644b]">
+              <p className="font-bold text-[#13220f]">Indore, Madhya Pradesh</p>
+              <p className="flex items-start gap-2">
+                <MapPin className="mt-1 h-4 w-4 shrink-0 text-violet" aria-hidden="true" />
+                <span>402 Apollo Trade Center, Geeta Bhawan Square, Indore, Madhya Pradesh</span>
+              </p>
+              <p className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <Phone className="h-4 w-4 shrink-0 text-violet" aria-hidden="true" />
+                <a className="font-bold text-[#13220f] hover:text-violet" href="tel:+919198350983">
+                  +91 9198350983
+                </a>
+                <a className="font-bold text-[#13220f] hover:text-violet" href="tel:+919198350987">
+                  +91 9198350987
+                </a>
+              </p>
+            </div>
           </div>
           <Link
             href="/contact"
