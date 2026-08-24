@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { CheckoutPageClient } from "@/components/checkout/CheckoutPageClient";
-import {
-  isGstInclusivePlanAmount,
-  type CounsellingPackage,
-} from "@/lib/counsellingPackages";
+import type { CounsellingPackage } from "@/lib/counsellingPackages";
 
 export const metadata: Metadata = {
   title: "Secure Checkout | Careerkick",
@@ -70,7 +67,7 @@ async function getApiPlanPackage(packageId?: string): Promise<CounsellingPackage
       description: plan.description,
       baseAmount: plan.totalAmount,
       taxRate: 0,
-      gstInclusive: isGstInclusivePlanAmount(plan.totalAmount),
+      gstInclusive: true,
       defaultCourse: "Other",
       inclusions: [
         "Counselling guidance",
