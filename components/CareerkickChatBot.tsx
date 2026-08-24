@@ -230,6 +230,7 @@ export function CareerkickChatBot() {
       <div
         className={cn(
           "fixed bottom-4 right-2 z-[96] flex flex-col items-end gap-2 transition-transform duration-700 sm:bottom-6 sm:right-6",
+          !open && "chatbot-desktop-walk",
           slideOut && !open ? "translate-x-[calc(100%+0.5rem)] sm:translate-x-0" : "translate-x-0",
         )}
       >
@@ -268,7 +269,7 @@ export function CareerkickChatBot() {
               alt=""
               width={128}
               height={128}
-              className="h-24 w-24 object-contain sm:h-28 sm:w-28 lg:h-32 lg:w-32"
+              className="chatbot-robot-turn h-24 w-24 object-contain sm:h-28 sm:w-28 lg:h-32 lg:w-32"
               unoptimized
             />
           )}

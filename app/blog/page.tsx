@@ -68,7 +68,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             <h1 className="font-display text-4xl font-bold leading-tight text-[var(--blog-text)] md:text-6xl lg:text-7xl">
               Admission strategy, cut-offs, and counselling clarity.
             </h1>
-            <p className="mt-6 max-w-3xl text-base leading-relaxed text-[var(--blog-muted)] md:text-lg">
+            <p className="blog-hero-copy mt-6 max-w-3xl text-base leading-relaxed text-[var(--blog-muted)] md:text-lg">
               Read practical Careerkick articles for NEET and JEE aspirants, from deadline tracking to choice filling and college planning.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
