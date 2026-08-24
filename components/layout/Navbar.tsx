@@ -18,10 +18,17 @@ export function Navbar() {
   const [packagesOpen, setPackagesOpen] = useState(false);
   const [desktopOpenLink, setDesktopOpenLink] = useState<string | null>(null);
   const [expandedMobileLink, setExpandedMobileLink] = useState<string | null>(null);
+  const [blogTheme, setBlogTheme] = useState<"light" | "dark" | null>(null);
   const phoneNumber = "7393062116";
   const MotionAnchor = motion.a;
+  const isBlogPath = pathname === "/blog" || pathname.startsWith("/blog/");
+  const blogDefaultTheme = pathname.startsWith("/blog/") ? "dark" : pathname === "/blog" ? "light" : null;
+  const resolvedBlogTheme = blogTheme ?? blogDefaultTheme;
   const isLightNavbar =
-    !scrolled && (pathname === "/blog" || pathname.startsWith("/blog/") || pathname === "/ayurveda-colleges-2026-27");
+    !scrolled &&
+    ((isBlogPath && resolvedBlogTheme !== "dark") ||
+      pathname === "/ayurveda-colleges-2026-27" ||
+      pathname === "/top-neet-counseling-platform-in-mp");
 
   const isActiveHref = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
@@ -47,6 +54,24 @@ export function Navbar() {
     setDesktopOpenLink(null);
     setExpandedMobileLink(null);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!isBlogPath) {
+      setBlogTheme(null);
+      return;
+    }
+
+    const savedTheme = window.localStorage.getItem("careerkick-blog-theme");
+    setBlogTheme(savedTheme === "dark" || savedTheme === "light" ? savedTheme : null);
+
+    const updateTheme = (event: Event) => {
+      const nextTheme = (event as CustomEvent<"light" | "dark">).detail;
+      setBlogTheme(nextTheme);
+    };
+
+    window.addEventListener("careerkick-blog-theme-change", updateTheme);
+    return () => window.removeEventListener("careerkick-blog-theme-change", updateTheme);
+  }, [isBlogPath]);
 
   return (
     <header className="fixed inset-x-0 top-0 z-[100]">

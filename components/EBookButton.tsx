@@ -3,7 +3,7 @@ export function EBookButton() {
     <a
       href="/e-books"
       aria-label="Open E-Book"
-      className="fixed right-0 top-1/2 z-[90] flex h-32 w-12 -translate-y-1/2 items-center justify-center rounded-l-xl border border-r-0 border-[#51A70A]/35 bg-gradient-brand font-display text-xs font-semibold text-base shadow-card transition-transform duration-300 hover:scale-[1.03] hover:shadow-glow-violet focus-visible:shadow-[0_0_0_2px_#51A70A,0_0_0_5px_#050704] sm:h-36 sm:w-14 sm:text-sm"
+      className="fixed right-0 top-1/2 z-[90] flex h-32 w-12 -translate-y-1/2 items-center justify-center rounded-l-md border border-r-0 border-[#51A70A]/35 bg-gradient-brand font-display text-xs font-semibold text-white shadow-card transition-transform duration-300 hover:scale-[1.03] hover:shadow-glow-violet focus-visible:shadow-[0_0_0_2px_#51A70A,0_0_0_5px_#050704] sm:h-36 sm:w-14 sm:text-sm"
     >
       <span className="inline-flex rotate-180 items-center gap-2 [writing-mode:vertical-rl]">
         <svg
@@ -25,4 +25,3 @@ export function EBookButton() {
     </a>
   );
 }
-

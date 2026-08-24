@@ -10,9 +10,9 @@ export function EmptyState({
   description = "Try another search term or explore all Careerkick articles.",
 }: EmptyStateProps) {
   return (
-    <div className="rounded-lg border border-[#dce9d4] bg-white p-8 text-center shadow-[0_12px_34px_rgba(31,61,21,0.08)]">
-      <p className="font-display text-2xl font-semibold text-[#13220f]">{title}</p>
-      <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-[#52644b]">
+    <div className="rounded-lg border border-[var(--blog-border)] bg-[var(--blog-panel)] p-8 text-center shadow-[var(--blog-shadow)]">
+      <p className="font-display text-2xl font-semibold text-[var(--blog-text)]">{title}</p>
+      <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-[var(--blog-muted)]">
         {description}
       </p>
       <Link

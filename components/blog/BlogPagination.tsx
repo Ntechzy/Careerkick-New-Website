@@ -42,13 +42,13 @@ export function BlogPagination({ currentPage, hasNextPage, category, search }: B
         className={cn(
           "rounded-full border px-5 py-3 text-sm font-semibold transition-colors",
           canGoBack
-            ? "border-white/10 bg-white/[0.04] text-white hover:border-violet/40"
-            : "pointer-events-none border-white/5 bg-white/[0.02] text-white/30",
+            ? "border-[var(--blog-border)] bg-[var(--blog-panel)] text-[var(--blog-text)] hover:border-violet/40"
+            : "pointer-events-none border-[var(--blog-border-soft)] bg-[var(--blog-panel-soft)] text-[var(--blog-faint)] opacity-45",
         )}
       >
         Previous
       </Link>
-      <span className="rounded-full border border-violet/25 bg-violet/10 px-4 py-3 font-mono text-xs text-violet-glow">
+      <span className="rounded-full border border-violet/25 bg-violet/10 px-4 py-3 font-mono text-xs text-violet">
         Page {currentPage}
       </span>
       <Link
@@ -57,8 +57,8 @@ export function BlogPagination({ currentPage, hasNextPage, category, search }: B
         className={cn(
           "rounded-full border px-5 py-3 text-sm font-semibold transition-colors",
           hasNextPage
-            ? "border-white/10 bg-white/[0.04] text-white hover:border-violet/40"
-            : "pointer-events-none border-white/5 bg-white/[0.02] text-white/30",
+            ? "border-[var(--blog-border)] bg-[var(--blog-panel)] text-[var(--blog-text)] hover:border-violet/40"
+            : "pointer-events-none border-[var(--blog-border-soft)] bg-[var(--blog-panel-soft)] text-[var(--blog-faint)] opacity-45",
         )}
       >
         Next

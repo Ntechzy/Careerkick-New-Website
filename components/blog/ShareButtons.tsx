@@ -43,7 +43,7 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
           href={network.href}
           target="_blank"
           rel="noreferrer"
-          className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-text-muted transition-colors hover:border-violet/40 hover:text-white"
+          className="rounded-full border border-[var(--blog-border)] bg-[var(--blog-panel)] px-4 py-2 text-sm font-semibold text-[var(--blog-muted)] transition-colors hover:border-violet/40 hover:text-violet"
         >
           {network.label}
         </a>
@@ -55,7 +55,7 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
           setCopied(true);
           window.setTimeout(() => setCopied(false), 1600);
         }}
-        className="rounded-full border border-violet/25 bg-violet/10 px-4 py-2 text-sm font-semibold text-violet-glow transition-colors hover:border-violet/50"
+        className="rounded-full border border-violet/25 bg-violet/10 px-4 py-2 text-sm font-semibold text-violet transition-colors hover:border-violet/50"
       >
         {copied ? "Copied" : "Copy Link"}
       </button>

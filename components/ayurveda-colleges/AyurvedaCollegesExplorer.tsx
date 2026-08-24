@@ -70,6 +70,7 @@ export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerP
             <div className="grid gap-2 sm:flex sm:flex-wrap">
               {datasets.map((dataset) => {
                 const active = dataset.id === activeDataset.id;
+                const denied = dataset.id === "denied";
                 return (
                   <button
                     key={dataset.id}
@@ -80,12 +81,16 @@ export function AyurvedaCollegesExplorer({ datasets }: AyurvedaCollegesExplorerP
                     }}
                     className={cn(
                       "inline-flex min-h-11 items-center gap-2 rounded-md border px-4 py-2 text-sm font-semibold transition-colors",
-                      active
+                      denied
+                        ? active
+                          ? "border-red-500/45 bg-red-50 text-red-700 shadow-sm"
+                          : "border-red-200 bg-white text-red-600 hover:border-red-400/60 hover:bg-red-50 hover:text-red-700"
+                        : active
                         ? "border-[#51A70A]/45 bg-[#edf7e7] text-violet shadow-sm"
                         : "border-[#dce9d4] bg-white text-[#52644b] hover:border-[#51A70A]/35 hover:text-violet",
                     )}
                   >
-                    {dataset.id === "denied" ? (
+                    {denied ? (
                       <AlertTriangle className="h-4 w-4" aria-hidden="true" />
                     ) : (
                       <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
