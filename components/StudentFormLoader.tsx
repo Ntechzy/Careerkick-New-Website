@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { siteConfig } from "@/lib/site";
 
-const STUDENT_FORM_SCRIPT_ID = "student-form-loader";
+const STUDENT_FORM_SCRIPT_ID_PREFIX = "student-form-loader";
 const STUDENT_FORM_SCRIPT_URL = "https://ntechzy.in/api/v1/student-form/form.js";
 const DEFAULT_FORM_CONTAINER_ID = "formsID7375";
 const DEFAULT_PATHS = ["/", "/dynamicForm/index.html", "/apply-now", "/e-books/form", "/contact"];
@@ -42,7 +42,8 @@ export function StudentFormLoader({
 
   useEffect(() => {
     const container = document.getElementById(formContainerId);
-    const previousScript = document.getElementById(STUDENT_FORM_SCRIPT_ID);
+    const scriptId = `${STUDENT_FORM_SCRIPT_ID_PREFIX}-${formContainerId}`;
+    const previousScript = document.getElementById(scriptId);
 
     previousScript?.remove();
 
@@ -54,7 +55,7 @@ export function StudentFormLoader({
     container.replaceChildren();
 
     const script = document.createElement("script");
-    script.id = STUDENT_FORM_SCRIPT_ID;
+    script.id = scriptId;
     script.type = "module";
     const reloadedScriptUrl = new URL(scriptUrl, window.location.href);
     reloadedScriptUrl.searchParams.set("ckReload", Date.now().toString());

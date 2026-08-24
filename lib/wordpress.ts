@@ -11,7 +11,7 @@ import type {
 const API_BASE = "https://blogs.careerkick.in/wp-json/wp/v2";
 const REVALIDATE_SECONDS = 3600;
 const POST_LIST_FIELDS =
-  "id,date,modified,slug,link,title,excerpt,_embedded.author,_embedded.wp:featuredmedia,_embedded.wp:term";
+  "id,date,modified,slug,link,title,excerpt,featured_media,_links,_embedded";
 const POST_REFERENCE_FIELDS = "id,date,slug,title";
 
 const htmlEntityMap: Record<string, string> = {
@@ -282,7 +282,7 @@ export async function getPost(slug: string) {
     buildUrl("/posts", {
       slug,
       _embed: 1,
-      _fields: "id,date,modified,slug,status,type,link,title,content,excerpt,author,featured_media,categories,tags,_embedded",
+      _fields: "id,date,modified,slug,status,type,link,title,content,excerpt,author,featured_media,categories,tags,_links,_embedded",
     }),
   );
 
