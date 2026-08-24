@@ -13,10 +13,10 @@ export function RelatedBlogs({ posts }: RelatedBlogsProps) {
   return (
     <section className="mt-16">
       <div className="mb-8">
-        <p className="font-mono text-xs uppercase tracking-widest text-violet-glow">
+        <p className="font-mono text-xs uppercase tracking-widest text-violet">
           Keep Reading
         </p>
-        <h2 className="mt-3 font-display text-3xl font-semibold text-white md:text-4xl">
+        <h2 className="mt-3 font-display text-3xl font-semibold text-[var(--blog-text)] md:text-4xl">
           Related articles
         </h2>
       </div>

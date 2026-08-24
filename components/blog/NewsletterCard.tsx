@@ -2,14 +2,14 @@ import { CONTACT_NUMBERS, getTelLink } from "@/lib/contactLinks";
 
 export function NewsletterCard() {
   return (
-    <div className="rounded-lg border border-violet/20 bg-[linear-gradient(135deg,#ffffff_0%,#eff8ea_100%)] p-6 shadow-[0_12px_34px_rgba(31,61,21,0.08)]">
+    <div className="rounded-lg border border-violet/20 bg-[var(--blog-panel)] p-6 shadow-[var(--blog-shadow)]">
       <p className="font-mono text-[10px] font-medium uppercase tracking-widest text-violet">
         Careerkick Notes
       </p>
-      <h3 className="mt-3 font-display text-2xl font-semibold text-[#13220f]">
+      <h3 className="mt-3 font-display text-2xl font-semibold text-[var(--blog-text)]">
         Never miss a counselling update.
       </h3>
-      <p className="mt-3 text-sm leading-relaxed text-[#52644b]">
+      <p className="mt-3 text-sm leading-relaxed text-[var(--blog-muted)]">
         Get admission timelines, cut-off explainers, and choice filling guidance from the Careerkick desk.
       </p>
       <a

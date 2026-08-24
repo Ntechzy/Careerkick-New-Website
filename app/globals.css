@@ -120,6 +120,75 @@ input:focus-visible {
   color: var(--color-text-muted);
 }
 
+.blog-theme-page {
+  --blog-bg: #f7faf4;
+  --blog-hero: linear-gradient(180deg, #ffffff 0%, #edf7e7 100%);
+  --blog-panel: #ffffff;
+  --blog-panel-soft: #fbfdf9;
+  --blog-card: #ffffff;
+  --blog-card-alt: #f7faf4;
+  --blog-border: #dce9d4;
+  --blog-border-soft: #e5efde;
+  --blog-text: #13220f;
+  --blog-muted: #52644b;
+  --blog-faint: #728067;
+  --blog-overlay: linear-gradient(to top, rgba(16, 36, 13, 0.55), transparent);
+  --blog-shadow: 0 12px 34px rgba(31, 61, 21, 0.08);
+  --blog-shadow-strong: 0 20px 60px rgba(31, 61, 21, 0.14);
+  transition: background-color 240ms ease, color 240ms ease;
+}
+
+.blog-theme-page.blog-theme-default-dark,
+html[data-blog-theme="dark"] .blog-theme-page {
+  --blog-bg: #050704;
+  --blog-hero: linear-gradient(180deg, #050704 0%, #0b1608 100%);
+  --blog-panel: #0b1009;
+  --blog-panel-soft: #121a10;
+  --blog-card: #0b1009;
+  --blog-card-alt: #121a10;
+  --blog-border: rgba(255, 255, 255, 0.10);
+  --blog-border-soft: rgba(255, 255, 255, 0.08);
+  --blog-text: #ffffff;
+  --blog-muted: #c8d4c1;
+  --blog-faint: #7c8b75;
+  --blog-overlay: linear-gradient(to top, rgba(5, 7, 4, 0.92), rgba(5, 7, 4, 0.18), transparent);
+  --blog-shadow: var(--shadow-card);
+  --blog-shadow-strong: var(--shadow-elevated);
+}
+
+html[data-blog-theme="light"] .blog-theme-page {
+  --blog-bg: #f7faf4;
+  --blog-hero: linear-gradient(180deg, #ffffff 0%, #edf7e7 100%);
+  --blog-panel: #ffffff;
+  --blog-panel-soft: #fbfdf9;
+  --blog-card: #ffffff;
+  --blog-card-alt: #f7faf4;
+  --blog-border: #dce9d4;
+  --blog-border-soft: #e5efde;
+  --blog-text: #13220f;
+  --blog-muted: #52644b;
+  --blog-faint: #728067;
+  --blog-overlay: linear-gradient(to top, rgba(16, 36, 13, 0.55), transparent);
+  --blog-shadow: 0 12px 34px rgba(31, 61, 21, 0.08);
+  --blog-shadow-strong: 0 20px 60px rgba(31, 61, 21, 0.14);
+}
+
+.blog-theme-page .career-blog-content {
+  color: var(--blog-muted);
+}
+
+.blog-theme-page .career-blog-content :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--blog-text);
+}
+
+.blog-theme-page .career-blog-content :where(p, li, figcaption) {
+  color: var(--blog-muted);
+}
+
+.blog-theme-page .career-blog-content :where(strong) {
+  color: var(--blog-text);
+}
+
 .career-blog-content :where(h1, h2, h3, h4, h5, h6) {
   color: var(--color-text-primary);
   font-family: var(--font-jakarta), "Plus Jakarta Sans", sans-serif;

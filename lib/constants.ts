@@ -67,6 +67,7 @@ export const NAV_LINKS: NavLink[] = [
 
 export const RESOURCE_LINKS: FooterLink[] = [
   { label: "NEET 2026", href: "/services" },
+  { label: "MP NEET Counselling", href: "/top-neet-counseling-platform-in-mp" },
   { label: "MBBS Counselling", href: "/services" },
   { label: "College Predictor", href: "/our-results" },
   { label: "College Search", href: "/our-results" },

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BlogSidebar } from "@/components/blog/BlogSidebar";
 import { Breadcrumb } from "@/components/blog/Breadcrumb";
+import { BlogThemeToggle } from "@/components/blog/BlogThemeToggle";
 import { NewsletterCard } from "@/components/blog/NewsletterCard";
 import { RelatedBlogs } from "@/components/blog/RelatedBlogs";
 import { ShareButtons } from "@/components/blog/ShareButtons";
@@ -136,7 +137,7 @@ export default async function SingleBlogPage({ params }: SingleBlogPageProps) {
   };
 
   return (
-    <main className="bg-base">
+    <main className="blog-theme-page blog-theme-default-dark bg-[var(--blog-bg)] text-[var(--blog-text)]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
@@ -147,36 +148,39 @@ export default async function SingleBlogPage({ params }: SingleBlogPageProps) {
       />
 
       <article>
-        <header className="relative overflow-hidden px-4 pb-12 pt-32 md:px-8 md:pb-16 md:pt-40">
+        <header className="relative overflow-hidden bg-[var(--blog-hero)] px-4 pb-12 pt-32 md:px-8 md:pb-16 md:pt-40">
           <div className="absolute -left-40 top-16 h-96 w-96 rounded-full bg-violet/10 blur-[120px]" />
           <div className="absolute -right-40 bottom-0 h-96 w-96 rounded-full bg-violet/10 blur-[120px]" />
           <div className="grid-overlay absolute inset-0 opacity-45" />
           <div className="relative mx-auto max-w-7xl">
-            <Breadcrumb current={post.title} />
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <Breadcrumb current={post.title} />
+              <BlogThemeToggle defaultTheme="dark" />
+            </div>
             <div className="mt-8 max-w-5xl">
-              <span className="rounded-full border border-violet/30 bg-violet/10 px-4 py-2 font-mono text-xs uppercase tracking-widest text-violet-glow">
+              <span className="rounded-full border border-violet/30 bg-violet/10 px-4 py-2 font-mono text-xs uppercase tracking-widest text-violet">
                 {category}
               </span>
-              <h1 className="mt-6 font-display text-4xl font-bold leading-tight text-white md:text-6xl">
+              <h1 className="mt-6 font-display text-4xl font-bold leading-tight text-[var(--blog-text)] md:text-6xl">
                 {post.title}
               </h1>
-              <p className="mt-6 max-w-3xl text-base leading-relaxed text-text-muted md:text-lg lg:text-white">
+              <p className="mt-6 max-w-3xl text-base leading-relaxed text-[var(--blog-muted)] md:text-lg">
                 {post.excerpt}
               </p>
-              <div className="mt-7 grid gap-3 rounded-lg border border-white/10 bg-white/[0.035] p-4 shadow-card backdrop-blur-xl sm:grid-cols-3">
+              <div className="mt-7 grid gap-3 rounded-lg border border-[var(--blog-border)] bg-[var(--blog-panel)]/80 p-4 shadow-[var(--blog-shadow)] backdrop-blur-xl sm:grid-cols-3">
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-text-faint">Author</p>
-                  <p className="mt-1 text-sm font-semibold text-white">{post.author?.name ?? "Careerkick"}</p>
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-[var(--blog-faint)]">Author</p>
+                  <p className="mt-1 text-sm font-semibold text-[var(--blog-text)]">{post.author?.name ?? "Careerkick"}</p>
                 </div>
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-text-faint">Published</p>
-                  <time dateTime={post.date} className="mt-1 block text-sm font-semibold text-white">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-[var(--blog-faint)]">Published</p>
+                  <time dateTime={post.date} className="mt-1 block text-sm font-semibold text-[var(--blog-text)]">
                     {formatPostDate(post.date)}
                   </time>
                 </div>
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-text-faint">Reading Time</p>
-                  <p className="mt-1 text-sm font-semibold text-white">{post.readingTime}</p>
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-[var(--blog-faint)]">Reading Time</p>
+                  <p className="mt-1 text-sm font-semibold text-[var(--blog-text)]">{post.readingTime}</p>
                 </div>
               </div>
             </div>
@@ -184,7 +188,7 @@ export default async function SingleBlogPage({ params }: SingleBlogPageProps) {
         </header>
 
         <section className="px-4 md:px-8">
-          <div className="relative mx-auto max-w-7xl overflow-hidden rounded-xl border border-white/10 bg-surface-2 p-2 shadow-elevated">
+          <div className="relative mx-auto max-w-7xl overflow-hidden rounded-xl border border-[var(--blog-border)] bg-[var(--blog-panel-soft)] p-2 shadow-[var(--blog-shadow-strong)]">
             <div className="relative aspect-[16/9] min-h-[260px] overflow-hidden rounded-lg">
               {post.featuredImage ? (
                 <Image
@@ -198,7 +202,7 @@ export default async function SingleBlogPage({ params }: SingleBlogPageProps) {
               ) : (
                 <div className="h-full w-full bg-gradient-hero" />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-base via-base/20 to-transparent" />
+              <div className="absolute inset-0 bg-[var(--blog-overlay)]" />
             </div>
           </div>
         </section>
@@ -206,19 +210,19 @@ export default async function SingleBlogPage({ params }: SingleBlogPageProps) {
         <section className="px-4 py-12 md:px-8 md:py-16">
           <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
             <div className="min-w-0">
-              <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-white/10 bg-gradient-card p-4 shadow-card">
+              <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-[var(--blog-border)] bg-[var(--blog-panel)] p-4 shadow-[var(--blog-shadow)]">
                 <Link
                   href="/blog"
-                  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-text-muted transition-colors hover:border-violet/40 hover:text-white"
+                  className="rounded-full border border-[var(--blog-border)] bg-[var(--blog-panel-soft)] px-4 py-2 text-sm font-semibold text-[var(--blog-muted)] transition-colors hover:border-violet/40 hover:text-violet"
                 >
                   Back to Blogs
                 </Link>
                 <ShareButtons title={post.title} url={articleUrl} />
               </div>
 
-              <div className="rounded-xl border border-white/10 bg-gradient-card px-5 py-8 shadow-card backdrop-blur-xl sm:px-8 md:px-10">
+              <div className="rounded-xl border border-[var(--blog-border)] bg-[var(--blog-panel)] px-5 py-8 shadow-[var(--blog-shadow)] backdrop-blur-xl sm:px-8 md:px-10">
                 <div
-                  className="career-blog-content prose prose-invert max-w-none prose-headings:scroll-mt-28 prose-p:leading-8 prose-img:shadow-card"
+                  className="career-blog-content prose max-w-none prose-headings:scroll-mt-28 prose-p:leading-8 prose-img:shadow-card"
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />
               </div>
@@ -228,7 +232,7 @@ export default async function SingleBlogPage({ params }: SingleBlogPageProps) {
                   {post.tags.map((tag) => (
                     <span
                       key={tag.id}
-                      className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-text-muted"
+                      className="rounded-full border border-[var(--blog-border)] bg-[var(--blog-panel)] px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-[var(--blog-muted)]"
                     >
                       {tag.name}
                     </span>
@@ -238,15 +242,15 @@ export default async function SingleBlogPage({ params }: SingleBlogPageProps) {
 
               <div className="mt-12 grid gap-4 md:grid-cols-2">
                 {previousPost && (
-                  <Link href={`/blog/${previousPost.slug}`} className="rounded-lg border border-white/10 bg-gradient-card p-5 shadow-card transition-colors hover:border-violet/40">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-text-faint">Previous</span>
-                    <p className="mt-2 line-clamp-2 font-display text-xl font-semibold text-white">{previousPost.title}</p>
+                  <Link href={`/blog/${previousPost.slug}`} className="rounded-lg border border-[var(--blog-border)] bg-[var(--blog-panel)] p-5 shadow-[var(--blog-shadow)] transition-colors hover:border-violet/40">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--blog-faint)]">Previous</span>
+                    <p className="mt-2 line-clamp-2 font-display text-xl font-semibold text-[var(--blog-text)]">{previousPost.title}</p>
                   </Link>
                 )}
                 {nextPost && (
-                  <Link href={`/blog/${nextPost.slug}`} className="rounded-lg border border-white/10 bg-gradient-card p-5 shadow-card transition-colors hover:border-violet/40 md:text-right">
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-text-faint">Next</span>
-                    <p className="mt-2 line-clamp-2 font-display text-xl font-semibold text-white">{nextPost.title}</p>
+                  <Link href={`/blog/${nextPost.slug}`} className="rounded-lg border border-[var(--blog-border)] bg-[var(--blog-panel)] p-5 shadow-[var(--blog-shadow)] transition-colors hover:border-violet/40 md:text-right">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--blog-faint)]">Next</span>
+                    <p className="mt-2 line-clamp-2 font-display text-xl font-semibold text-[var(--blog-text)]">{nextPost.title}</p>
                   </Link>
                 )}
               </div>

@@ -32,7 +32,7 @@ export function BlogCategories({ categories, selected, search }: BlogCategoriesP
           "rounded-full border px-4 py-2 text-sm font-semibold transition-colors",
           !selected
             ? "border-violet/35 bg-violet/10 text-violet"
-            : "border-[#dce9d4] bg-white text-[#52644b] hover:border-violet/35 hover:text-violet",
+            : "border-[var(--blog-border)] bg-[var(--blog-panel)] text-[var(--blog-muted)] hover:border-violet/35 hover:text-violet",
         )}
       >
         All
@@ -45,7 +45,7 @@ export function BlogCategories({ categories, selected, search }: BlogCategoriesP
           "rounded-full border px-4 py-2 text-sm font-semibold transition-colors",
           selected === String(category.id)
               ? "border-violet/35 bg-violet/10 text-violet"
-              : "border-[#dce9d4] bg-white text-[#52644b] hover:border-violet/35 hover:text-violet",
+              : "border-[var(--blog-border)] bg-[var(--blog-panel)] text-[var(--blog-muted)] hover:border-violet/35 hover:text-violet",
           )}
         >
           {category.name}

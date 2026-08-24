@@ -15,21 +15,21 @@ type BlogSidebarProps = {
 export function BlogSidebar({ categories, recentPosts, selectedCategory, search }: BlogSidebarProps) {
   return (
     <aside className="space-y-5 lg:sticky lg:top-24">
-      <div className="rounded-lg border border-[#dce9d4] bg-white p-5 shadow-[0_12px_34px_rgba(31,61,21,0.08)]">
+      <div className="rounded-lg border border-[var(--blog-border)] bg-[var(--blog-panel)] p-5 shadow-[var(--blog-shadow)]">
         <p className="mb-4 font-mono text-[10px] uppercase tracking-widest text-violet">
           Search
         </p>
         <BlogSearch defaultValue={search} />
       </div>
 
-      <div className="rounded-lg border border-[#dce9d4] bg-white p-5 shadow-[0_12px_34px_rgba(31,61,21,0.08)]">
+      <div className="rounded-lg border border-[var(--blog-border)] bg-[var(--blog-panel)] p-5 shadow-[var(--blog-shadow)]">
         <p className="mb-4 font-mono text-[10px] uppercase tracking-widest text-violet">
           Categories
         </p>
         <BlogCategories categories={categories} selected={selectedCategory} search={search} />
       </div>
 
-      <div className="rounded-lg border border-[#dce9d4] bg-white p-5 shadow-[0_12px_34px_rgba(31,61,21,0.08)]">
+      <div className="rounded-lg border border-[var(--blog-border)] bg-[var(--blog-panel)] p-5 shadow-[var(--blog-shadow)]">
         <p className="mb-4 font-mono text-[10px] uppercase tracking-widest text-violet">
           Recent Posts
         </p>
@@ -38,16 +38,16 @@ export function BlogSidebar({ categories, recentPosts, selectedCategory, search 
             <Link
               key={post.id}
               href={`/blog/${post.slug}`}
-              className="group grid grid-cols-[auto_1fr] gap-3 rounded-md border border-[#e5efde] bg-[#f7faf4] p-3 transition-colors hover:border-violet/30 hover:bg-violet/5"
+              className="group grid grid-cols-[auto_1fr] gap-3 rounded-md border border-[var(--blog-border-soft)] bg-[var(--blog-card-alt)] p-3 transition-colors hover:border-violet/30 hover:bg-violet/5"
             >
               <span className="font-mono text-[10px] text-violet">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <span className="block min-w-0">
-                <span className="line-clamp-2 text-sm font-semibold leading-snug text-[#182413] transition-colors group-hover:text-violet">
+                <span className="line-clamp-2 text-sm font-semibold leading-snug text-[var(--blog-text)] transition-colors group-hover:text-violet">
                   {post.title}
                 </span>
-                <time dateTime={post.date} className="mt-1 block font-mono text-[10px] uppercase tracking-widest text-[#728067]">
+                <time dateTime={post.date} className="mt-1 block font-mono text-[10px] uppercase tracking-widest text-[var(--blog-faint)]">
                   {formatPostDate(post.date)}
                 </time>
               </span>
