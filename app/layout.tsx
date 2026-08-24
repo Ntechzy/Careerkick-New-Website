@@ -99,7 +99,7 @@ export default function RootLayout({
         <Script
           type="module"
           src="https://ntechzy.in/api/v1/student-form/form.js"
-          path='["/", "/dynamicForm/index.html", "/apply-now", "/e-books/form", "/contact"]'
+          path='["/", "/dynamicForm/index.html", "/apply-now", "/e-books/form", "/contact", "/about", "/about/board-members", "/ayurveda-colleges-2026-27", "/blog", "/blog/[slug]", "/careers", "/checkout", "/checkout/failure", "/checkout/pending", "/checkout/success", "/e-books", "/e-books/download", "/our-results", "/payment", "/payment/failed", "/payment/failure", "/payment/success", "/payment/verify", "/payment/verify/[merchantTxnNo]", "/policies", "/policies/disclaimer", "/policies/privacy", "/policies/refund", "/policies/terms", "/request-city", "/services", "/top-neet-counseling-platform-in-mp"]'
           divid="formsID7375"
           courses='["Select Course","BAMS","BHMS","BUMS","MBBS","BDS"]'
           styles="basic"
