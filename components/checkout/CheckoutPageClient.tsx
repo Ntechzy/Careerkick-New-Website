@@ -673,7 +673,7 @@ function SelectedPlanCard({ selectedPackage }: { selectedPackage: CounsellingPac
           <p className="mt-3 text-xl font-bold text-slate-950 sm:text-2xl">
             {formatIndianCurrency(selectedPackage.baseAmount)}
             <span className="text-sm font-semibold text-slate-500">
-              {selectedPackage.gstInclusive ? " 18% GST inclusive" : " + GST"}
+              {" Taxes inclusive"}
             </span>
           </p>
         </div>
@@ -816,7 +816,7 @@ function OrderSummary({
 
       <div className="mt-5 space-y-3 border-b border-slate-200 pb-5 text-sm">
         <SummaryRow label="Counselling Fee" value={formatIndianCurrency(pricing.baseAmount)} />
-        {selectedPackage.gstInclusive ? <SummaryRow label="GST (18%)" value="Included" /> : null}
+        <SummaryRow label="Taxes" value="Included" />
         {pricing.taxRate > 0 ? <SummaryRow label={`GST (${Math.round(pricing.taxRate * 100)}%)`} value={formatIndianCurrency(pricing.taxAmount)} /> : null}
         {pricing.discountAmount > 0 ? <SummaryRow label="Discount" value={`-${formatIndianCurrency(pricing.discountAmount)}`} /> : null}
       </div>
