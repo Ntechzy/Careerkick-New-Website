@@ -370,21 +370,6 @@ html[data-blog-theme="dark"] .blog-theme-page .blog-hero-copy {
   line-height: 1.2 !important;
 }
 
-.global-lead-popup-form :where(button[type="submit"], input[type="submit"], .submit, .btn, [class*="submit"], [class*="Submit"]) {
-  min-height: 2.75rem !important;
-  width: 100% !important;
-  border: 0 !important;
-  border-radius: 0.5rem !important;
-  background-image: linear-gradient(135deg, #2F7804 0%, #51A70A 48%, #6DCC12 100%) !important;
-  color: #ffffff !important;
-  font-weight: 800 !important;
-  box-shadow: 0 16px 36px rgba(81, 167, 10, 0.24) !important;
-}
-
-.global-lead-popup-form :where(button[type="submit"], input[type="submit"], .submit, .btn, [class*="submit"], [class*="Submit"]):hover {
-  transform: translateY(-1px);
-}
-
 @layer utilities {
   .perspective-1000 {
     perspective: 1000px;
