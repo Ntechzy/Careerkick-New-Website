@@ -4,7 +4,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { NAV_LINKS } from "@/lib/constants";
 import { CounsellingPackagesModal } from "@/components/CTAButtons";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -75,24 +75,30 @@ export function Navbar() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-[100]">
-      <motion.nav className="relative mx-auto flex h-16 max-w-[1480px] items-center justify-between px-4 md:h-[72px] md:px-6 xl:px-8">
+      <motion.nav
+        className={cn(
+          "relative mx-auto flex h-16 max-w-[1480px] items-center justify-between px-4 transition-colors duration-300 md:h-[72px] md:px-6 xl:px-8",
+          open && "bg-white shadow-[0_8px_24px_rgba(15,23,42,0.12)] md:bg-transparent md:shadow-none",
+        )}
+      >
         <motion.div
           layoutId="navbar-bg"
           className={cn(
             "absolute inset-x-2 inset-y-2 -z-10 rounded-full border border-white/5 bg-base/80 shadow-card backdrop-blur-xl md:inset-x-4 xl:inset-x-6",
-            !scrolled && "hidden md:block",
+            open && "hidden md:block",
+            !open && !scrolled && "hidden md:block",
           )}
           transition={{ duration: 0.35 }}
         />
 
         <a href="/" className="flex shrink-0 items-center" aria-label="Careerkick home">
           <Image
-            src="/logo-bg.png"
+            src={open ? "/logo.png" : "/logo-bg.png"}
             alt="Careerkick"
             width={1000}
             height={250}
             priority
-            className="h-10 w-auto object-contain xl:h-12"
+            className={cn("h-10 w-auto object-contain xl:h-12", open && "h-11 md:h-10 xl:h-12")}
           />
         </a>
 
@@ -246,44 +252,48 @@ export function Navbar() {
 
         <button
           type="button"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 md:hidden"
+          className={cn(
+            "flex h-11 w-11 items-center justify-center rounded-full border transition-colors md:hidden",
+            open
+              ? "border-transparent bg-white text-[#0b2b05]"
+              : "border-white/10 bg-white/5 text-white",
+          )}
           aria-label="Toggle menu"
           aria-expanded={open}
           onClick={() => setOpen((value) => !value)}
         >
-          <span className="relative h-4 w-5">
-            <span
-              className={cn(
-                "absolute left-0 top-0 h-0.5 w-5 bg-white transition-transform",
-                open && "translate-y-2 rotate-45",
-              )}
-            />
-            <span
-              className={cn(
-                "absolute left-0 top-2 h-0.5 w-5 bg-white transition-opacity",
-                open && "opacity-0",
-              )}
-            />
-            <span
-              className={cn(
-                "absolute bottom-0 left-0 h-0.5 w-5 bg-white transition-transform",
-                open && "-translate-y-2 -rotate-45",
-              )}
-            />
-          </span>
+          {open ? (
+            <X className="h-7 w-7" aria-hidden="true" />
+          ) : (
+            <span className="relative h-4 w-5">
+              <span className="absolute left-0 top-0 h-0.5 w-5 bg-current transition-transform" />
+              <span className="absolute left-0 top-2 h-0.5 w-5 bg-current transition-opacity" />
+              <span className="absolute bottom-0 left-0 h-0.5 w-5 bg-current transition-transform" />
+            </span>
+          )}
         </button>
       </motion.nav>
 
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-x-0 top-0 -z-10 h-[100dvh] w-full bg-base/95 backdrop-blur-2xl md:hidden"
+            className="fixed inset-x-0 top-16 -z-10 h-[calc(100dvh-4rem)] w-full overflow-y-auto bg-[#eef5eb]/88 px-4 pb-8 pt-12 backdrop-blur-xl md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="flex h-full flex-col overflow-y-auto px-6 pb-8 pt-20 sm:px-8">
-              <div className="flex flex-1 flex-col justify-center space-y-5 py-6 sm:space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 24, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.98 }}
+              transition={{ duration: 0.28, ease: "easeOut" }}
+              className="mx-auto flex min-h-[min(34rem,calc(100dvh-7.5rem))] w-full max-w-[40rem] flex-col rounded-[32px] border border-white/75 bg-white px-5 py-6 shadow-[0_26px_70px_rgba(9,28,4,0.18)] sm:px-7 sm:py-7"
+            >
+              <p className="px-2 text-[11px] font-extrabold uppercase tracking-[0.16em] text-[#7f8f79]">
+                Explore Platform
+              </p>
+
+              <div className="mt-5 flex flex-1 flex-col space-y-3">
                 {NAV_LINKS.map((link, index) => {
                   const active = isActiveLink(link);
                   const expanded = expandedMobileLink === link.href;
@@ -292,13 +302,18 @@ export function Navbar() {
                     return (
                       <motion.div
                         key={link.href}
-                        initial={{ opacity: 0, x: 60 }}
+                        initial={{ opacity: 0, x: 28 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
                       >
                         <button
                           type="button"
-                          className="flex w-full items-center justify-between gap-4 text-left font-display text-2xl font-semibold text-white sm:text-3xl"
+                          className={cn(
+                            "flex min-h-14 w-full items-center justify-between gap-4 rounded-[24px] border px-5 text-left font-display text-lg font-extrabold text-[#0b2b05] shadow-[0_10px_30px_rgba(9,28,4,0.04)] transition-colors",
+                            active
+                              ? "border-[#51A70A]/28 bg-[#edf8e8]"
+                              : "border-slate-950/[0.04] bg-[#f8faf7] hover:bg-[#f1f8ee]",
+                          )}
                           aria-expanded={expanded}
                           onClick={() =>
                             setExpandedMobileLink((value) =>
@@ -307,10 +322,10 @@ export function Navbar() {
                           }
                         >
                           <span>{link.label}</span>
-                          <ChevronDown
+                          <ChevronRight
                             className={cn(
-                              "h-6 w-6 shrink-0 transition-transform",
-                              expanded && "rotate-180",
+                              "h-5 w-5 shrink-0 text-[#8a9486] transition-transform",
+                              expanded && "rotate-90 text-[#51A70A]",
                             )}
                             aria-hidden="true"
                           />
@@ -324,12 +339,15 @@ export function Navbar() {
                               exit={{ height: 0, opacity: 0 }}
                               className="overflow-hidden"
                             >
-                              <div className="mt-4 space-y-3 border-l border-[#51A70A]/35 pl-4">
+                              <div className="mt-2 space-y-2 px-3 pb-1">
                                 {link.children.map((child) => (
                                   <a
                                     key={child.href}
                                     href={child.href}
-                                    className="block text-base font-semibold text-white transition-colors hover:text-white"
+                                    className={cn(
+                                      "block rounded-2xl px-4 py-3 text-sm font-bold text-[#52644b] transition-colors hover:bg-[#edf8e8] hover:text-[#0b2b05]",
+                                      pathname === child.href && "bg-[#edf8e8] text-[#0b2b05]",
+                                    )}
                                     onClick={() => setOpen(false)}
                                   >
                                     {child.label}
@@ -347,42 +365,49 @@ export function Navbar() {
                     <MotionAnchor
                       key={link.href}
                       href={link.href}
-                      className="block font-display text-2xl font-semibold text-white sm:text-3xl"
-                      initial={{ opacity: 0, x: 60 }}
+                      className={cn(
+                        "flex min-h-14 items-center justify-between gap-4 rounded-[24px] border px-5 font-display text-lg font-extrabold text-[#0b2b05] shadow-[0_10px_30px_rgba(9,28,4,0.04)] transition-colors",
+                        active
+                          ? "border-[#51A70A]/28 bg-[#edf8e8]"
+                          : "border-slate-950/[0.04] bg-[#f8faf7] hover:bg-[#f1f8ee]",
+                      )}
+                      initial={{ opacity: 0, x: 28 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
                       onClick={() => setOpen(false)}
                     >
-                      {link.label}
+                      <span>{link.label}</span>
+                      <ChevronRight className="h-5 w-5 shrink-0 text-[#8a9486]" aria-hidden="true" />
                     </MotionAnchor>
                   );
                 })}
               </div>
               
-              <div className="mt-auto w-full shrink-0 space-y-3 pt-6">
+              <div className="mt-6 w-full shrink-0 space-y-3 border-t border-slate-950/[0.06] pt-4">
                 <MagneticButton
                   type="button"
                   onClick={() => {
                     setOpen(false);
                     setPackagesOpen(true);
                   }}
-                  className="w-full py-4 text-base"
+                  className="min-h-14 w-full bg-[#0b2b05] bg-none py-4 text-base shadow-[0_14px_34px_rgba(9,28,4,0.18)] hover:shadow-[0_18px_40px_rgba(9,28,4,0.22)]"
                 >
-                  Get Counselling
+                  Predict Your College
                 </MagneticButton>
                 <motion.a
-                  href={`tel:${phoneNumber}`}
-                  className="inline-flex w-full items-center justify-center rounded-full border border-[#51A70A]/25 bg-white px-6 py-4 text-base font-semibold text-slate-900"
+                  href="/contact"
+                  className="inline-flex min-h-14 w-full items-center justify-center rounded-full bg-gradient-brand px-6 py-4 text-base font-extrabold text-[#0b2b05] shadow-[0_14px_34px_rgba(81,167,10,0.22)]"
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.98 }}
+                  onClick={() => setOpen(false)}
                 >
-                  Toll Free Number
+                  Get Free Counselling
                 </motion.a>
-                <p className="text-center font-mono text-xs tracking-[0.22em] text-[#8cef32]">
+                <p className="text-center font-mono text-xs font-bold tracking-[0.16em] text-[#52644b]">
                   {phoneNumber}
                 </p>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
