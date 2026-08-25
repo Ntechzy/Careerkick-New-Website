@@ -7,7 +7,6 @@ import { Footer } from "@/components/layout/Footer";
 import { CursorGlow } from "@/components/ui/CursorGlow";
 import { WhatsAppFloatingButton } from "@/components/WhatsAppFloatingButton";
 import { CareerkickChatBot } from "@/components/CareerkickChatBot";
-import { GlobalLeadPopup } from "@/components/GlobalLeadPopup";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
@@ -91,7 +90,6 @@ export default function RootLayout({
             <main className="overflow-x-hidden">{children}</main>
             <WhatsAppFloatingButton />
             <CareerkickChatBot />
-            <GlobalLeadPopup />
             <Footer />
           </SmoothScrollProvider>
         </StoreProvider>
@@ -99,7 +97,7 @@ export default function RootLayout({
         <Script
           type="module"
           src="https://ntechzy.in/api/v1/student-form/form.js"
-          path='["/", "/dynamicForm/index.html", "/apply-now", "/e-books/form", "/contact", "/about", "/about/board-members", "/ayurveda-colleges-2026-27", "/blog", "/blog/[slug]", "/careers", "/checkout", "/checkout/failure", "/checkout/pending", "/checkout/success", "/e-books", "/e-books/download", "/our-results", "/payment", "/payment/failed", "/payment/failure", "/payment/success", "/payment/verify", "/payment/verify/[merchantTxnNo]", "/policies", "/policies/disclaimer", "/policies/privacy", "/policies/refund", "/policies/terms", "/request-city", "/services", "/top-neet-counseling-platform-in-mp"]'
+          path='["/", "/dynamicForm/index.html", "/apply-now", "/e-books/form", "/contact"]'
           divid="formsID7375"
           courses='["Select Course","BAMS","BHMS","BUMS","MBBS","BDS"]'
           styles="basic"
