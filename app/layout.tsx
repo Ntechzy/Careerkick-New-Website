@@ -2,12 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { CursorGlow } from "@/components/ui/CursorGlow";
-import { WhatsAppFloatingButton } from "@/components/WhatsAppFloatingButton";
-import { CareerkickChatBot } from "@/components/CareerkickChatBot";
-import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
 import StoreProvider from "./StoreProvider";
@@ -84,14 +79,7 @@ export default function RootLayout({
     <html lang="en" className={cn(jakarta.variable)}>
       <body>
         <StoreProvider>
-          <SmoothScrollProvider>
-            <CursorGlow />
-            <Navbar />
-            <main className="overflow-x-hidden">{children}</main>
-            <WhatsAppFloatingButton />
-            <CareerkickChatBot />
-            <Footer />
-          </SmoothScrollProvider>
+          <SiteChrome>{children}</SiteChrome>
         </StoreProvider>
 
         <Script

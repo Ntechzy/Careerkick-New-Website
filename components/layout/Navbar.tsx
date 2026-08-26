@@ -392,16 +392,16 @@ export function Navbar() {
                   }}
                   className="min-h-14 w-full bg-[#0b2b05] bg-none py-4 text-base shadow-[0_14px_34px_rgba(9,28,4,0.18)] hover:shadow-[0_18px_40px_rgba(9,28,4,0.22)]"
                 >
-                  Predict Your College
+                  Get Counselling
                 </MagneticButton>
                 <motion.a
-                  href="/contact"
+                  href={`tel:${phoneNumber}`}
                   className="inline-flex min-h-14 w-full items-center justify-center rounded-full bg-gradient-brand px-6 py-4 text-base font-extrabold text-[#0b2b05] shadow-[0_14px_34px_rgba(81,167,10,0.22)]"
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setOpen(false)}
                 >
-                  Get Free Counselling
+                  Toll Free Number
                 </motion.a>
                 <p className="text-center font-mono text-xs font-bold tracking-[0.16em] text-[#52644b]">
                   {phoneNumber}

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { fetchPlans } from "@/lib/features/plansSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
@@ -91,17 +90,30 @@ export function CounsellingPackagesModal({ onClose }: CounsellingPackagesModalPr
           onTouchMove={(event) => event.stopPropagation()}
           onWheel={(event) => event.stopPropagation()}
         >
-          <div className="mx-auto mb-4 max-w-4xl rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-left shadow-[0_12px_30px_rgba(220,38,38,0.08)]">
-            <ul className="list-disc space-y-1.5 pl-5 text-sm font-semibold leading-relaxed text-red-700">
-              {COUNSELLING_PAYMENT_NOTES.map((note) => (
-                <li key={note}>{note}</li>
-              ))}
-            </ul>
-          </div>
-          {status === "loading" ? (
-            <div className="mx-auto mb-4 flex max-w-4xl items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600">
-              <Loader2 className="h-4 w-4 animate-spin text-[#56b016]" />
-              Loading plans...
+          {status === "idle" || status === "loading" ? (
+            <div className="mx-auto max-w-4xl">
+              <div className="mb-4 rounded-xl border border-[#56b016]/15 bg-white px-4 py-3 shadow-[0_12px_30px_rgba(86,176,22,0.08)]">
+                <div className="mx-auto h-3 w-44 animate-pulse rounded-full bg-[#56b016]/20" />
+                <div className="mx-auto mt-3 h-2.5 w-full max-w-2xl animate-pulse rounded-full bg-slate-200" />
+                <div className="mx-auto mt-2 h-2.5 w-4/5 max-w-xl animate-pulse rounded-full bg-slate-200" />
+              </div>
+              <div className="grid gap-4 md:grid-cols-3 md:gap-5">
+                {[0, 1, 2].map((item) => (
+                  <div
+                    key={item}
+                    className="flex min-h-[19rem] flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_14px_38px_rgba(0,0,0,0.08)] md:min-h-[21rem]"
+                  >
+                    <div className="mx-auto h-5 w-4/5 animate-pulse rounded-full bg-slate-200" />
+                    <div className="mx-auto mt-3 h-5 w-3/5 animate-pulse rounded-full bg-slate-200" />
+                    <div className="mx-auto mt-6 h-3 w-full animate-pulse rounded-full bg-slate-100" />
+                    <div className="mx-auto mt-2 h-3 w-5/6 animate-pulse rounded-full bg-slate-100" />
+                    <div className="mt-auto">
+                      <div className="mx-auto h-8 w-32 animate-pulse rounded-full bg-[#56b016]/20" />
+                      <div className="mx-auto mt-3 h-11 w-full animate-pulse rounded-full bg-[#56b016]/25" />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : null}
           {status === "failed" ? (
@@ -114,13 +126,23 @@ export function CounsellingPackagesModal({ onClose }: CounsellingPackagesModalPr
               No active counselling plans are available right now.
             </div>
           ) : null}
+          {status === "succeeded" && plans.length > 0 ? (
+            <div className="mx-auto mb-4 max-w-4xl rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-left shadow-[0_12px_30px_rgba(220,38,38,0.08)]">
+              <ul className="list-disc space-y-1.5 pl-5 text-sm font-semibold leading-relaxed text-red-700">
+                {COUNSELLING_PAYMENT_NOTES.map((note) => (
+                  <li key={note}>{note}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          {status === "succeeded" && plans.length > 0 ? (
           <div className="mx-auto grid max-w-4xl gap-4 md:grid-cols-3 md:gap-5">
             {plans.map((item) => (
               <article
                 key={item._id}
                 className="flex min-h-[19rem] flex-col rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-[0_14px_38px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1 md:min-h-[21rem]"
               >
-                <h3 className="mx-auto max-w-[16rem] font-display text-xl font-semibold leading-tight text-slate-950 md:text-[1.35rem]">
+                <h3 className="mx-auto min-w-0 max-w-full break-words font-display text-xl font-semibold leading-tight text-slate-950 [overflow-wrap:anywhere] md:text-[1.35rem]">
                   {item.title}
                 </h3>
                 <p className="mx-auto mt-3 max-w-[17rem] text-sm leading-relaxed text-slate-600">
@@ -144,6 +166,7 @@ export function CounsellingPackagesModal({ onClose }: CounsellingPackagesModalPr
               </article>
             ))}
           </div>
+          ) : null}
           <div className="hidden">
             <ul className="space-y-2 text-sm font-semibold leading-relaxed text-red-700">
               {COUNSELLING_PAYMENT_NOTES.map((note) => (
