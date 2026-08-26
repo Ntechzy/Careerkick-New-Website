@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
 import { fetchPlans } from "@/lib/features/plansSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
@@ -40,10 +39,33 @@ export default function PricingSection() {
           </p>
         </div>
 
-        {status === "loading" ? (
-          <div className="mx-auto mt-8 flex max-w-4xl items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600">
-            <Loader2 className="h-4 w-4 animate-spin text-[#56b016]" />
-            Loading plans...
+        {status === "idle" || status === "loading" ? (
+          <div className="mx-auto mt-10 max-w-6xl sm:mt-12">
+            <div className="mx-auto mb-5 max-w-4xl rounded-xl border border-[#56b016]/15 bg-white px-4 py-4 shadow-[0_16px_36px_rgba(86,176,22,0.08)] sm:px-5">
+              <div className="mx-auto h-3 w-48 animate-pulse rounded-full bg-[#56b016]/20" />
+              <div className="mx-auto mt-3 h-2.5 w-full max-w-2xl animate-pulse rounded-full bg-slate-200" />
+              <div className="mx-auto mt-2 h-2.5 w-4/5 max-w-xl animate-pulse rounded-full bg-slate-200" />
+            </div>
+            <div className="grid gap-5 md:grid-cols-3 lg:gap-6">
+              {[0, 1, 2].map((item) => (
+                <div
+                  key={item}
+                  className="flex min-h-[35rem] flex-col overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(0,0,0,0.08)]"
+                >
+                  <div className="h-56 shrink-0 animate-pulse bg-[#56b016]/10 sm:h-60" />
+                  <div className="flex flex-1 flex-col p-5 text-center sm:p-6">
+                    <div className="mx-auto h-5 w-4/5 animate-pulse rounded-full bg-slate-200" />
+                    <div className="mx-auto mt-3 h-5 w-3/5 animate-pulse rounded-full bg-slate-200" />
+                    <div className="mx-auto mt-6 h-3 w-full animate-pulse rounded-full bg-slate-100" />
+                    <div className="mx-auto mt-2 h-3 w-5/6 animate-pulse rounded-full bg-slate-100" />
+                    <div className="mt-auto pt-7">
+                      <div className="mx-auto h-8 w-32 animate-pulse rounded-full bg-[#56b016]/20" />
+                    </div>
+                    <div className="mt-5 h-12 w-full animate-pulse rounded-full bg-[#56b016]/20" />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : null}
         {status === "failed" ? (
@@ -57,6 +79,7 @@ export default function PricingSection() {
           </div>
         ) : null}
 
+        {status === "succeeded" && plans.length > 0 ? (
         <div className="mx-auto mt-10 grid max-w-6xl gap-5 sm:mt-12 md:grid-cols-3 lg:gap-6">
           {plans.map((item) => (
               <article
@@ -75,7 +98,7 @@ export default function PricingSection() {
                 </div>
 
                 <div className="flex flex-1 flex-col p-5 text-center sm:p-6">
-                  <h3 className="mx-auto max-w-[19rem] font-display text-xl font-semibold leading-tight text-slate-950 sm:text-2xl md:text-xl lg:text-2xl">
+                  <h3 className="mx-auto min-w-0 max-w-full break-words font-display text-xl font-semibold leading-tight text-slate-950 [overflow-wrap:anywhere] sm:text-2xl md:text-xl lg:text-2xl">
                     {item.title}
                   </h3>
                   <p className="mx-auto mt-4 max-w-[20rem] text-sm leading-relaxed text-slate-600">
@@ -101,6 +124,8 @@ export default function PricingSection() {
               </article>
           ))}
         </div>
+        ) : null}
+        {status === "succeeded" && plans.length > 0 ? (
         <div className="mx-auto mt-6 max-w-4xl rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-left shadow-[0_16px_36px_rgba(220,38,38,0.08)] sm:px-5">
           <ul className="space-y-2 text-sm font-semibold leading-relaxed text-red-700 sm:text-base">
             {COUNSELLING_PAYMENT_NOTES.map((note) => (
@@ -111,6 +136,7 @@ export default function PricingSection() {
             ))}
           </ul>
         </div>
+        ) : null}
       </div>
     </section>
   );
