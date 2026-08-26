@@ -466,7 +466,7 @@ export default function CouponsPage() {
             </div>
           ) : null}
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <table className="w-full min-w-[900px] text-left text-sm">
             <thead className="bg-[var(--dash-surface-strong)] text-xs uppercase tracking-[0.14em] text-[var(--dash-muted)]">
               <tr>

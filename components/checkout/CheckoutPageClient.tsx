@@ -23,6 +23,7 @@ import {
   COUNSELLING_PAYMENT_NOTES,
   COURSE_OPTIONS,
   formatIndianCurrency,
+  GST_RATE,
   type CounsellingPackage,
 } from "@/lib/counsellingPackages";
 import { CONTACT_NUMBERS, getTelLink } from "@/lib/contactLinks";
@@ -257,6 +258,18 @@ function isStudentDetailsReady(values: FormState) {
   ];
 
   return requiredStudentFields.every((field) => !validateField(field, values));
+}
+
+function getIncludedGstBreakdown(totalAmount: number, gstRate = GST_RATE) {
+  const taxableAmount = Math.round(totalAmount / (1 + gstRate));
+  const gstAmount = Math.max(totalAmount - taxableAmount, 0);
+
+  return {
+    taxableAmount,
+    gstAmount,
+    totalAmount,
+    gstRate,
+  };
 }
 
 export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps) {
@@ -673,7 +686,7 @@ function SelectedPlanCard({ selectedPackage }: { selectedPackage: CounsellingPac
           <p className="mt-3 text-xl font-bold text-slate-950 sm:text-2xl">
             {formatIndianCurrency(selectedPackage.baseAmount)}
             <span className="text-sm font-semibold text-slate-500">
-              {" Taxes inclusive"}
+              {" 18% GST included"}
             </span>
           </p>
         </div>
@@ -801,6 +814,7 @@ function OrderSummary({
   handleCouponApply: () => void;
 }) {
   const couponError = errors.couponCode ?? pricing.couponError;
+  const gstBreakdown = getIncludedGstBreakdown(pricing.baseAmount);
 
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
@@ -815,9 +829,12 @@ function OrderSummary({
       </div>
 
       <div className="mt-5 space-y-3 border-b border-slate-200 pb-5 text-sm">
-        <SummaryRow label="Counselling Fee" value={formatIndianCurrency(pricing.baseAmount)} />
-        <SummaryRow label="Taxes" value="Included" />
-        {pricing.taxRate > 0 ? <SummaryRow label={`GST (${Math.round(pricing.taxRate * 100)}%)`} value={formatIndianCurrency(pricing.taxAmount)} /> : null}
+        <SummaryRow label="Package price before GST" value={formatIndianCurrency(gstBreakdown.taxableAmount)} />
+        <SummaryRow
+          label={`GST included (${Math.round(gstBreakdown.gstRate * 100)}%)`}
+          value={formatIndianCurrency(gstBreakdown.gstAmount)}
+        />
+        <SummaryRow label="Total package price" value={formatIndianCurrency(pricing.baseAmount)} />
         {pricing.discountAmount > 0 ? <SummaryRow label="Discount" value={`-${formatIndianCurrency(pricing.discountAmount)}`} /> : null}
       </div>
 

@@ -1,15 +1,43 @@
-import { ArrowUpRight, BadgeIndianRupee, BarChart3, CheckCircle2, Percent, UsersRound } from "lucide-react";
+"use client";
 
-const stats = [
-  { label: "Active plans", value: "12", detail: "+3 this month", icon: BarChart3 },
-  { label: "Students", value: "1,248", detail: "184 new leads", icon: UsersRound },
-  { label: "Revenue", value: "₹18.4L", detail: "82% collected", icon: BadgeIndianRupee },
-  { label: "Coupons", value: "9", detail: "5 currently active", icon: Percent },
-];
+import { ArrowUpRight, BadgeIndianRupee, BarChart3, CheckCircle2, UsersRound } from "lucide-react";
+import { useEffect, useState } from "react";
+
+type DashboardStat = {
+  label: string;
+  value: string;
+  detail: string;
+  icon: typeof BarChart3;
+};
+
+type BackendPlan = {
+  _id?: string;
+  id?: string;
+  isActive?: boolean;
+};
+
+type BackendPayment = {
+  studentId?: string | { _id?: string; id?: string; email?: string };
+  studentEmail?: string;
+  email?: string;
+  paidAmount?: number;
+  amountPaid?: number;
+  amount?: number;
+};
+
+type ApiCollectionResponse<T> = {
+  data?: T[] | { data?: T[]; plans?: T[]; payments?: T[]; records?: T[]; total?: number; totalCount?: number; count?: number };
+  plans?: T[];
+  payments?: T[];
+  records?: T[];
+  total?: number;
+  totalCount?: number;
+  count?: number;
+};
 
 const activity = [
   "NEET Counseling Premium plan updated",
-  "CAREER500 coupon used on checkout",
+  "Student payment annotations reviewed",
   "Three student logins completed",
   "Partial payment option reviewed",
 ];
@@ -21,10 +49,119 @@ const features = [
   "Light and dark dashboard modes",
 ];
 
+function formatCompactAmount(value: number) {
+  return `Rs ${new Intl.NumberFormat("en-IN", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(value)}`;
+}
+
+function getCollection<T>(payload: ApiCollectionResponse<T>) {
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.data?.data)) return payload.data.data;
+  if (Array.isArray(payload?.data?.plans)) return payload.data.plans;
+  if (Array.isArray(payload?.data?.payments)) return payload.data.payments;
+  if (Array.isArray(payload?.data?.records)) return payload.data.records;
+  if (Array.isArray(payload?.plans)) return payload.plans;
+  if (Array.isArray(payload?.payments)) return payload.payments;
+  if (Array.isArray(payload?.records)) return payload.records;
+  return [];
+}
+
+function getCollectionTotal<T>(payload: ApiCollectionResponse<T>, fallback: number) {
+  const nested = Array.isArray(payload?.data) ? undefined : payload?.data;
+
+  return payload?.total ?? payload?.totalCount ?? payload?.count ?? nested?.total ?? nested?.totalCount ?? nested?.count ?? fallback;
+}
+
 export default function DashboardPage() {
+  const [stats, setStats] = useState<DashboardStat[]>([
+    { label: "Active plans", value: "--", detail: "Loading plans", icon: BarChart3 },
+    { label: "Students", value: "--", detail: "Loading students", icon: UsersRound },
+    { label: "Revenue", value: "--", detail: "Loading collections", icon: BadgeIndianRupee },
+  ]);
+
+  useEffect(() => {
+    async function loadStats() {
+      try {
+        const token = window.localStorage.getItem("careerkick-dashboard-token");
+        const headers = {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        };
+
+        const [plansResponse, paymentsResponse] = await Promise.all([
+          fetch("/api/plans?page=1&limit=20", {
+            headers,
+            cache: "no-store",
+          }),
+          fetch("/api/student-payment-details", {
+            headers,
+            cache: "no-store",
+          }),
+        ]);
+
+        const plansData = await plansResponse.json();
+        const paymentsData = await paymentsResponse.json();
+
+        const planList = getCollection<BackendPlan>(plansData);
+        const paymentList = getCollection<BackendPayment>(paymentsData);
+
+        const activePlans = getCollectionTotal(plansData, planList.filter((plan) => plan.isActive !== false).length);
+        const totalStudents = new Set(
+          paymentList.map((payment: BackendPayment) => {
+            if (typeof payment.studentId === "string") {
+              return payment.studentId;
+            }
+
+            return (
+              payment.studentId?._id ??
+              payment.studentId?.id ??
+              payment.studentId?.email ??
+              payment.studentEmail ??
+              payment.email ??
+              ""
+            );
+          }).filter(Boolean),
+        ).size;
+        const totalRevenue = paymentList.reduce((sum: number, payment: BackendPayment) => {
+          return sum + (payment.paidAmount ?? payment.amountPaid ?? payment.amount ?? 0);
+        }, 0);
+
+        setStats([
+          {
+            label: "Active plans",
+            value: String(activePlans),
+            detail: `${activePlans} currently active`,
+            icon: BarChart3,
+          },
+          {
+            label: "Students",
+            value: String(totalStudents),
+            detail: `${totalStudents} payment-linked students`,
+            icon: UsersRound,
+          },
+          {
+            label: "Revenue",
+            value: formatCompactAmount(totalRevenue),
+            detail: `${formatCompactAmount(totalRevenue)} collected`,
+            icon: BadgeIndianRupee,
+          },
+        ]);
+      } catch {
+        setStats([
+          { label: "Active plans", value: "--", detail: "Unable to load plans", icon: BarChart3 },
+          { label: "Students", value: "--", detail: "Unable to load students", icon: UsersRound },
+          { label: "Revenue", value: "--", detail: "Unable to load revenue", icon: BadgeIndianRupee },
+        ]);
+      }
+    }
+
+    void loadStats();
+  }, []);
+
   return (
     <div className="space-y-6">
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {stats.map((stat) => {
           const Icon = stat.icon;
 

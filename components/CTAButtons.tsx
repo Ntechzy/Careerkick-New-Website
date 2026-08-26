@@ -153,7 +153,7 @@ export function CounsellingPackagesModal({ onClose }: CounsellingPackagesModalPr
                     {formatIndianCurrency(item.totalAmount)}
                   </p>
                   <span className="mt-1 block min-h-4 text-xs font-semibold text-slate-500">
-                    Taxes inclusive
+                    18% GST included
                   </span>
                   <Link
                     href={`/checkout?package=${item._id}`}

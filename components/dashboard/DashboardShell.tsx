@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, LayoutDashboard, LogOut, Moon, Percent, Sun, UserRound } from "lucide-react";
+import { BarChart3, CreditCard, LayoutDashboard, LogOut, Moon, Percent, Sun, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,7 @@ const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Plans", href: "/dashboard/plans", icon: BarChart3 },
   { label: "Coupon Codes", href: "/dashboard/coupons", icon: Percent },
+  { label: "Transactions", href: "/dashboard/student-transactions", icon: CreditCard },
 ];
 
 export function DashboardShell({
