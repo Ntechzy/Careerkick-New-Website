@@ -39,6 +39,7 @@ import { cn } from "@/lib/utils";
 
 type CheckoutPageClientProps = {
   selectedPackage: CounsellingPackage | null;
+  selectedPlanId: string;
 };
 
 type StudentFormState = {
@@ -62,6 +63,15 @@ type FormState = StudentFormState & {
 };
 
 type FormErrors = Partial<Record<keyof FormState | "submit", string>>;
+
+type CouponValidationResult = {
+  couponCode?: string;
+  discountType?: string;
+  discountValue?: number;
+  discountAmount?: number;
+  originalAmount?: number;
+  finalAmount?: number;
+};
 
 const CATEGORY_OPTIONS = [
   "General",
@@ -272,12 +282,24 @@ function getIncludedGstBreakdown(totalAmount: number, gstRate = GST_RATE) {
   };
 }
 
-export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps) {
+function getSelectedPlanIdFromUrl() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  const searchParams = new URLSearchParams(window.location.search);
+
+  return searchParams.get("package") ?? searchParams.get("planId") ?? searchParams.get("planID") ?? searchParams.get("id") ?? "";
+}
+
+export function CheckoutPageClient({ selectedPackage, selectedPlanId }: CheckoutPageClientProps) {
   const dispatch = useAppDispatch();
   const [form, setForm] = useState<FormState>(() => initialForm(selectedPackage));
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [couponOpen, setCouponOpen] = useState(false);
+  const [couponValidation, setCouponValidation] = useState<CouponValidationResult | null>(null);
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
   const studentDetailsReady = isStudentDetailsReady(form);
   const districtOptions = useMemo(
     () => (form.stateOrDomicile ? getDistricts(form.stateOrDomicile) : []),
@@ -292,15 +314,45 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
       return null;
     }
 
-    return calculateCheckoutPayment({
+    const basePricing = calculateCheckoutPayment({
       baseAmount: selectedPackage.baseAmount,
       taxRate: selectedPackage.taxRate,
-      couponCode: form.couponCode,
+      couponCode: null,
       paymentAmount: requestedPaymentAmount,
     });
-  }, [form.couponCode, requestedPaymentAmount, selectedPackage]);
+
+    if (!couponValidation) {
+      return basePricing;
+    }
+
+    const discountAmount = Math.min(couponValidation.discountAmount ?? 0, basePricing.totalAmount);
+    const netAmount = Math.max(couponValidation.finalAmount ?? basePricing.totalAmount - discountAmount, 0);
+    const amountPaid = Math.min(Math.max(Math.round(requestedPaymentAmount ?? netAmount), 0), netAmount);
+    const dueAmount = Math.max(netAmount - amountPaid, 0);
+
+    return {
+      ...basePricing,
+      coupon: {
+        code: couponValidation.couponCode ?? form.couponCode.trim().toUpperCase(),
+        label: "Coupon applied successfully",
+        type: couponValidation.discountType === "PERCENTAGE" ? "percentage" as const : "flat" as const,
+        value: couponValidation.discountValue ?? 0,
+      },
+      couponCode: couponValidation.couponCode ?? form.couponCode.trim().toUpperCase(),
+      couponError: undefined,
+      discountAmount,
+      netAmount,
+      amountPaid,
+      dueAmount,
+      paymentStatus: dueAmount > 0 ? ("pending" as const) : ("success" as const),
+    };
+  }, [couponValidation, form.couponCode, requestedPaymentAmount, selectedPackage]);
 
   const updateField = <Key extends keyof FormState>(field: Key, value: FormState[Key]) => {
+    if (field === "couponCode") {
+      setCouponValidation(null);
+    }
+
     setForm((current) => {
       const nextForm = {
         ...current,
@@ -320,16 +372,74 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
     });
   };
 
-  const handleCouponApply = () => {
-    if (!pricing) {
+  const handleCouponApply = async () => {
+    const planId = getSelectedPlanIdFromUrl() || selectedPlanId;
+
+    if (!planId) {
+      setCouponValidation(null);
+      setErrors((current) => ({
+        ...current,
+        couponCode: "Selected plan ID could not be found.",
+        submit: undefined,
+      }));
       return;
     }
 
+    const code = form.couponCode.trim().toUpperCase();
+
+    if (!code) {
+      setCouponValidation(null);
+      setErrors((current) => ({
+        ...current,
+        couponCode: "Please enter a coupon code.",
+        submit: undefined,
+      }));
+      return;
+    }
+
+    setApplyingCoupon(true);
     setErrors((current) => ({
       ...current,
-      couponCode: pricing.couponError,
+      couponCode: undefined,
       submit: undefined,
     }));
+
+    try {
+      const response = await fetch(`/api/plans/${encodeURIComponent(planId)}/coupons/validate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          planId,
+        },
+        body: JSON.stringify({ code }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setCouponValidation(null);
+        setErrors((current) => ({
+          ...current,
+          couponCode: data?.message ?? "Unable to validate coupon.",
+          submit: undefined,
+        }));
+        return;
+      }
+
+      setCouponValidation(data?.data ?? null);
+      setForm((current) => ({
+        ...current,
+        couponCode: data?.data?.couponCode ?? code,
+      }));
+    } catch {
+      setCouponValidation(null);
+      setErrors((current) => ({
+        ...current,
+        couponCode: "Unable to connect to coupon service.",
+        submit: undefined,
+      }));
+    } finally {
+      setApplyingCoupon(false);
+    }
   };
 
   const handleSubmit = async (event?: React.FormEvent) => {
@@ -342,8 +452,8 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
 
     const nextErrors = validateForm(form, pricing.netAmount);
 
-    if (pricing.couponError) {
-      nextErrors.couponCode = pricing.couponError;
+    if (form.couponCode.trim() && !couponValidation) {
+      nextErrors.couponCode = "Apply the coupon code before continuing.";
     }
 
     setErrors(nextErrors);
@@ -454,6 +564,7 @@ export function CheckoutPageClient({ selectedPackage }: CheckoutPageClientProps)
               setCouponOpen={setCouponOpen}
               updateField={updateField}
               handleCouponApply={handleCouponApply}
+              applyingCoupon={applyingCoupon}
             />
           </aside>
         </form>
@@ -802,6 +913,7 @@ function OrderSummary({
   setCouponOpen,
   updateField,
   handleCouponApply,
+  applyingCoupon,
 }: {
   form: FormState;
   errors: FormErrors;
@@ -812,6 +924,7 @@ function OrderSummary({
   setCouponOpen: (value: boolean) => void;
   updateField: <Key extends keyof FormState>(field: Key, value: FormState[Key]) => void;
   handleCouponApply: () => void;
+  applyingCoupon: boolean;
 }) {
   const couponError = errors.couponCode ?? pricing.couponError;
   const gstBreakdown = getIncludedGstBreakdown(pricing.baseAmount);
@@ -866,8 +979,8 @@ function OrderSummary({
                   couponError ? "border-red-300" : "border-slate-300",
                 )}
               />
-              <button type="button" onClick={handleCouponApply} className="min-h-[48px] rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 sm:min-h-0">
-                Apply
+              <button type="button" onClick={handleCouponApply} disabled={applyingCoupon} className="min-h-[48px] rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70 sm:min-h-0">
+                {applyingCoupon ? "Applying..." : "Apply"}
               </button>
             </div>
             {couponError ? <p id="couponCode-error" className="mt-2 text-sm font-medium text-red-600">{couponError}</p> : null}

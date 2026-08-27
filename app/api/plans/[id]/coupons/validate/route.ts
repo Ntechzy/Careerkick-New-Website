@@ -16,16 +16,18 @@ export async function POST(
   { params }: { params: { id: string } },
 ) {
   const authorization = request.headers.get("authorization");
+  const planId = request.headers.get("planId") ?? request.headers.get("planid") ?? params.id;
 
   try {
     const payload = await request.json();
     const response = await fetch(
-      `${getApiBaseUrl()}/plans/${encodeURIComponent(params.id)}/coupons/validate`,
+      `${getApiBaseUrl()}/plans/${encodeURIComponent(planId)}/coupons/validate`,
       {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          planId,
           ...(authorization ? { Authorization: authorization } : {}),
         },
         body: JSON.stringify(payload),

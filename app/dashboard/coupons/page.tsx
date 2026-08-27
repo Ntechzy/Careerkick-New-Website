@@ -448,7 +448,7 @@ export default function CouponsPage() {
             <p className="text-sm font-bold text-[var(--dash-danger)]">{plansError}</p>
           ) : null}
           {!isLoadingPlans && !plansError ? (
-            <div className="flex gap-2 overflow-x-auto">
+            <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               {plans.map((plan) => (
                 <button
                   key={plan.id}
