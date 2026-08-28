@@ -1,6 +1,8 @@
 "use client";
 
-import { ArrowUpRight, BadgeIndianRupee, BarChart3, CheckCircle2, UsersRound } from "lucide-react";
+import { ArrowUpRight, BadgeIndianRupee, BarChart3, CheckCircle2, PlayCircle, UsersRound } from "lucide-react";
+import { DASHBOARD_TOUR_EVENT } from "@/components/dashboard/DashboardTour";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type DashboardStat = {
@@ -8,6 +10,8 @@ type DashboardStat = {
   value: string;
   detail: string;
   icon: typeof BarChart3;
+  href: string;
+  tourId: string;
 };
 
 type BackendPlan = {
@@ -35,25 +39,20 @@ type ApiCollectionResponse<T> = {
   count?: number;
 };
 
-const activity = [
-  "NEET Counseling Premium plan updated",
-  "Student payment annotations reviewed",
-  "Three student logins completed",
-  "Partial payment option reviewed",
+const dashboardInstructions = [
+  "Use the stat cards to jump directly to plans or student transaction records.",
+  "Open Plans to create counselling plans, review plan details, update pricing or partial amounts, and remove inactive plans.",
+  "Open Coupon Codes to select a plan tab, create coupons, validate coupon codes, edit coupon details, or delete coupons.",
+  "Open Transactions to review student payments, view full payment details, update coupon or discount annotations, and delete payment records when required.",
+  "Use the sidebar to switch sections, toggle light or dark mode, and logout when dashboard work is complete.",
 ];
 
-const features = [
-  "Admin and student login entry points",
-  "Plan creation, update, view and delete workflow",
-  "Coupon code management overview",
-  "Light and dark dashboard modes",
-];
-
-function formatCompactAmount(value: number) {
-  return `Rs ${new Intl.NumberFormat("en-IN", {
-    notation: "compact",
-    maximumFractionDigits: 1,
-  }).format(value)}`;
+function formatExactAmount(value: number) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(value);
 }
 
 function getCollection<T>(payload: ApiCollectionResponse<T>) {
@@ -76,9 +75,9 @@ function getCollectionTotal<T>(payload: ApiCollectionResponse<T>, fallback: numb
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStat[]>([
-    { label: "Active plans", value: "--", detail: "Loading plans", icon: BarChart3 },
-    { label: "Students", value: "--", detail: "Loading students", icon: UsersRound },
-    { label: "Revenue", value: "--", detail: "Loading collections", icon: BadgeIndianRupee },
+    { label: "Active plans", value: "--", detail: "Loading plans", icon: BarChart3, href: "/dashboard/plans", tourId: "stat-active-plans" },
+    { label: "Students", value: "--", detail: "Loading students", icon: UsersRound, href: "/dashboard/student-transactions", tourId: "stat-students" },
+    { label: "Revenue", value: "--", detail: "Loading collections", icon: BadgeIndianRupee, href: "/dashboard/student-transactions", tourId: "stat-revenue" },
   ]);
 
   useEffect(() => {
@@ -133,31 +132,41 @@ export default function DashboardPage() {
             value: String(activePlans),
             detail: `${activePlans} currently active`,
             icon: BarChart3,
+            href: "/dashboard/plans",
+            tourId: "stat-active-plans",
           },
           {
             label: "Students",
             value: String(totalStudents),
             detail: `${totalStudents} payment-linked students`,
             icon: UsersRound,
+            href: "/dashboard/student-transactions",
+            tourId: "stat-students",
           },
           {
             label: "Revenue",
-            value: formatCompactAmount(totalRevenue),
-            detail: `${formatCompactAmount(totalRevenue)} collected`,
+            value: formatExactAmount(totalRevenue),
+            detail: `${formatExactAmount(totalRevenue)} collected`,
             icon: BadgeIndianRupee,
+            href: "/dashboard/student-transactions",
+            tourId: "stat-revenue",
           },
         ]);
       } catch {
         setStats([
-          { label: "Active plans", value: "--", detail: "Unable to load plans", icon: BarChart3 },
-          { label: "Students", value: "--", detail: "Unable to load students", icon: UsersRound },
-          { label: "Revenue", value: "--", detail: "Unable to load revenue", icon: BadgeIndianRupee },
+          { label: "Active plans", value: "--", detail: "Unable to load plans", icon: BarChart3, href: "/dashboard/plans", tourId: "stat-active-plans" },
+          { label: "Students", value: "--", detail: "Unable to load students", icon: UsersRound, href: "/dashboard/student-transactions", tourId: "stat-students" },
+          { label: "Revenue", value: "--", detail: "Unable to load revenue", icon: BadgeIndianRupee, href: "/dashboard/student-transactions", tourId: "stat-revenue" },
         ]);
       }
     }
 
     void loadStats();
   }, []);
+
+  function startDashboardTour() {
+    window.dispatchEvent(new Event(DASHBOARD_TOUR_EVENT));
+  }
 
   return (
     <div className="space-y-6">
@@ -166,9 +175,11 @@ export default function DashboardPage() {
           const Icon = stat.icon;
 
           return (
-            <article
+            <Link
               key={stat.label}
-              className="rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] p-5 shadow-[var(--dash-shadow)]"
+              href={stat.href}
+              data-tour={stat.tourId}
+              className="rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] p-5 shadow-[var(--dash-shadow)] transition hover:border-[var(--dash-primary)] hover:-translate-y-0.5"
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -183,39 +194,38 @@ export default function DashboardPage() {
                 {stat.detail}
                 <ArrowUpRight className="h-4 w-4" />
               </p>
-            </article>
+            </Link>
           );
         })}
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
-        <div className="rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] p-5 shadow-[var(--dash-shadow)]">
-          <div className="flex items-center justify-between gap-4">
+      <section>
+        <div className="w-full rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] p-5 shadow-[var(--dash-shadow)]">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-lg font-black">Dashboard Overview</h2>
-              <p className="mt-1 text-sm text-[var(--dash-muted)]">A quick view of counselling operations.</p>
+              <p className="mt-1 text-sm text-[var(--dash-muted)]">How to use the dashboard sections.</p>
             </div>
-            <span className="rounded-md bg-[var(--dash-surface-strong)] px-3 py-2 text-xs font-black text-[var(--dash-primary)]">
-              Live
-            </span>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <span className="rounded-md bg-[var(--dash-surface-strong)] px-3 py-2 text-center text-xs font-black text-[var(--dash-primary)]">
+                Live
+              </span>
+              <button
+                type="button"
+                onClick={startDashboardTour}
+                data-tour="dashboard-tour-button"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[var(--dash-primary)] px-4 text-sm font-black text-white transition hover:bg-[var(--dash-primary-strong)]"
+              >
+                <PlayCircle className="h-4 w-4" />
+                Start Tour
+              </button>
+            </div>
           </div>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {features.map((feature) => (
-              <div key={feature} className="flex items-center gap-3 rounded-md border border-[var(--dash-border)] bg-[var(--dash-surface-strong)] p-4">
+          <div className="mt-6 grid gap-3 md:grid-cols-2">
+            {dashboardInstructions.map((instruction) => (
+              <div key={instruction} className="flex items-start gap-3 rounded-md border border-[var(--dash-border)] bg-[var(--dash-surface-strong)] p-4">
                 <CheckCircle2 className="h-5 w-5 shrink-0 text-[var(--dash-primary)]" />
-                <p className="text-sm font-bold">{feature}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] p-5 shadow-[var(--dash-shadow)]">
-          <h2 className="text-lg font-black">Recent Activity</h2>
-          <div className="mt-5 space-y-3">
-            {activity.map((item) => (
-              <div key={item} className="rounded-md border border-[var(--dash-border)] bg-[var(--dash-surface-strong)] p-4">
-                <p className="text-sm font-bold">{item}</p>
-                <p className="mt-1 text-xs font-semibold text-[var(--dash-muted)]">Just now</p>
+                <p className="text-sm font-bold leading-6">{instruction}</p>
               </div>
             ))}
           </div>
