@@ -3,16 +3,18 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, LayoutDashboard, LogOut, Moon, Percent, Sun, UserRound } from "lucide-react";
+import { BarChart3, CreditCard, LayoutDashboard, LogOut, Moon, Percent, Sun, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
+import { DashboardTour } from "@/components/dashboard/DashboardTour";
 import { cn } from "@/lib/utils";
 
 export const DASHBOARD_AUTH_KEY = "careerkick-dashboard-auth";
 
 const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Plans", href: "/dashboard/plans", icon: BarChart3 },
-  { label: "Coupon Codes", href: "/dashboard/coupons", icon: Percent },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, tourId: "nav-dashboard" },
+  { label: "Plans", href: "/dashboard/plans", icon: BarChart3, tourId: "nav-plans" },
+  { label: "Coupon Codes", href: "/dashboard/coupons", icon: Percent, tourId: "nav-coupons" },
+  { label: "Transactions", href: "/dashboard/student-transactions", icon: CreditCard, tourId: "nav-transactions" },
 ];
 
 export function DashboardShell({
@@ -86,7 +88,7 @@ export function DashboardShell({
             />
           </div>
 
-          <nav className="grid grid-cols-4 gap-2 lg:mt-8 lg:flex lg:flex-col">
+          <nav data-tour="dashboard-navigation" className="grid grid-cols-4 gap-2 lg:mt-8 lg:flex lg:flex-col">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active =
@@ -96,6 +98,7 @@ export function DashboardShell({
                 <Link
                   key={item.href}
                   href={item.href}
+                  data-tour={item.tourId}
                   className={cn(
                     "flex min-h-14 flex-col items-center justify-center gap-1 rounded-md px-2 text-center text-[11px] font-bold text-[var(--dash-muted)] transition lg:min-h-0 lg:flex-row lg:justify-start lg:gap-3 lg:px-3 lg:py-3 lg:text-sm",
                     active &&
@@ -109,7 +112,7 @@ export function DashboardShell({
             })}
           </nav>
 
-          <div className="mt-auto hidden rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface-strong)] p-3 lg:block">
+          <div data-tour="dashboard-account-actions" className="mt-auto hidden rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface-strong)] p-3 lg:block">
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--dash-muted)]">Mode</p>
             <button
               type="button"
@@ -141,7 +144,7 @@ export function DashboardShell({
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col pb-24 lg:pb-0">
-          <header className="sticky top-0 z-30 border-b border-[var(--dash-border)] bg-[var(--dash-bg)]/88 px-4 py-4 backdrop-blur-xl sm:px-6 lg:px-8">
+          <header data-tour="dashboard-header" className="sticky top-0 z-30 border-b border-[var(--dash-border)] bg-[var(--dash-bg)]/88 px-4 py-4 backdrop-blur-xl sm:px-6 lg:px-8">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--dash-primary)]">
@@ -156,6 +159,7 @@ export function DashboardShell({
                   setTheme(nextTheme);
                   window.localStorage.setItem("careerkick-dashboard-theme", nextTheme);
                 }}
+                data-tour="dashboard-mobile-theme"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[var(--dash-border)] bg-[var(--dash-surface)] text-[var(--dash-text)] lg:hidden"
                 aria-label="Toggle dashboard theme"
               >
@@ -166,6 +170,7 @@ export function DashboardShell({
           <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
         </div>
       </div>
+      <DashboardTour />
     </div>
   );
 }

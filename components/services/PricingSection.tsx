@@ -110,7 +110,7 @@ export default function PricingSection() {
                       {formatIndianCurrency(item.totalAmount)}
                     </div>
                     <span className="mt-1 block min-h-4 text-xs font-semibold text-slate-500">
-                      Taxes inclusive
+                      18% GST included
                     </span>
                   </div>
 

@@ -88,5 +88,5 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
   const packageId = searchParams?.package;
   const selectedPackage = await getApiPlanPackage(packageId);
 
-  return <CheckoutPageClient selectedPackage={selectedPackage ?? null} />;
+  return <CheckoutPageClient selectedPackage={selectedPackage ?? null} selectedPlanId={packageId ?? ""} />;
 }
