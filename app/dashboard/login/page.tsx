@@ -14,8 +14,10 @@ import {
   CalendarDays,
   Bell,
   CheckCircle2,
+  Eye,
+  EyeOff,
 } from "lucide-react";
-import { DASHBOARD_AUTH_KEY } from "@/components/dashboard/DashboardShell";
+import { DASHBOARD_AUTH_KEY, DASHBOARD_ROLE_KEY, DASHBOARD_USER_KEY } from "@/components/dashboard/DashboardShell";
 import { cn } from "@/lib/utils";
 
 const tabs = [
@@ -29,6 +31,7 @@ export default function DashboardLoginPage() {
   const [activeTab, setActiveTab] =
     useState<(typeof tabs)[number]["id"]>("admin");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -38,6 +41,12 @@ export default function DashboardLoginPage() {
     const password = String(formData.get("password") ?? "");
 
     setIsLoggingIn(true);
+    window.localStorage.removeItem(DASHBOARD_AUTH_KEY);
+    window.localStorage.removeItem(DASHBOARD_ROLE_KEY);
+    window.localStorage.removeItem(DASHBOARD_USER_KEY);
+    window.localStorage.removeItem("careerkick-dashboard-token");
+    document.cookie = `${DASHBOARD_AUTH_KEY}=; path=/; max-age=0; samesite=lax`;
+    document.cookie = `${DASHBOARD_ROLE_KEY}=; path=/; max-age=0; samesite=lax`;
 
     try {
       const response = await fetch("/api/auth/login", {
@@ -60,12 +69,22 @@ export default function DashboardLoginPage() {
         payload?.accessToken ??
         payload?.data?.accessToken;
 
+      const role = payload?.data?.role;
+
+      if (role !== "admin" && role !== "student") {
+        alert("Your account role is not allowed to access the dashboard.");
+        return;
+      }
+
       if (token) {
         window.localStorage.setItem("careerkick-dashboard-token", token);
       }
 
       window.localStorage.setItem(DASHBOARD_AUTH_KEY, "true");
+      window.localStorage.setItem(DASHBOARD_ROLE_KEY, role);
+      window.localStorage.setItem(DASHBOARD_USER_KEY, JSON.stringify(payload?.data ?? {}));
       document.cookie = `${DASHBOARD_AUTH_KEY}=true; path=/; max-age=86400; samesite=lax`;
+      document.cookie = `${DASHBOARD_ROLE_KEY}=${role}; path=/; max-age=86400; samesite=lax`;
 
       router.replace("/dashboard");
     } catch {
@@ -150,6 +169,7 @@ export default function DashboardLoginPage() {
                       id={`${activeTab}-email`}
                       name="email"
                       type="email"
+                      placeholder="Email address"
                       className="h-12 w-full rounded-xl border border-[var(--dash-border)] bg-[var(--dash-surface-strong)] pl-12 pr-4 text-sm font-semibold text-[var(--dash-text)] outline-none transition placeholder:text-[var(--dash-muted)] focus:border-[var(--dash-primary)] focus:bg-[var(--dash-surface)] focus:ring-2 focus:ring-[var(--dash-primary)]/10"
                     />
                   </div>
@@ -170,9 +190,18 @@ export default function DashboardLoginPage() {
                     <input
                       id={`${activeTab}-password`}
                       name="password"
-                      type="password"
-                      className="h-12 w-full rounded-xl border border-[var(--dash-border)] bg-[var(--dash-surface-strong)] pl-12 pr-4 text-sm font-semibold text-[var(--dash-text)] outline-none transition placeholder:text-[var(--dash-muted)] focus:border-[var(--dash-primary)] focus:bg-[var(--dash-surface)] focus:ring-2 focus:ring-[var(--dash-primary)]/10"
+                      placeholder="Password"
+                      type={showPassword ? "text" : "password"}
+                      className="h-12 w-full rounded-xl border border-[var(--dash-border)] bg-[var(--dash-surface-strong)] pl-12 pr-12 text-sm font-semibold text-[var(--dash-text)] outline-none transition placeholder:text-[var(--dash-muted)] focus:border-[var(--dash-primary)] focus:bg-[var(--dash-surface)] focus:ring-2 focus:ring-[var(--dash-primary)]/10"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((current) => !current)}
+                      className="absolute right-2 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-[var(--dash-muted)] transition hover:bg-[var(--dash-surface)] hover:text-[var(--dash-text)]"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
                   </div>
                 </div>
 

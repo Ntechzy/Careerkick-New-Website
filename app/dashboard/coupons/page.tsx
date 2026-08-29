@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { BadgeIndianRupee, CalendarDays, Percent, Pencil, Plus, TicketPercent, Trash2 } from "lucide-react";
 import { CommonDialog } from "@/components/dashboard/CommonDialog";
+import { ExportColumn, ExportDrawer } from "@/components/dashboard/ExportDrawer";
 
 type Coupon = {
   id: string;
@@ -95,6 +96,25 @@ function toDateTimeLocal(value: string) {
 
   return date.toISOString().slice(0, 16);
 }
+
+const couponExportColumns: ExportColumn<Coupon>[] = [
+  { header: "Code", value: (coupon) => coupon.code },
+  { header: "Plan", value: (coupon) => coupon.label },
+  { header: "Type", value: (coupon) => coupon.type },
+  {
+    header: "Value",
+    value: (coupon) =>
+      coupon.type === "PERCENTAGE"
+        ? `${coupon.value}%`
+        : `Rs ${coupon.value.toLocaleString("en-IN")}`,
+  },
+  {
+    header: "Valid Until",
+    value: (coupon) =>
+      coupon.validUntil ? new Date(coupon.validUntil).toLocaleDateString("en-IN") : "-",
+  },
+  { header: "Status", value: (coupon) => coupon.status },
+];
 
 export default function CouponsPage() {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
@@ -419,7 +439,14 @@ export default function CouponsPage() {
             Review discount codes available for counselling checkout.
           </p>
         </div>
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+          <ExportDrawer
+            title="Coupon Codes"
+            fileName="careerkick-coupons"
+            rows={coupons}
+            columns={couponExportColumns}
+            disabled={isLoadingPlans || isLoadingCoupons || Boolean(plansError || couponsError)}
+          />
           <button
             type="button"
             onClick={openValidateDialog}

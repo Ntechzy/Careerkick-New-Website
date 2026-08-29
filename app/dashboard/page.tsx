@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowUpRight, BadgeIndianRupee, BarChart3, CheckCircle2, PlayCircle, UsersRound } from "lucide-react";
+import { ArrowUpRight, BadgeIndianRupee, BarChart3, CheckCircle2, CreditCard, PlayCircle, UsersRound } from "lucide-react";
 import { DASHBOARD_TOUR_EVENT } from "@/components/dashboard/DashboardTour";
+import { DASHBOARD_ROLE_KEY, DASHBOARD_USER_KEY } from "@/components/dashboard/DashboardShell";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -29,6 +30,11 @@ type BackendPayment = {
   amount?: number;
 };
 
+type DashboardUser = {
+  id?: string;
+  email?: string;
+};
+
 type ApiCollectionResponse<T> = {
   data?: T[] | { data?: T[]; plans?: T[]; payments?: T[]; records?: T[]; total?: number; totalCount?: number; count?: number };
   plans?: T[];
@@ -44,6 +50,13 @@ const dashboardInstructions = [
   "Open Plans to create counselling plans, review plan details, update pricing or partial amounts, and remove inactive plans.",
   "Open Coupon Codes to select a plan tab, create coupons, validate coupon codes, edit coupon details, or delete coupons.",
   "Open Transactions to review student payments, view full payment details, update coupon or discount annotations, and delete payment records when required.",
+  "Use the sidebar to switch sections, toggle light or dark mode, and logout when dashboard work is complete.",
+];
+
+const studentDashboardInstructions = [
+  "Open My Transactions to review your counselling plan payment records.",
+  "Check payment status, transaction reference, method, and payment date from your transaction table.",
+  "Use the export option to download your transaction records when needed.",
   "Use the sidebar to switch sections, toggle light or dark mode, and logout when dashboard work is complete.",
 ];
 
@@ -73,7 +86,41 @@ function getCollectionTotal<T>(payload: ApiCollectionResponse<T>, fallback: numb
   return payload?.total ?? payload?.totalCount ?? payload?.count ?? nested?.total ?? nested?.totalCount ?? nested?.count ?? fallback;
 }
 
+function getStoredDashboardUser(): DashboardUser {
+  try {
+    const storedUser = window.localStorage.getItem(DASHBOARD_USER_KEY);
+    return storedUser ? JSON.parse(storedUser) : {};
+  } catch {
+    return {};
+  }
+}
+
+function paymentBelongsToStudent(payment: BackendPayment, user: DashboardUser) {
+  const userId = user.id?.trim();
+  const userEmail = user.email?.trim().toLowerCase();
+
+  if (!userId && !userEmail) {
+    return true;
+  }
+
+  const studentId =
+    typeof payment.studentId === "string"
+      ? payment.studentId
+      : payment.studentId?._id ?? payment.studentId?.id ?? "";
+  const studentEmail =
+    (typeof payment.studentId === "object" ? payment.studentId?.email : undefined) ??
+    payment.studentEmail ??
+    payment.email ??
+    "";
+
+  return (
+    (Boolean(userId) && studentId === userId) ||
+    (Boolean(userEmail) && studentEmail.toLowerCase() === userEmail)
+  );
+}
+
 export default function DashboardPage() {
+  const [role, setRole] = useState<"admin" | "student" | null>(null);
   const [stats, setStats] = useState<DashboardStat[]>([
     { label: "Active plans", value: "--", detail: "Loading plans", icon: BarChart3, href: "/dashboard/plans", tourId: "stat-active-plans" },
     { label: "Students", value: "--", detail: "Loading students", icon: UsersRound, href: "/dashboard/student-transactions", tourId: "stat-students" },
@@ -81,7 +128,65 @@ export default function DashboardPage() {
   ]);
 
   useEffect(() => {
+    const savedRole = window.localStorage.getItem(DASHBOARD_ROLE_KEY);
+    setRole(savedRole === "student" ? "student" : "admin");
+  }, []);
+
+  useEffect(() => {
+    if (!role) {
+      return;
+    }
+
     async function loadStats() {
+      if (role === "student") {
+        try {
+          const token = window.localStorage.getItem("careerkick-dashboard-token");
+          const response = await fetch("/api/student-payment-details", {
+            headers: {
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            cache: "no-store",
+          });
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data?.message ?? "Unable to load transactions.");
+          }
+
+          const user = getStoredDashboardUser();
+          const paymentList = getCollection<BackendPayment>(data).filter((payment) => paymentBelongsToStudent(payment, user));
+          const totalPaid = paymentList.reduce((sum: number, payment: BackendPayment) => {
+            return sum + (payment.paidAmount ?? payment.amountPaid ?? payment.amount ?? 0);
+          }, 0);
+
+          setStats([
+            {
+              label: "My transactions",
+              value: String(paymentList.length),
+              detail: `${paymentList.length} payment records`,
+              icon: CreditCard,
+              href: "/dashboard/my-transactions",
+              tourId: "stat-my-transactions",
+            },
+            {
+              label: "Amount paid",
+              value: formatExactAmount(totalPaid),
+              detail: `${formatExactAmount(totalPaid)} paid`,
+              icon: BadgeIndianRupee,
+              href: "/dashboard/my-transactions",
+              tourId: "stat-amount-paid",
+            },
+          ]);
+        } catch {
+          setStats([
+            { label: "My transactions", value: "--", detail: "Unable to load transactions", icon: CreditCard, href: "/dashboard/my-transactions", tourId: "stat-my-transactions" },
+            { label: "Amount paid", value: "--", detail: "Unable to load payments", icon: BadgeIndianRupee, href: "/dashboard/my-transactions", tourId: "stat-amount-paid" },
+          ]);
+        }
+
+        return;
+      }
+
       try {
         const token = window.localStorage.getItem("careerkick-dashboard-token");
         const headers = {
@@ -162,7 +267,7 @@ export default function DashboardPage() {
     }
 
     void loadStats();
-  }, []);
+  }, [role]);
 
   function startDashboardTour() {
     window.dispatchEvent(new Event(DASHBOARD_TOUR_EVENT));
@@ -222,7 +327,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="mt-6 grid gap-3 md:grid-cols-2">
-            {dashboardInstructions.map((instruction) => (
+            {(role === "student" ? studentDashboardInstructions : dashboardInstructions).map((instruction) => (
               <div key={instruction} className="flex items-start gap-3 rounded-md border border-[var(--dash-border)] bg-[var(--dash-surface-strong)] p-4">
                 <CheckCircle2 className="h-5 w-5 shrink-0 text-[var(--dash-primary)]" />
                 <p className="text-sm font-bold leading-6">{instruction}</p>

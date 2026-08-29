@@ -24,8 +24,23 @@ export async function POST(request: Request) {
       cache: "no-store",
     });
     const data = await response.json();
+    const role = data?.data?.role;
+    const nextResponse = NextResponse.json(data, { status: response.status });
 
-    return NextResponse.json(data, { status: response.status });
+    if (response.ok && data?.success && (role === "admin" || role === "student")) {
+      nextResponse.cookies.set("careerkick-dashboard-auth", "true", {
+        maxAge: 60 * 60 * 24,
+        path: "/",
+        sameSite: "lax",
+      });
+      nextResponse.cookies.set("careerkick-dashboard-role", role, {
+        maxAge: 60 * 60 * 24,
+        path: "/",
+        sameSite: "lax",
+      });
+    }
+
+    return nextResponse;
   } catch (error) {
     return NextResponse.json(
       {

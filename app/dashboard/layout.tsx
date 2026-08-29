@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { cookies } from "next/headers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -9,8 +10,13 @@ const inter = Inter({
 });
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const role = cookies().get("careerkick-dashboard-role")?.value;
+
   return (
-    <DashboardShell fontClassName={`${inter.variable} [font-family:var(--font-dashboard),Inter,sans-serif]`}>
+    <DashboardShell
+      fontClassName={`${inter.variable} [font-family:var(--font-dashboard),Inter,sans-serif]`}
+      initialRole={role === "student" ? "student" : "admin"}
+    >
       {children}
     </DashboardShell>
   );

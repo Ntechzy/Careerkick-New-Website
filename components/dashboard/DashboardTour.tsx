@@ -71,14 +71,59 @@ const tourSteps: Step[] = [
   },
 ];
 
-export function DashboardTour() {
+const studentTourSteps: Step[] = [
+  {
+    target: '[data-tour="dashboard-header"]',
+    title: "Control Center",
+    content: "This header keeps you oriented inside your dashboard. On mobile, the theme toggle is available here.",
+    placement: "bottom",
+  },
+  {
+    target: '[data-tour="dashboard-navigation"]',
+    title: "Dashboard Navigation",
+    content: "Use the sidebar on desktop or the bottom navigation on mobile to switch between Dashboard and My Transactions.",
+    placement: "auto",
+  },
+  {
+    target: '[data-tour="stat-my-transactions"]',
+    title: "My Transactions",
+    content: "This card shows how many payment records are available in your account.",
+    placement: "bottom",
+  },
+  {
+    target: '[data-tour="stat-amount-paid"]',
+    title: "Amount Paid",
+    content: "This card shows the total paid amount from your transaction records.",
+    placement: "bottom",
+  },
+  {
+    target: '[data-tour="dashboard-overview"]',
+    title: "Dashboard Overview",
+    content: "Use this section as a quick operating guide for your dashboard. You can restart this tour from here anytime.",
+    placement: "top",
+  },
+  {
+    target: '[data-tour="dashboard-tour-button"]',
+    title: "Restart The Tour",
+    content: "Select this button whenever you want to see the guided dashboard walkthrough again.",
+    placement: "bottom",
+  },
+  {
+    target: '[data-tour="nav-my-transactions"]',
+    title: "My Transactions",
+    content: "Open My Transactions to review payment status, transaction references, and payment dates.",
+    placement: "auto",
+  },
+];
+
+export function DashboardTour({ role }: { role: "admin" | "student" }) {
   const pathname = usePathname();
   const [run, setRun] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
 
   const steps = useMemo<Step[]>(
     () => [
-      ...tourSteps,
+      ...(role === "student" ? studentTourSteps : tourSteps),
       {
         target: isDesktop ? '[data-tour="dashboard-account-actions"]' : '[data-tour="dashboard-mobile-theme"]',
         title: isDesktop ? "Theme And Logout" : "Theme Control",
@@ -88,7 +133,7 @@ export function DashboardTour() {
         placement: "auto",
       },
     ],
-    [isDesktop],
+    [isDesktop, role],
   );
 
   useEffect(() => {
