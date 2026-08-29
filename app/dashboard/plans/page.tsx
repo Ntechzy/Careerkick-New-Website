@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Eye, Pencil, Plus, Trash2 } from "lucide-react";
 import { CommonDialog } from "@/components/dashboard/CommonDialog";
+import { ExportColumn, ExportDrawer } from "@/components/dashboard/ExportDrawer";
 
 type DashboardPlan = {
   id: string;
@@ -59,6 +60,20 @@ function parsePartialAmounts(value: string) {
     .map((item) => Number(item.trim()))
     .filter((item) => Number.isFinite(item) && item > 0);
 }
+
+const planExportColumns: ExportColumn<DashboardPlan>[] = [
+  { header: "Title", value: (plan) => plan.title },
+  { header: "Description", value: (plan) => plan.description },
+  { header: "Total Amount", value: (plan) => plan.totalAmount },
+  {
+    header: "Partial Amounts",
+    value: (plan) =>
+      plan.allowedPartialAmounts.length > 0
+        ? plan.allowedPartialAmounts.join(", ")
+        : "None",
+  },
+  { header: "Status", value: (plan) => (plan.isActive ? "Active" : "Inactive") },
+];
 
 export default function PlansPage() {
   const [plans, setPlans] = useState<DashboardPlan[]>([]);
@@ -271,14 +286,23 @@ export default function PlansPage() {
             Create, review, update and remove counselling plans.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={openCreate}
-          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[var(--dash-primary)] px-4 text-sm font-black text-white transition hover:bg-[var(--dash-primary-strong)] sm:w-auto"
-        >
-          <Plus className="h-4 w-4" />
-          Create Plan
-        </button>
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+          <ExportDrawer
+            title="Plans"
+            fileName="careerkick-plans"
+            rows={plans}
+            columns={planExportColumns}
+            disabled={isLoadingPlans || Boolean(plansError)}
+          />
+          <button
+            type="button"
+            onClick={openCreate}
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[var(--dash-primary)] px-4 text-sm font-black text-white transition hover:bg-[var(--dash-primary-strong)] sm:w-auto"
+          >
+            <Plus className="h-4 w-4" />
+            Create Plan
+          </button>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow)]">

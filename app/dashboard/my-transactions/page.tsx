@@ -1,9 +1,10 @@
 "use client";
 
-import { BadgeIndianRupee, CreditCard, Eye, Pencil, ReceiptText, Trash2, UsersRound } from "lucide-react";
+import { BadgeIndianRupee, CreditCard, Eye, ReceiptText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CommonDialog } from "@/components/dashboard/CommonDialog";
 import { ExportColumn, ExportDrawer } from "@/components/dashboard/ExportDrawer";
+import { DASHBOARD_USER_KEY } from "@/components/dashboard/DashboardShell";
 
 type StudentTransaction = {
   id: string;
@@ -24,11 +25,6 @@ type StudentTransaction = {
   paymentMethod: string;
   transactionDate: string;
   historyCount: number;
-};
-
-type PaymentAnnotationForm = {
-  discountApplied: number;
-  couponCode: string;
 };
 
 type BackendStudentTransaction = {
@@ -62,6 +58,11 @@ type BackendStudentTransaction = {
   createdAt?: string;
   paidAt?: string;
   updatedAt?: string;
+};
+
+type DashboardUser = {
+  id?: string;
+  email?: string;
 };
 
 function normalizeTransaction(entry: BackendStudentTransaction): StudentTransaction {
@@ -132,6 +133,29 @@ function formatDate(value: string) {
   });
 }
 
+function getStoredDashboardUser(): DashboardUser {
+  try {
+    const storedUser = window.localStorage.getItem(DASHBOARD_USER_KEY);
+    return storedUser ? JSON.parse(storedUser) : {};
+  } catch {
+    return {};
+  }
+}
+
+function belongsToStudent(transaction: StudentTransaction, user: DashboardUser) {
+  const userId = user.id?.trim();
+  const userEmail = user.email?.trim().toLowerCase();
+
+  if (!userId && !userEmail) {
+    return true;
+  }
+
+  return (
+    (Boolean(userId) && transaction.studentId === userId) ||
+    (Boolean(userEmail) && transaction.studentEmail.toLowerCase() === userEmail)
+  );
+}
+
 const transactionExportColumns: ExportColumn<StudentTransaction>[] = [
   { header: "Student", value: (transaction) => transaction.studentName },
   { header: "Email", value: (transaction) => transaction.studentEmail },
@@ -151,18 +175,12 @@ const transactionExportColumns: ExportColumn<StudentTransaction>[] = [
   { header: "Date", value: (transaction) => formatDate(transaction.transactionDate) },
 ];
 
-export default function StudentTransactionsPage() {
+export default function MyTransactionsPage() {
   const [transactions, setTransactions] = useState<StudentTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTransaction, setSelectedTransaction] = useState<StudentTransaction | null>(null);
   const [isViewOpen, setIsViewOpen] = useState(false);
-  const [isLoadingView, setIsLoadingView] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState<StudentTransaction | null>(null);
-  const [editForm, setEditForm] = useState<PaymentAnnotationForm>({ discountApplied: 0, couponCode: "" });
-  const [isSavingEdit, setIsSavingEdit] = useState(false);
-  const [transactionPendingDelete, setTransactionPendingDelete] = useState<StudentTransaction | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     async function loadTransactions() {
@@ -171,6 +189,7 @@ export default function StudentTransactionsPage() {
 
       try {
         const token = window.localStorage.getItem("careerkick-dashboard-token");
+        const user = getStoredDashboardUser();
         const response = await fetch("/api/student-payment-details", {
           headers: {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -180,7 +199,7 @@ export default function StudentTransactionsPage() {
         const data = await response.json();
 
         if (!response.ok) {
-          setError(data?.message ?? "Unable to load student transactions.");
+          setError(data?.message ?? "Unable to load your transactions.");
           return;
         }
 
@@ -192,7 +211,11 @@ export default function StudentTransactionsPage() {
               ? data.records
               : [];
 
-        setTransactions(paymentList.map((item: BackendStudentTransaction) => normalizeTransaction(item)));
+        setTransactions(
+          paymentList
+            .map((item: BackendStudentTransaction) => normalizeTransaction(item))
+            .filter((transaction: StudentTransaction) => belongsToStudent(transaction, user)),
+        );
       } catch {
         setError("Unable to connect to student payment service.");
       } finally {
@@ -203,171 +226,17 @@ export default function StudentTransactionsPage() {
     void loadTransactions();
   }, []);
 
-  async function viewTransaction(transaction: StudentTransaction) {
-    setIsLoadingView(true);
-    setIsViewOpen(true);
-
-    try {
-      const token = window.localStorage.getItem("careerkick-dashboard-token");
-      const response = await fetch(`/api/student-payment-details/${encodeURIComponent(transaction.id)}`, {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        cache: "no-store",
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data?.message ?? "Unable to load transaction details.");
-        setIsViewOpen(false);
-        return;
-      }
-
-      const detail = data?.data?.payment ?? data?.payment ?? data?.data ?? data;
-      setSelectedTransaction(normalizeTransaction(detail));
-    } catch {
-      alert("Unable to connect to student payment service.");
-      setIsViewOpen(false);
-    } finally {
-      setIsLoadingView(false);
-    }
-  }
-
-  function closeViewDialog() {
-    setIsViewOpen(false);
-    setSelectedTransaction(null);
-  }
-
-  function openEditDialog(transaction: StudentTransaction) {
-    setEditingTransaction(transaction);
-    setEditForm({
-      discountApplied: transaction.discountApplied,
-      couponCode: transaction.couponCode === "-" ? "" : transaction.couponCode,
-    });
-  }
-
-  function closeEditDialog() {
-    setEditingTransaction(null);
-    setEditForm({ discountApplied: 0, couponCode: "" });
-  }
-
-  async function saveTransactionAnnotations() {
-    if (!editingTransaction) {
-      return;
-    }
-
-    setIsSavingEdit(true);
-
-    try {
-      const token = window.localStorage.getItem("careerkick-dashboard-token");
-      const response = await fetch(`/api/student-payment-details/${encodeURIComponent(editingTransaction.id)}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          discountApplied: Number(editForm.discountApplied),
-          couponCode: editForm.couponCode.trim(),
-        }),
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data?.message ?? "Unable to update payment detail.");
-        return;
-      }
-
-      setTransactions((current) =>
-        current.map((transaction) =>
-          transaction.id === editingTransaction.id
-            ? {
-                ...transaction,
-                discountApplied: Number(editForm.discountApplied),
-                couponCode: editForm.couponCode.trim() || "-",
-              }
-            : transaction,
-        ),
-      );
-
-      if (selectedTransaction?.id === editingTransaction.id) {
-        setSelectedTransaction((current) =>
-          current
-            ? {
-                ...current,
-                discountApplied: Number(editForm.discountApplied),
-                couponCode: editForm.couponCode.trim() || "-",
-              }
-            : current,
-        );
-      }
-
-      closeEditDialog();
-    } catch {
-      alert("Unable to connect to student payment service.");
-    } finally {
-      setIsSavingEdit(false);
-    }
-  }
-
-  async function deleteTransaction() {
-    if (!transactionPendingDelete) {
-      return;
-    }
-
-    setIsDeleting(true);
-
-    try {
-      const token = window.localStorage.getItem("careerkick-dashboard-token");
-      const response = await fetch(`/api/student-payment-details/${encodeURIComponent(transactionPendingDelete.id)}`, {
-        method: "DELETE",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data?.message ?? "Unable to delete payment detail.");
-        return;
-      }
-
-      setTransactions((current) => current.filter((transaction) => transaction.id !== transactionPendingDelete.id));
-
-      if (selectedTransaction?.id === transactionPendingDelete.id) {
-        closeViewDialog();
-      }
-
-      if (editingTransaction?.id === transactionPendingDelete.id) {
-        closeEditDialog();
-      }
-
-      setTransactionPendingDelete(null);
-    } catch {
-      alert("Unable to connect to student payment service.");
-    } finally {
-      setIsDeleting(false);
-    }
-  }
-
-  const totalCollected = transactions.reduce((sum, transaction) => sum + transaction.amountPaid, 0);
+  const totalPaid = transactions.reduce((sum, transaction) => sum + transaction.amountPaid, 0);
   const totalRemaining = transactions.reduce((sum, transaction) => sum + transaction.remainingAmount, 0);
-  const successCount = transactions.filter((transaction) =>
-    transaction.paymentStatus.toLowerCase().includes("success") ||
-    transaction.paymentStatus.toLowerCase().includes("paid"),
-  ).length;
-  const uniqueStudents = new Set(transactions.map((transaction) => transaction.studentId || transaction.studentEmail)).size;
   const stats = [
-    { label: "Total transactions", value: String(transactions.length), icon: ReceiptText },
-    { label: "Successful payments", value: String(successCount), icon: CreditCard },
-    { label: "Students covered", value: String(uniqueStudents), icon: UsersRound },
-    { label: "Amount collected", value: formatCurrency(totalCollected), icon: BadgeIndianRupee },
+    { label: "My transactions", value: String(transactions.length), icon: ReceiptText },
+    { label: "Amount paid", value: formatCurrency(totalPaid), icon: BadgeIndianRupee },
     { label: "Amount remaining", value: formatCurrency(totalRemaining), icon: BadgeIndianRupee },
   ];
 
   return (
     <div className="space-y-6">
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+      <section className="grid gap-4 md:grid-cols-3">
         {stats.map((stat) => {
           const Icon = stat.icon;
 
@@ -392,14 +261,14 @@ export default function StudentTransactionsPage() {
 
       <div className="flex flex-col gap-4 rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] p-5 shadow-[var(--dash-shadow)] sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-xl font-black">Student Transactions</h2>
+          <h2 className="text-xl font-black">My Transactions</h2>
           <p className="mt-1 text-sm font-semibold text-[var(--dash-muted)]">
-            Review payment records across students and counselling plans.
+            Review your payment records and counselling plan transactions.
           </p>
         </div>
         <ExportDrawer
-          title="Student Transactions"
-          fileName="careerkick-student-transactions"
+          title="My Transactions"
+          fileName="careerkick-my-transactions"
           rows={transactions}
           columns={transactionExportColumns}
           disabled={isLoading || Boolean(error)}
@@ -408,7 +277,7 @@ export default function StudentTransactionsPage() {
 
       <div className="overflow-hidden rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] shadow-[var(--dash-shadow)]">
         <div className="overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-          <table className="w-full min-w-[980px] text-left text-sm">
+          <table className="w-full min-w-[920px] text-left text-sm">
             <thead className="bg-[var(--dash-surface-strong)] text-xs uppercase tracking-[0.14em] text-[var(--dash-muted)]">
               <tr>
                 <th className="px-4 py-4">Student</th>
@@ -416,14 +285,10 @@ export default function StudentTransactionsPage() {
                 <th className="px-4 py-4">Plan</th>
                 <th className="px-4 py-4">Type</th>
                 <th className="px-4 py-4">Amount Paid</th>
-                <th className="px-4 py-4">Cumulative</th>
                 <th className="px-4 py-4">Remaining</th>
-                <th className="px-4 py-4">Discount</th>
-                <th className="px-4 py-4">Coupon</th>
                 <th className="px-4 py-4">Transaction</th>
                 <th className="px-4 py-4">Method</th>
                 <th className="px-4 py-4">Status</th>
-                <th className="px-4 py-4">History</th>
                 <th className="px-4 py-4">Date</th>
                 <th className="px-4 py-4 text-right">Action</th>
               </tr>
@@ -431,22 +296,22 @@ export default function StudentTransactionsPage() {
             <tbody className="divide-y divide-[var(--dash-border)]">
               {isLoading ? (
                 <tr>
-                  <td className="px-4 py-8 text-center font-bold text-[var(--dash-muted)]" colSpan={15}>
-                    Loading student transactions...
+                  <td className="px-4 py-8 text-center font-bold text-[var(--dash-muted)]" colSpan={11}>
+                    Loading your transactions...
                   </td>
                 </tr>
               ) : null}
               {!isLoading && error ? (
                 <tr>
-                  <td className="px-4 py-8 text-center font-bold text-[var(--dash-danger)]" colSpan={15}>
+                  <td className="px-4 py-8 text-center font-bold text-[var(--dash-danger)]" colSpan={11}>
                     {error}
                   </td>
                 </tr>
               ) : null}
               {!isLoading && !error && transactions.length === 0 ? (
                 <tr>
-                  <td className="px-4 py-8 text-center font-bold text-[var(--dash-muted)]" colSpan={15}>
-                    No student transactions found.
+                  <td className="px-4 py-8 text-center font-bold text-[var(--dash-muted)]" colSpan={11}>
+                    No transactions found.
                   </td>
                 </tr>
               ) : null}
@@ -465,10 +330,7 @@ export default function StudentTransactionsPage() {
                   </td>
                   <td className="px-4 py-4 font-bold">{transaction.paymentType}</td>
                   <td className="px-4 py-4 font-black">{formatCurrency(transaction.amountPaid)}</td>
-                  <td className="px-4 py-4 font-black">{formatCurrency(transaction.cumulativePaid)}</td>
                   <td className="px-4 py-4 font-black">{formatCurrency(transaction.remainingAmount)}</td>
-                  <td className="px-4 py-4 font-bold">{formatCurrency(transaction.discountApplied)}</td>
-                  <td className="px-4 py-4 font-bold">{transaction.couponCode}</td>
                   <td className="px-4 py-4 text-[var(--dash-muted)]">{transaction.transactionRef}</td>
                   <td className="px-4 py-4 font-bold">{transaction.paymentMethod}</td>
                   <td className="px-4 py-4">
@@ -476,33 +338,19 @@ export default function StudentTransactionsPage() {
                       {transaction.paymentStatus}
                     </span>
                   </td>
-                  <td className="px-4 py-4 font-bold">{transaction.historyCount}</td>
                   <td className="px-4 py-4 font-semibold text-[var(--dash-muted)]">{formatDate(transaction.transactionDate)}</td>
                   <td className="px-4 py-4">
                     <div className="flex justify-end gap-2">
                       <button
                         type="button"
-                        onClick={() => viewTransaction(transaction)}
+                        onClick={() => {
+                          setSelectedTransaction(transaction);
+                          setIsViewOpen(true);
+                        }}
                         className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--dash-border)] bg-[var(--dash-surface-strong)]"
                         aria-label={`View ${transaction.studentName}`}
                       >
                         <Eye className="h-4 w-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => openEditDialog(transaction)}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--dash-border)] bg-[var(--dash-surface-strong)]"
-                        aria-label={`Edit ${transaction.studentName}`}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setTransactionPendingDelete(transaction)}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--dash-border)] bg-[var(--dash-surface-strong)] text-[var(--dash-danger)]"
-                        aria-label={`Delete ${transaction.studentName}`}
-                      >
-                        <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                   </td>
@@ -516,12 +364,13 @@ export default function StudentTransactionsPage() {
       <CommonDialog
         open={isViewOpen}
         title="Transaction Details"
-        description="Student payment detail record"
-        onClose={closeViewDialog}
+        description="Your payment detail record"
+        onClose={() => {
+          setIsViewOpen(false);
+          setSelectedTransaction(null);
+        }}
       >
-        {isLoadingView ? (
-          <div className="py-8 text-center text-sm font-bold text-slate-600">Loading transaction details...</div>
-        ) : selectedTransaction ? (
+        {selectedTransaction ? (
           <div className="space-y-4 text-sm">
             {[
               ["Student", selectedTransaction.studentName],
@@ -550,96 +399,6 @@ export default function StudentTransactionsPage() {
         ) : (
           <div className="py-8 text-center text-sm font-bold text-slate-600">No transaction details found.</div>
         )}
-      </CommonDialog>
-
-      <CommonDialog
-        open={Boolean(editingTransaction)}
-        title="Edit Payment Detail"
-        description="Update payment-detail annotations only."
-        onClose={closeEditDialog}
-      >
-        <form className="space-y-4">
-          <label className="block text-sm font-black text-slate-950">
-            Discount Applied
-            <input
-              type="number"
-              value={String(editForm.discountApplied)}
-              onChange={(event) =>
-                setEditForm((current) => ({
-                  ...current,
-                  discountApplied: Number(event.target.value),
-                }))
-              }
-              className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-950"
-            />
-          </label>
-          <label className="block text-sm font-black text-slate-950">
-            Coupon Code
-            <input
-              type="text"
-              value={editForm.couponCode}
-              onChange={(event) =>
-                setEditForm((current) => ({
-                  ...current,
-                  couponCode: event.target.value,
-                }))
-              }
-              className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-950"
-            />
-          </label>
-          <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
-            <button
-              type="button"
-              onClick={closeEditDialog}
-              className="h-11 rounded-md border border-slate-200 bg-white px-4 text-sm font-black text-slate-950"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={saveTransactionAnnotations}
-              disabled={isSavingEdit}
-              className="h-11 rounded-md bg-[#16a34a] px-4 text-sm font-black text-white shadow-[0_12px_24px_rgba(22,163,74,0.24)] transition hover:bg-[#15803d] disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isSavingEdit ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-        </form>
-      </CommonDialog>
-
-      <CommonDialog
-        open={Boolean(transactionPendingDelete)}
-        title="Delete Payment Detail"
-        description={transactionPendingDelete ? `Delete payment detail for ${transactionPendingDelete.studentName}?` : "Delete this payment detail?"}
-        onClose={() => {
-          if (!isDeleting) {
-            setTransactionPendingDelete(null);
-          }
-        }}
-      >
-        <div className="space-y-5">
-          <p className="text-sm font-semibold text-slate-600">
-            This action will permanently remove the selected payment detail record.
-          </p>
-          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-            <button
-              type="button"
-              onClick={() => setTransactionPendingDelete(null)}
-              disabled={isDeleting}
-              className="h-11 rounded-md border border-slate-200 bg-white px-4 text-sm font-black text-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={deleteTransaction}
-              disabled={isDeleting}
-              className="h-11 rounded-md bg-red-600 px-4 text-sm font-black text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isDeleting ? "Deleting..." : "Delete Payment Detail"}
-            </button>
-          </div>
-        </div>
       </CommonDialog>
     </div>
   );

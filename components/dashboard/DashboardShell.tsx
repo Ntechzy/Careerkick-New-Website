@@ -3,31 +3,44 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, CreditCard, LayoutDashboard, LogOut, Moon, Percent, Sun, UserRound } from "lucide-react";
+import { BarChart3, CreditCard, LayoutDashboard, LogOut, Moon, Percent, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DashboardTour } from "@/components/dashboard/DashboardTour";
 import { cn } from "@/lib/utils";
 
 export const DASHBOARD_AUTH_KEY = "careerkick-dashboard-auth";
+export const DASHBOARD_ROLE_KEY = "careerkick-dashboard-role";
+export const DASHBOARD_USER_KEY = "careerkick-dashboard-user";
+
+type DashboardRole = "admin" | "student";
 
 const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, tourId: "nav-dashboard" },
-  { label: "Plans", href: "/dashboard/plans", icon: BarChart3, tourId: "nav-plans" },
-  { label: "Coupon Codes", href: "/dashboard/coupons", icon: Percent, tourId: "nav-coupons" },
-  { label: "Transactions", href: "/dashboard/student-transactions", icon: CreditCard, tourId: "nav-transactions" },
-];
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, tourId: "nav-dashboard", roles: ["admin", "student"] },
+  { label: "Plans", href: "/dashboard/plans", icon: BarChart3, tourId: "nav-plans", roles: ["admin"] },
+  { label: "Coupon Codes", href: "/dashboard/coupons", icon: Percent, tourId: "nav-coupons", roles: ["admin"] },
+  { label: "Transactions", href: "/dashboard/student-transactions", icon: CreditCard, tourId: "nav-transactions", roles: ["admin"] },
+  { label: "My Transactions", href: "/dashboard/my-transactions", icon: CreditCard, tourId: "nav-my-transactions", roles: ["student"] },
+] satisfies Array<{
+  label: string;
+  href: string;
+  icon: typeof LayoutDashboard;
+  tourId: string;
+  roles: DashboardRole[];
+}>;
 
 export function DashboardShell({
   children,
   fontClassName,
+  initialRole,
 }: {
   children: React.ReactNode;
   fontClassName: string;
+  initialRole: DashboardRole;
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [authChecked, setAuthChecked] = useState(false);
+  const [role, setRole] = useState<DashboardRole>(initialRole);
   const isLoginPage = pathname === "/dashboard/login";
 
   useEffect(() => {
@@ -38,31 +51,26 @@ export function DashboardShell({
   }, []);
 
   useEffect(() => {
-    const isLoggedIn = window.localStorage.getItem(DASHBOARD_AUTH_KEY) === "true";
-
-    if (!isLoggedIn && !isLoginPage) {
-      router.replace("/dashboard/login");
+    const savedRole = window.localStorage.getItem(DASHBOARD_ROLE_KEY);
+    if (savedRole === "admin" || savedRole === "student") {
+      setRole(savedRole);
       return;
     }
 
-    if (isLoggedIn && isLoginPage) {
-      router.replace("/dashboard");
-      return;
-    }
-
-    setAuthChecked(true);
-  }, [isLoginPage, router]);
+    setRole(initialRole);
+  }, [initialRole, pathname]);
 
   const isDark = theme === "dark";
+  const visibleNavItems = navItems.filter((item) => item.roles.includes(role));
 
-  if (!authChecked) {
-    return (
-      <div className={cn("dashboard-theme flex min-h-screen items-center justify-center", isDark && "dashboard-dark", fontClassName)}>
-        <div className="rounded-lg border border-[var(--dash-border)] bg-[var(--dash-surface)] px-5 py-4 text-sm font-black shadow-[var(--dash-shadow)]">
-          Opening secure dashboard...
-        </div>
-      </div>
-    );
+  function logout() {
+    window.localStorage.removeItem(DASHBOARD_AUTH_KEY);
+    window.localStorage.removeItem(DASHBOARD_ROLE_KEY);
+    window.localStorage.removeItem(DASHBOARD_USER_KEY);
+    window.localStorage.removeItem("careerkick-dashboard-token");
+    document.cookie = `${DASHBOARD_AUTH_KEY}=; path=/; max-age=0; samesite=lax`;
+    document.cookie = `${DASHBOARD_ROLE_KEY}=; path=/; max-age=0; samesite=lax`;
+    router.replace("/dashboard/login");
   }
 
   if (isLoginPage) {
@@ -88,8 +96,8 @@ export function DashboardShell({
             />
           </div>
 
-          <nav data-tour="dashboard-navigation" className="grid grid-cols-4 gap-2 lg:mt-8 lg:flex lg:flex-col">
-            {navItems.map((item) => {
+          <nav data-tour="dashboard-navigation" className={cn("grid gap-2 lg:mt-8 lg:flex lg:flex-col", role === "student" ? "grid-cols-2" : "grid-cols-4")}>
+            {visibleNavItems.map((item) => {
               const Icon = item.icon;
               const active =
                 item.href === "/dashboard" ? pathname === item.href : pathname.startsWith(item.href);
@@ -129,11 +137,7 @@ export function DashboardShell({
             {!isLoginPage ? (
               <button
                 type="button"
-                onClick={() => {
-                  window.localStorage.removeItem(DASHBOARD_AUTH_KEY);
-                  document.cookie = `${DASHBOARD_AUTH_KEY}=; path=/; max-age=0; samesite=lax`;
-                  router.replace("/dashboard/login");
-                }}
+                onClick={logout}
                 className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-md border border-[var(--dash-border)] px-3 py-2 text-sm font-bold text-[var(--dash-danger)]"
               >
                 <LogOut className="h-4 w-4" />
@@ -152,25 +156,35 @@ export function DashboardShell({
                 </p>
                 <h1 className="mt-1 text-xl font-black leading-tight sm:text-2xl">Dashboard</h1>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  const nextTheme = isDark ? "light" : "dark";
-                  setTheme(nextTheme);
-                  window.localStorage.setItem("careerkick-dashboard-theme", nextTheme);
-                }}
-                data-tour="dashboard-mobile-theme"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[var(--dash-border)] bg-[var(--dash-surface)] text-[var(--dash-text)] lg:hidden"
-                aria-label="Toggle dashboard theme"
-              >
-                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              </button>
+              <div className="flex items-center gap-2 lg:hidden">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const nextTheme = isDark ? "light" : "dark";
+                    setTheme(nextTheme);
+                    window.localStorage.setItem("careerkick-dashboard-theme", nextTheme);
+                  }}
+                  data-tour="dashboard-mobile-theme"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[var(--dash-border)] bg-[var(--dash-surface)] text-[var(--dash-text)] transition hover:border-[var(--dash-primary)] hover:text-[var(--dash-primary)]"
+                  aria-label="Toggle dashboard theme"
+                >
+                  {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[var(--dash-border)] bg-[var(--dash-surface)] text-[var(--dash-danger)] transition hover:border-[var(--dash-danger)] hover:bg-red-50"
+                  aria-label="Logout"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           </header>
           <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
         </div>
       </div>
-      <DashboardTour />
+      <DashboardTour role={role} />
     </div>
   );
 }
