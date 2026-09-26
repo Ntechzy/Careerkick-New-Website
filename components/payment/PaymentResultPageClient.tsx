@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AlertCircle, Check, Download, Phone, Printer, X } from "lucide-react";
+import { AlertCircle, Check, Phone, X } from "lucide-react";
 import { formatIndianCurrency } from "@/lib/counsellingPackages";
 import { CONTACT_NUMBERS, getTelLink, getWhatsAppLink } from "@/lib/contactLinks";
 import { getPaymentRecord, type PaymentRecord } from "@/lib/mockPayment";
@@ -70,18 +70,14 @@ function PaymentSuccess({ record }: { record: PaymentRecord }) {
 
         <Timeline />
 
-        <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-          <Link href="/" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#51A70A] px-5 text-sm font-bold text-white">
-            Go to Dashboard / Continue
+        <p className="mx-auto mt-7 max-w-xl text-sm font-semibold leading-6 text-slate-600">
+          The payment receipt will be sent to the email address entered during checkout.
+        </p>
+
+        <div className="mt-4 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link href="/dashboard/login" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#51A70A] px-5 text-sm font-bold text-white">
+            Go to Dashboard
           </Link>
-          <button type="button" onClick={() => window.print()} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 px-5 text-sm font-bold text-slate-800">
-            <Printer className="h-4 w-4" />
-            Print Receipt
-          </button>
-          <button type="button" onClick={() => window.print()} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 px-5 text-sm font-bold text-slate-800">
-            <Download className="h-4 w-4" />
-            Download Receipt
-          </button>
         </div>
 
         <HelpBlock />
