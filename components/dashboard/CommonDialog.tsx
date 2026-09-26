@@ -83,7 +83,7 @@ export function CommonDialog({
               <X className="h-4 w-4" />
             </button>
           </div>
-          <div className="max-h-[calc(100vh-12rem)] overflow-y-auto px-5 py-5">{children}</div>
+          <div className="max-h-[calc(100vh-8rem)] overflow-y-auto px-5 py-5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">{children}</div>
         </div>
       </div>
     </>,

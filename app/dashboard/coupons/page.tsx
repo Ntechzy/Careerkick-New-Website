@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { type WheelEvent, useEffect, useState } from "react";
 import { BadgeIndianRupee, CalendarDays, Percent, Pencil, Plus, TicketPercent, Trash2 } from "lucide-react";
 import { CommonDialog } from "@/components/dashboard/CommonDialog";
 import { ExportColumn, ExportDrawer } from "@/components/dashboard/ExportDrawer";
@@ -583,7 +583,7 @@ export default function CouponsPage() {
             <select
               value={form.planId}
               onChange={(event) => setForm((current) => ({ ...current, planId: event.target.value }))}
-              className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-950"
+              className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-950 focus:border-slate-300 focus:outline-none focus:ring-0"
               disabled={isLoadingPlans || Boolean(editingCouponId)}
             >
               <option value="">
@@ -605,13 +605,13 @@ export default function CouponsPage() {
             <select
               value={form.discountType}
               onChange={(event) => setForm((current) => ({ ...current, discountType: event.target.value }))}
-              className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-950"
+              className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-950 focus:border-slate-300 focus:outline-none focus:ring-0"
             >
               <option value="FLAT">FLAT</option>
               <option value="PERCENTAGE">PERCENTAGE</option>
             </select>
           </label>
-          <CouponField label="Discount Value" type="number" value={String(form.discountValue)} onChange={(value) => setForm((current) => ({ ...current, discountValue: Number(value) }))} />
+          <CouponField label="Discount Value" type="number" value={String(form.discountValue)} onWheel={(event) => event.currentTarget.blur()} onChange={(value) => setForm((current) => ({ ...current, discountValue: Number(value) }))} />
           <CouponField label="Valid Until" type="datetime-local" value={form.validUntil} onChange={(value) => setForm((current) => ({ ...current, validUntil: value }))} />
           <label className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-black text-slate-950">
             Is Active
@@ -680,7 +680,7 @@ export default function CouponsPage() {
             <select
               value={validateForm.planId}
               onChange={(event) => setValidateForm((current) => ({ ...current, planId: event.target.value }))}
-              className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-950"
+              className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-950 focus:border-slate-300 focus:outline-none focus:ring-0"
               disabled={isLoadingPlans || isValidating}
             >
               <option value="">
@@ -771,11 +771,13 @@ function CouponField({
   label,
   value,
   type = "text",
+  onWheel,
   onChange,
 }: {
   label: string;
   value: string;
   type?: string;
+  onWheel?: (event: WheelEvent<HTMLInputElement>) => void;
   onChange: (value: string) => void;
 }) {
   return (
@@ -784,8 +786,9 @@ function CouponField({
       <input
         type={type}
         value={value}
+        onWheel={onWheel}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-950"
+        className="mt-2 h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-950 focus:border-slate-300 focus:outline-none focus:ring-0"
       />
     </label>
   );
