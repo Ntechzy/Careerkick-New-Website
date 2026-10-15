@@ -19,6 +19,7 @@ import { EventsSection } from "@/components/sections/EventsSection";
 import { ImportantEventsSection } from "@/components/sections/ImportantEventsSection";
 import { EBookButton } from "@/components/EBookButton";
 import { IntroAnimation } from "@/components/IntroAnimation";
+import { BamsCollegePopup } from "@/components/BamsCollegePopup";
 import { AdmittedStudentsSection } from "@/components/sections/AdmittedStudentsSection";
 import { OfficesSection } from "@/components/sections/OfficesSection";
 import { CounsellingMistakesSection } from "@/components/sections/CounsellingMistakesSection";
@@ -89,6 +90,7 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
       <IntroAnimation />
+      <BamsCollegePopup />
       <EBookButton />
       <HeroSection />
       <StatsSection />
