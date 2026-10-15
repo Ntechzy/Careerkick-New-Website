@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Download, ArrowUpRight, ScanLine, X, ZoomIn, ZoomOut, MoveHorizontal } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 
-const imageUrl = "/top_20_bams_college_list_popup.webp";
+const imageUrl = "/2.webp";
 
 export function BamsCollegePopup() {
   const dialogRef = useRef<HTMLDialogElement>(null);
