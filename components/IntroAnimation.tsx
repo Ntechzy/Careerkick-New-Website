@@ -46,7 +46,7 @@ export function IntroAnimation() {
   }, [reduceMotion, visible]);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={() => window.dispatchEvent(new Event("careerkick:intro-complete"))}>
       {visible && (
         <motion.div
           className="fixed inset-0 z-[999] grid place-items-center overflow-hidden bg-base text-white"
