@@ -44,8 +44,8 @@ const officeNetwork: NetworkOffice[] = [
     image:
       "https://res.cloudinary.com/dhlqc0ymy/image/upload/v1783162422/kanpur_fzmknv.png",
     address:
-      "117/H, Pandu Nagar near JK, 1/606, Temple Kanpur, Kanpur Nagar, Uttar Pradesh, India, 208005",
-    link: "https://www.google.com/maps?ll=26.480127,80.292698&z=15&t=m&hl=en-GB&gl=US&mapclient=embed&cid=9720261514956615116",
+      "117/N/65, L Block, Raniganj, Kakadeo, Kanpur, Uttar Pradesh 208025",
+    link: "https://www.google.com/maps/search/?api=1&query=117%2FN%2F65%2C%20L%20Block%2C%20Raniganj%2C%20Kakadeo%2C%20Kanpur%2C%20Uttar%20Pradesh%20208025",
     contacts: ["+91 7521050567", "+91 8429133397", "+91 7275179977"],
     labelOffset: { x: -72, y: 22 },
   },

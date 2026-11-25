@@ -465,7 +465,7 @@ function MapComponent({
   center = DEFAULT_CENTER,
   zoom = 14.4,
   title = "Careerkick Office",
-  address = "117 N 65, Rani Ganj, Kakadeo, Kanpur, 208025",
+  address = "117/N/65, L Block, Raniganj, Kakadeo, Kanpur, Uttar Pradesh 208025",
   locationUrl,
   className = "",
 }: MapProps) {

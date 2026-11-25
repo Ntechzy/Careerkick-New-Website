@@ -8,8 +8,8 @@ const officeLocations = [
   {
     name: "Careerkick Services",
     branch: "Kanpur Branch",
-    address: "117 N 65, Rani Ganj, Kakadeo, Kanpur, 208025",
-    href: "https://maps.app.goo.gl/C7fjCr7jsH5zcAPE8",
+    address: "117/N/65, L Block, Raniganj, Kakadeo, Kanpur, Uttar Pradesh 208025",
+    href: "https://www.google.com/maps/search/?api=1&query=117%2FN%2F65%2C%20L%20Block%2C%20Raniganj%2C%20Kakadeo%2C%20Kanpur%2C%20Uttar%20Pradesh%20208025",
   },
   {
     name: "Careerkick Services",

@@ -74,11 +74,11 @@ const contactPoints = [
   },
   {
     label: "Main Office",
-    value: "117/H, Pandu Nagar near JK, 1/606, Temple Kanpur, Kanpur Nagar, Uttar Pradesh, India, 208005",
+    value: "117/N/65, L Block, Raniganj, Kakadeo, Kanpur, Uttar Pradesh 208025",
     addressLines: [
-      "117/H, Pandu Nagar near JK, 1/606, Temple Kanpur, Kanpur Nagar, Uttar Pradesh, India, 208005",
+      "117/N/65, L Block, Raniganj, Kakadeo, Kanpur, Uttar Pradesh 208025",
     ],
-    href: "https://www.google.com/maps/search/?api=1&query=117%20N%2065%20Rani%20Ganj%20Ambedkar%20Nagar%20Navin%20Nagar%20Kakadeo%20Kanpur%20Uttar%20Pradesh%20208025",
+    href: "https://www.google.com/maps/search/?api=1&query=117%2FN%2F65%2C%20L%20Block%2C%20Raniganj%2C%20Kakadeo%2C%20Kanpur%2C%20Uttar%20Pradesh%20208025",
     icon: MapPin,
   },
 ];
